@@ -28,18 +28,18 @@ public class ClienteDAO {
         try (Statement stmt = conexao.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 Cliente c = new Cliente(
-                        TipoCliente.valueOf(rs.getString("tipo")), // Supondo que "tipo" seja armazenado como String no banco
+                        TipoCliente.valueOf(rs.getString("tipo")),
                         rs.getString("nome"),
                         rs.getInt("codigo"),
                         rs.getDate("dataCadastro").toLocalDate(),
                         rs.getString("telefone"),
-                        rs.getString("celular"), // Adicionado o celular que estava faltando
+                        rs.getString("celular"),
                         rs.getString("cpfCNPJ"),
-                        rs.getString("rg"), // Adicionado o RG que estava faltando
-                        rs.getString("emissor"), // Adicionado o órgão emissor do RG
-                        rs.getDate("dataEmissao") != null ? rs.getDate("dataEmissao").toLocalDate() : null, // Para evitar NullPointerException
+                        rs.getString("rg"), 
+                        rs.getString("emissor"), 
+                        rs.getDate("dataEmissao") != null ? rs.getDate("dataEmissao").toLocalDate() : null, 
                         rs.getString("email"),
-                        new Endereco( // Criando um objeto Endereco
+                        new Endereco( 
                                 rs.getString("cep"),
                                 rs.getString("logradouro"),
                                 rs.getInt("numero"),
@@ -48,8 +48,8 @@ public class ClienteDAO {
                                 rs.getString("cidade"),
                                 rs.getString("UF")
                         ),
-                        rs.getString("naturalidade"), // Adicionado naturalidade
-                        rs.getDate("dataNascimento") != null ? rs.getDate("dataNascimento").toLocalDate() : null, // Para evitar erro caso seja null
+                        rs.getString("naturalidade"), 
+                        rs.getDate("dataNascimento") != null ? rs.getDate("dataNascimento").toLocalDate() : null, 
                         rs.getBoolean("bloqueado"),
                         rs.getString("estadoCivil")
                 );
@@ -94,6 +94,6 @@ public class ClienteDAO {
                 }
             }
         }
-        return null; // Retorna null caso não encontre o cliente
+        return null; 
     }
 }
