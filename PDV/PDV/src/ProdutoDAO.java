@@ -28,23 +28,23 @@ public class ProdutoDAO {
         try (Statement stmt = conexao.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 Produto p = new Produto(
-                        rs.getString("codigo"),                     // Código do produto
-                        rs.getInt("estoque_atual"),                 // Estoque atual
-                        rs.getString("localizacao"),                // Localização (Adicionado)
-                        rs.getDouble("comissao"),                   // Comissão (Adicionado)
-                        rs.getDate("validade") != null ? rs.getDate("validade").toLocalDate() : null, // Validade (Adicionado e tratado para evitar erro)
-                        rs.getString("marca"),                      // Marca (Adicionado)
-                        rs.getDouble("preco_compra"),               // Preço de compra
-                        rs.getString("descricao"),                  // Descrição do produto
-                        new Fornecedor(rs.getInt("fornecedor_id")), // Fornecedor (Criando objeto, supondo que só tem ID no banco)
-                        rs.getDouble("preco_venda"),                // Preço de venda
-                        rs.getString("unidade"),                    // Unidade de medida (Adicionado)
-                        rs.getString("codigo_barras"),              // Código de barras (Adicionado)
-                        rs.getDouble("lucro"),                      // Lucro (Adicionado)
-                        new SubCategoria(rs.getInt()), // Subcategoria (Criando objeto com ID)
-                        new Categoria(rs.getInt("categoria_id")),   // Categoria (Criando objeto com ID)
-                        rs.getInt("garantia"),                      // Garantia (Adicionado)
-                        rs.getString("referencia")                  // Referência do produto (Adicionado)
+                        rs.getString("codigo"),                     
+                        rs.getInt("estoque_atual"),                 
+                        rs.getString("localizacao"),               
+                        rs.getDouble("comissao"),                   
+                        rs.getDate("validade") != null ? rs.getDate("validade").toLocalDate() : null, 
+                        rs.getString("marca"),                     
+                        rs.getDouble("preco_compra"),               
+                        rs.getString("descricao"),                  
+                        new Fornecedor(rs.getInt("fornecedor_id")), 
+                        rs.getDouble("preco_venda"),                
+                        rs.getString("unidade"),                    
+                        rs.getString("codigo_barras"),              
+                        rs.getDouble("lucro"),                      
+                        new SubCategoria(rs.getInt()), 
+                        new Categoria(rs.getInt("categoria_id")),   
+                        rs.getInt("garantia"),                      
+                        rs.getString("referencia")                  
                 );
                 produtos.add(p);
             }
