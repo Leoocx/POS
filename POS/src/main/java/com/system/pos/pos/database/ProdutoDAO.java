@@ -1,6 +1,5 @@
 package com.system.pos.pos.database;
-import com.system.pos.pos.model.Categoria;
-import com.system.pos.pos.model.Fornecedor;
+
 import com.system.pos.pos.model.Produto;
 
 import java.sql.*;
@@ -15,13 +14,13 @@ public class ProdutoDAO {
     }
 
     public void adicionarProduto(Produto produto) throws SQLException {
-        String sql = "INSERT INTO Produto (codigo, descricao, preco_compra, preco_venda, categoria, estoque_atual) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Produto (codigo, descricao, preco_compra, preco_venda, barcode, estoque_atual) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
-            stmt.setString(1, produto.getCodigo());
+            stmt.setInt(1, produto.getCodigo());
             stmt.setString(2, produto.getDescricao());
             stmt.setDouble(3, produto.getPrecoCompra());
             stmt.setDouble(4, produto.getPrecoVenda());
-            stmt.setString(5, String.valueOf(produto.getCategoria()));
+            stmt.setString(5, produto.getCodigoBarras());
             stmt.setInt(6, produto.getEstoqueAtual());
             stmt.executeUpdate();
         }
@@ -30,26 +29,28 @@ public class ProdutoDAO {
     public List<Produto> listarProdutos() throws SQLException {
         List<Produto> produtos = new ArrayList<>();
         String sql = "SELECT * FROM Produto";
-        try (Statement stmt = conexao.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+
+        try (Statement stmt = conexao.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 Produto p = new Produto(
-                        rs.getString("codigo"),                     // Código do produto
-                        rs.getInt("estoque_atual"),                 // Estoque atual
-                        rs.getString("localizacao"),                // Localização (Adicionado)
-                        rs.getDouble("comissao"),                   // Comissão (Adicionado)
-                        rs.getDate("validade") != null ? rs.getDate("validade").toLocalDate() : null, // Validade (Adicionado e tratado para evitar erro)
-                        rs.getString("marca"),                      // Marca (Adicionado)
-                        rs.getDouble("preco_compra"),               // Preço de compra
-                        rs.getString("descricao"),                  // Descrição do produto
-                        new Fornecedor(rs.getInt("fornecedor_id")), // Fornecedor (Criando objeto, supondo que só tem ID no banco)
-                        rs.getDouble("preco_venda"),                // Preço de venda
-                        rs.getString("unidade"),                    // Unidade de medida (Adicionado)
-                        rs.getString("codigo_barras"),              // Código de barras (Adicionado)
-                        rs.getDouble("lucro"),                      // Lucro (Adicionado)
-                        // Subcategoria (Criando objeto com ID)
-                        new Categoria(rs.getInt("categoria_id")),   // Categoria (Criando objeto com ID)
-                        rs.getInt("garantia"),                      // Garantia (Adicionado)
-                        rs.getString("referencia")                  // Referência do produto (Adicionado)
+                        rs.getInt("codigo"),
+                        rs.getInt("estoque_atual"),
+                        "", // localizacao
+                        0.0, // comissao
+                        null, // validade
+                        "", // marca
+                        rs.getDouble("preco_compra"),
+                        rs.getString("descricao"),
+                        null, // fornecedor
+                        rs.getDouble("preco_venda"),
+                        "", // unidade
+                        rs.getString("barcode"),
+                        0.0, // lucro
+                        null, // subCategoria
+                        null, // categoria
+                        0, // garantia
+                        ""  // referencia
                 );
                 produtos.add(p);
             }
@@ -58,22 +59,22 @@ public class ProdutoDAO {
     }
 
     public void atualizarProduto(Produto produto) throws SQLException {
-        String sql = "UPDATE Produto SET descricao = ?, preco_compra = ?, preco_venda = ?, categoria = ?, estoque_atual = ? WHERE codigo = ?";
+        String sql = "UPDATE Produto SET descricao = ?, preco_compra = ?, preco_venda = ?, barcode = ?, estoque_atual = ? WHERE codigo = ?";
         try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
             stmt.setString(1, produto.getDescricao());
             stmt.setDouble(2, produto.getPrecoCompra());
             stmt.setDouble(3, produto.getPrecoVenda());
-            new Categoria(4, produto.getCategoria());
+            stmt.setString(4, produto.getCodigoBarras());
             stmt.setInt(5, produto.getEstoqueAtual());
             stmt.setInt(6, produto.getCodigo());
             stmt.executeUpdate();
         }
     }
 
-    public void removerProduto(int id) throws SQLException {
-        String sql = "DELETE FROM Produto WHERE id = ?";
+    public void removerProduto(int codigo) throws SQLException {
+        String sql = "DELETE FROM Produto WHERE codigo = ?";
         try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
-            stmt.setInt(1, id);
+            stmt.setInt(1, codigo);
             stmt.executeUpdate();
         }
     }

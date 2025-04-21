@@ -13,7 +13,6 @@ public class CaixaDAO {
     }
 
     public void abrirCaixa(AberturaFechamentoCaixa caixa){
-
     }
 
     public void fecharCaixa(AberturaFechamentoCaixa caixa){

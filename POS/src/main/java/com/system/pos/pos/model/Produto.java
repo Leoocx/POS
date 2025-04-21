@@ -1,4 +1,5 @@
 package com.system.pos.pos.model;
+
 import java.time.LocalDate;
 
 public class Produto {
@@ -7,12 +8,12 @@ public class Produto {
     private String codigoBarras;
     private String unidade;
     private double precoCompra;
-    private double lucro;
     private double precoVenda;
+    private double lucro;
     private Categoria categoria;
     private SubCategoria subCategoria;
     private Fornecedor fornecedor;
-    private int garantia ; //em meses
+    private int garantia;
     private String marca;
     private String referencia;
     private LocalDate validade;
@@ -20,7 +21,10 @@ public class Produto {
     private String localizacao;
     private int estoqueAtual;
 
-    public Produto(int codigo, int estoqueAtual, String localizacao, double comissao, LocalDate validade, String marca, double precoCompra, String descricao, Fornecedor fornecedor, double precoVenda, String unidade, String codigoBarras, double lucro, SubCategoria subCategoria, Categoria categoria, int garantia, String referencia) {
+    public Produto(int codigo, int estoqueAtual, String localizacao, double comissao, LocalDate validade, String marca,
+                   double precoCompra, String descricao, Fornecedor fornecedor, double precoVenda, String unidade,
+                   String codigoBarras, double lucro, SubCategoria subCategoria, Categoria categoria, int garantia,
+                   String referencia) {
         this.codigo = codigo;
         this.estoqueAtual = estoqueAtual;
         this.localizacao = localizacao;
@@ -28,9 +32,9 @@ public class Produto {
         this.validade = validade;
         this.marca = marca;
         this.precoCompra = precoCompra;
+        this.precoVenda = precoVenda;
         this.descricao = descricao;
         this.fornecedor = fornecedor;
-        this.precoVenda = precoVenda;
         this.unidade = unidade;
         this.codigoBarras = codigoBarras;
         this.lucro = lucro;
@@ -40,9 +44,10 @@ public class Produto {
         this.referencia = referencia;
     }
 
-    public String getCodigo() {
+    public int getCodigo() {
         return codigo;
     }
+
     public void setCodigo(int codigo) {
         this.codigo = codigo;
     }
@@ -79,20 +84,20 @@ public class Produto {
         this.precoCompra = precoCompra;
     }
 
-    public double getLucro() {
-        return lucro;
-    }
-
-    public void setLucro(double lucro) {
-        this.lucro = lucro;
-    }
-
     public double getPrecoVenda() {
         return precoVenda;
     }
 
     public void setPrecoVenda(double precoVenda) {
         this.precoVenda = precoVenda;
+    }
+
+    public double getLucro() {
+        return lucro;
+    }
+
+    public void setLucro(double lucro) {
+        this.lucro = lucro;
     }
 
     public Categoria getCategoria() {
