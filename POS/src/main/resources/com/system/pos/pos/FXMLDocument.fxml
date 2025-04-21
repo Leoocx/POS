@@ -13,7 +13,7 @@
     <children>
       <ImageView fitHeight="80.0" fitWidth="340.0" layoutX="14.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0">
          <image>
-            <Image url="@LDLogo2015.png" />
+            <Image url="@" />
          </image></ImageView>
       <ListView editable="true" layoutX="426.0" layoutY="76.0" prefHeight="337.0" prefWidth="421.0" AnchorPane.bottomAnchor="187.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="76.0" />
       <Pane layoutX="365.0" layoutY="30.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="40.0" prefWidth="421.0" style="-fx-border-color: #ccc; -fx-border-radius: 4px; -fx-background-color: #0cb512;" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="30.0">
