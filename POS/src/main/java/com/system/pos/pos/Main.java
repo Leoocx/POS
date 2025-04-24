@@ -15,8 +15,8 @@ public class Main extends Application {
         URL fxml = getClass().getResource("/com/system/pos/pos/login.fxml");
         System.out.println(fxml);
 
-        Scene scene = new Scene(fxmlLoader.load(), 600, 400);
-        stage.setTitle("POS System");
+        Scene scene = new Scene(fxmlLoader.load(), 1200, 700);
+        stage.setTitle("Sistema de Ponto de Venda (POS) ");
         stage.setScene(scene);
         stage.show();
     }

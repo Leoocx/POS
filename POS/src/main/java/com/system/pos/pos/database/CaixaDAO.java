@@ -1,6 +1,6 @@
 package com.system.pos.pos.database;
 
-import com.system.pos.pos.view.AberturaFechamentoCaixa;
+import com.system.pos.pos.model.AberturaFechamentoCaixa;
 
 import java.sql.Connection;
 

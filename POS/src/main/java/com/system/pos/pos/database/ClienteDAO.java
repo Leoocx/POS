@@ -46,9 +46,9 @@ public class ClienteDAO {
                         rs.getString("telefone"),
                         rs.getString("celular"), // Adicionado o celular que estava faltando
                         rs.getString("cpfCNPJ"),
-                        rs.getString("rg"), // Adicionado o RG que estava faltando
-                        rs.getString("emissor"), // Adicionado o órgão emissor do RG
-                        rs.getDate("dataEmissao") != null ? rs.getDate("dataEmissao").toLocalDate() : null, // Para evitar NullPointerException
+                        rs.getString("rg"),
+                        rs.getString("emissor"),
+                        rs.getDate("dataEmissao") != null ? rs.getDate("dataEmissao").toLocalDate() : null,
                         rs.getString("email"),
                         new Endereco( // Criando um objeto Endereco
                                 rs.getString("cep"),
@@ -59,8 +59,8 @@ public class ClienteDAO {
                                 rs.getString("cidade"),
                                 rs.getString("UF")
                         ),
-                        rs.getString("naturalidade"), // Adicionado naturalidade
-                        rs.getDate("dataNascimento") != null ? rs.getDate("dataNascimento").toLocalDate() : null, // Para evitar erro caso seja null
+                        rs.getString("naturalidade"),
+                        rs.getDate("dataNascimento") != null ? rs.getDate("dataNascimento").toLocalDate() : null,
                         rs.getBoolean("bloqueado"),
                         rs.getString("estadoCivil")
                 );

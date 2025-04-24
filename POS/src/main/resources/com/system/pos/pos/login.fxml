@@ -28,7 +28,7 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.text.TextFlow?>
 
-<StackPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.system.pos.pos.view.Login">
+<StackPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.system.pos.pos.view.LoginView">
    <stylesheets>
       <URL value="@../../style/css/colors.css" />
       <URL value="@../../style/css/skeleton.css" />
