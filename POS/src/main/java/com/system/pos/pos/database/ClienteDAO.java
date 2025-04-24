@@ -39,18 +39,18 @@ public class ClienteDAO {
         try (Statement stmt = conexao.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 Cliente c = new Cliente(
-                        TipoCliente.valueOf(rs.getString("tipo")), // Supondo que "tipo" seja armazenado como String no banco
+                        TipoCliente.valueOf(rs.getString("tipo")),
                         rs.getString("nome"),
                         rs.getInt("codigo"),
                         rs.getDate("dataCadastro").toLocalDate(),
                         rs.getString("telefone"),
-                        rs.getString("celular"), // Adicionado o celular que estava faltando
+                        rs.getString("celular"),
                         rs.getString("cpfCNPJ"),
                         rs.getString("rg"),
                         rs.getString("emissor"),
                         rs.getDate("dataEmissao") != null ? rs.getDate("dataEmissao").toLocalDate() : null,
                         rs.getString("email"),
-                        new Endereco( // Criando um objeto Endereco
+                        new Endereco(
                                 rs.getString("cep"),
                                 rs.getString("logradouro"),
                                 rs.getInt("numero"),

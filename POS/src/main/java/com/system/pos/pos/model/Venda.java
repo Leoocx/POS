@@ -9,6 +9,7 @@ public class Venda {
     private Cliente cliente;
     private Pagamento formaPagamento;
     private double desconto;
+    private StatusVenda status;
 
     public Venda(int codigo, int quantidade, double valorTotal, StatusVenda status, double desconto, Pagamento formaPagamento, LocalDateTime data, Cliente cliente, int precoUnitario) {
         this.codigo = codigo;
@@ -96,7 +97,6 @@ public class Venda {
         this.valorTotal = valorTotal;
     }
 
-    private StatusVenda status;
 }
 
 
