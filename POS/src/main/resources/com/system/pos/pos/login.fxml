@@ -97,7 +97,7 @@
                      <content>
                         <VBox id="loginContent" fx:id="loginContent" alignment="CENTER" style="-fx-background-color: white;">
                            <children>
-                              <GridPane fx:id="login_content" alignment="CENTER" maxHeight="400.0" maxWidth="400.0" prefHeight="416.0" prefWidth="354.0">
+                              <GridPane fx:id="login_content" alignment="CENTER" maxHeight="419.0" maxWidth="516.0" prefHeight="419.0" prefWidth="516.0">
                                  <columnConstraints>
                                     <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                     <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -111,14 +111,14 @@
                                     <RowConstraints maxHeight="125.0" minHeight="1.0" prefHeight="124.0" vgrow="SOMETIMES" />
                                  </rowConstraints>
                                  <children>
-                                    <TextField fx:id="username" minHeight="50.0" prefHeight="40.0" prefWidth="371.0" promptText="Your Username" GridPane.columnSpan="2147483647" GridPane.rowIndex="2" GridPane.valignment="TOP">
+                                    <TextField fx:id="username" minHeight="50.0" prefHeight="40.0" prefWidth="371.0" promptText="Username" GridPane.columnSpan="2147483647" GridPane.rowIndex="2" GridPane.valignment="TOP">
                                        <styleClass>
                                           <String fx:value="lead-contact" />
                                           <String fx:value="action-clear" />
                                           <String fx:value="input-large" />
                                        </styleClass>
                                     </TextField>
-                                    <PasswordField fx:id="password" minHeight="50.0" prefHeight="40.0" promptText="Your password" GridPane.columnSpan="2147483647" GridPane.rowIndex="3" GridPane.valignment="TOP">
+                                    <PasswordField fx:id="password" minHeight="50.0" prefHeight="40.0" promptText="password" GridPane.columnSpan="2147483647" GridPane.rowIndex="3" GridPane.valignment="TOP">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
@@ -129,17 +129,17 @@
                                           <String fx:value="input-large" />
                                        </styleClass>
                                     </PasswordField>
-                                    <Button fx:id="btnLogin" defaultButton="true" mnemonicParsing="false" onAction="#loginButton" prefWidth="121.0" styleClass="btn-alternate" text="Login" GridPane.rowIndex="5" />
-                                    <Button cancelButton="true" layoutX="38.0" layoutY="318.0" mnemonicParsing="false" prefWidth="121.0" styleClass="btn-ripple" text="Register" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                                    <Label fx:id="welcome" alignment="CENTER" prefHeight="38.0" prefWidth="533.0" style="-fx-font-weight: bold;" text="Welcome" textAlignment="CENTER" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER">
+                                    <Button fx:id="btnLogin" defaultButton="true" mnemonicParsing="false" onAction="#loginButton" prefWidth="121.0" styleClass="btn-alternate" text="Entrar" GridPane.rowIndex="5" />
+                                    <Button cancelButton="true" layoutX="38.0" layoutY="318.0" mnemonicParsing="false" prefWidth="121.0" styleClass="btn-ripple" text="Registrar" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                    <Label fx:id="welcome" alignment="CENTER" prefHeight="35.0" prefWidth="411.0" style="-fx-font-weight: bold;" text="Bem-Vindo" textAlignment="CENTER" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER">
                                        <styleClass>
                                           <String fx:value="h2" />
                                           <String fx:value="text-info" />
                                        </styleClass>
                                     </Label>
-                                    <Label alignment="CENTER" prefHeight="18.0" prefWidth="524.0" styleClass="h5" text="Welcome back, Please login in your account." GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
-                                    <CheckBox mnemonicParsing="false" text="Remenber " GridPane.rowIndex="4" />
-                                    <Hyperlink text="Forgot your password?" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                    <Label alignment="CENTER" prefHeight="23.0" prefWidth="507.0" styleClass="h5" text="Bem vindo, por favor entre com uma conta existente ou crie uma nova conta." GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
+                                    <CheckBox mnemonicParsing="false" text="Lembrar minha senha" GridPane.rowIndex="4" />
+                                    <Hyperlink text="Esqueci a senha." GridPane.columnIndex="1" GridPane.rowIndex="4" />
                                  </children>
                               </GridPane>
                               <VBox alignment="BOTTOM_CENTER" prefHeight="19.0" prefWidth="554.0">
