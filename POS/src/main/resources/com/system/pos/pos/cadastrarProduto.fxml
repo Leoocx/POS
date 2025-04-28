@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="587.0" prefWidth="944.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <TextField fx:id="codigo" layoutX="34.0" layoutY="83.0" promptText="Código" />
+      <TextArea fx:id="descricao" layoutX="272.0" layoutY="255.0" prefHeight="200.0" prefWidth="401.0" promptText="Descrição do produto" />
+      <TextField fx:id="unidade" layoutX="226.0" layoutY="83.0" promptText="Unidades" />
+      <ComboBox fx:id="categoria" layoutX="226.0" layoutY="197.0" prefWidth="150.0" promptText="Categoria" />
+      <ComboBox fx:id="subCategoria" layoutX="397.0" layoutY="197.0" prefWidth="150.0" promptText="Sub-categoria" />
+      <TextField fx:id="fornecedor" layoutX="398.0" layoutY="83.0" promptText="Nome do fornecedor" />
+      <TextField fx:id="marca" layoutX="568.0" layoutY="83.0" promptText="Marca" />
+      <TextField fx:id="referencia" layoutX="226.0" layoutY="152.0" promptText="Referência" />
+      <TextField fx:id="validade" layoutX="568.0" layoutY="152.0" promptText="Validade" />
+      <TextField fx:id="localizacao" layoutX="398.0" layoutY="152.0" promptText="Localização" />
+      <Button fx:id="btnCadastrarProduto" layoutX="416.0" layoutY="502.0" mnemonicParsing="false" onAction="#cadastrarProdutoButton" prefHeight="25.0" prefWidth="121.0" text="Cadastrar Produto" />
+   </children>
+</AnchorPane>
