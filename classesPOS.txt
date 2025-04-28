@@ -1,0 +1,77 @@
+Cliente
+
+ATRIBUTOS:
+private int codigo;
+    private String nome;
+    private LocalDate dataCadastro;
+    private String telefone;
+    private String celular;
+    private TipoCliente tipo;
+    private String cpfCNPJ;
+    private String rg;
+    private String emissor;
+    private LocalDate dataEmissao;
+    private String endereco;
+    private String email;
+    private String naturalidade;
+    private LocalDate dataNascimento;
+    private String estadoCivil;
+    private boolean bloqueado;
+
+Endereco
+
+ATRIBUTOS:
+	    private String cep;
+    private String logradouro;
+    private int numero;
+    private String complemento;
+    private String bairro;
+    private String cidade;
+    private String UF;
+
+
+
+Fornecedor
+
+ATRIBUTOS:
+   private String codigo;
+    private String nome;
+    private Endereco endereco;
+    private String telefone;
+    private String celular;
+    private String email;
+    private String cnpj;
+
+Produto
+
+ATRIBUTOS:
+    private int codigo;
+    private String descricao;
+    private String codigoBarras;
+    private int unidade;
+    private float precoCompra;
+    private float precoVenda;
+    private double lucro;
+    private Categoria categoria;
+    private SubCategoria subCategoria;
+    private Fornecedor fornecedor;
+    private int garantia;
+    private String marca;
+    private String referencia;
+    private LocalDate validade;
+    private double comissao;
+    private String localizacao;
+    private int estoqueAtual;
+
+
+Venda
+
+ATRIBUTOS:
+ private int codigo;
+    private int quantidade;
+    private int precoUnitario;
+    private LocalDateTime data;
+    private Cliente cliente;
+    private Pagamento formaPagamento;
+    private double desconto;
+    private StatusVenda status;
