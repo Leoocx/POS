@@ -2,6 +2,8 @@ package com.system.pos.pos.view;
 
 import com.system.pos.pos.controller.ClientesController;
 import com.system.pos.pos.model.Cliente;
+import com.system.pos.pos.report.RelatorioClientes;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 
@@ -38,8 +40,7 @@ public class CadastroClienteView {
     }
     @FXML
     public void gerarPDFButton(){
-
-
+        RelatorioClientes.gerarPDF(null);
     }
 
 }

@@ -3,34 +3,27 @@ import com.system.pos.pos.model.Produto;
 import com.system.pos.pos.service.ProdutoService;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 public class ProdutoController {
     private ProdutoService produtoService;
 
-    public ProdutoController(Connection connection) {
-        produtoService = new ProdutoService(connection);
+    public void adicionarProduto(Produto produto) throws SQLException {
+        produtoService.adicionarProduto(produto);
     }
 
-    public boolean adicionarProduto(Produto produto) {
-        return produtoService.adicionarProduto(produto);
+    public void atualizarProduto(Produto produto) throws SQLException {
+        produtoService.atualizarProduto(produto);
     }
 
-    public boolean atualizarProduto(Produto produto) {
-        return produtoService.atualizarProduto(produto);
-    }
-
-    public boolean removerProduto(int cdProduto) {
+    public void removerProduto(int cdProduto) throws SQLException {
         Produto produto = new Produto();
         produto.setCdProduto(cdProduto);
-        return produtoService.removerProduto(produto);
+        produtoService.removerProduto(cdProduto);
     }
 
-    public List<Produto> listarProdutos() {
+    public List<Produto> listarProdutos() throws SQLException {
         return produtoService.listarProdutos();
-    }
-
-    public Produto buscarProduto(int cdProduto) {
-        return produtoService.buscarProduto(cdProduto);
     }
 }

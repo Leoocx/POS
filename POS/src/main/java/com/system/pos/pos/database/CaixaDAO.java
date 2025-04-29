@@ -8,8 +8,8 @@ public class CaixaDAO {
 
     private Connection conexao;
 
-    public CaixaDAO(Connection conexao){
-        this.conexao=conexao;
+    public CaixaDAO(){
+        this.conexao=ConnectionDB.conectar();
     }
 
     public void abrirCaixa(AberturaFechamentoCaixa caixa){

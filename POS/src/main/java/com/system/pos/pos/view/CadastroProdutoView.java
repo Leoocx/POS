@@ -30,10 +30,6 @@ public class CadastroProdutoView {
     private ProdutoService produtoService;
 
 
-    public CadastroProdutoView(Connection connection) {
-        this.produtoService = new ProdutoService(connection);
-    }
-
     @FXML
     public void initialize() {
         categoria.getItems().addAll(Arrays.asList(Categoria.values()).stream().map(Enum::name).toArray(String[]::new));

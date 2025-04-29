@@ -14,16 +14,23 @@ import javafx.scene.control.TextField;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.List;
 
 public class ClientesController {
 
+    
     public void cadastrarCliente(Cliente cliente) {
-            try {
-                ClienteService.cadastrarCliente(cliente);
+        try {
+            ClienteService.cadastrarCliente(cliente);
             } catch (Exception ex) {
                 System.out.println("Erro ao cadastrar cliente: " + ex.getMessage());
                 ex.printStackTrace();
             }
     }
+
+
+
+
+
 }
 

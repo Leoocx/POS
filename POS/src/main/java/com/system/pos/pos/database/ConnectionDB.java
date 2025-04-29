@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class ConnectionDB {
     private static final String URL = "jdbc:sqlite:database.db";
 
-    public static Connection conectar(){
+    public static Connection conectar(){ //sqlite
         File dbFile = new File("database.db");
         boolean bancoExiste = dbFile.exists();
         try{
@@ -23,4 +23,13 @@ public class ConnectionDB {
             throw new RuntimeException("Erro ao conectar ao banco de dados");
         }
     }
+
+    public static Connection conectarGenerico(String url, String usuario, String senha) {    //PARA OUTROS BANCOS DE DADOS
+        try {
+                return DriverManager.getConnection(url,usuario,senha);
+        } catch (SQLException e) {
+            System.err.println("ERRO: "+e.getMessage());
+            return null;
+          }
+        }
 }

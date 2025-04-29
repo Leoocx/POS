@@ -2,7 +2,7 @@ package com.system.pos.pos.controller;
 
 
 public class VendasController {
-    public void adicionarItem(){  //ir cadastrando os produtos para vender
+    public void adicionarItem(){ 
 
     }
 
@@ -10,11 +10,11 @@ public class VendasController {
 
     }
 
-    public void precoTotal(){  //preço total
+    public void precoTotal(){ 
 
     }
 
-    public void finalizarVenda(){ //Finalizar a venda e registrar no sistema
+    public void finalizarVenda(){ 
 
     }
 

@@ -2,144 +2,69 @@ package com.system.pos.pos.database;
 
 import com.system.pos.pos.model.Produto;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class ProdutoDAO {
+    private Connection conexao;
 
-    private Connection connection;
-
-    public Connection getConnection() {
-        return connection;
+    public ProdutoDAO() {
+        this.conexao = ConnectionDB.conectar();
     }
-
-    public void setConnection(Connection connection) {
-        this.connection = connection;
-    }
-
-    public boolean inserir(Produto produto) {
-        String sql = "INSERT INTO produtos(nome, preco, quantidade, cdCategoria) VALUES(?,?,?,?)";
-        try {
-            PreparedStatement stmt = connection.prepareStatement(sql);
-            stmt.setString(1, produto.getNome());
-            stmt.setDouble(2, produto.getPreco());
-            stmt.setInt(3, produto.getQuantidade());
-            stmt.setInt(4, produto.getCategoria());
-            stmt.execute();
-            return true;
-        } catch (SQLException ex) {
-            Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
-        }
-    }
-
-    public boolean alterar(Produto produto) {
-        String sql = "UPDATE produtos SET nome=?, preco=?, quantidade=?, cdCategoria=? WHERE cdProduto=?";
-        try {
-            PreparedStatement stmt = connection.prepareStatement(sql);
-            stmt.setString(1, produto.getNome());
-            stmt.setDouble(2, produto.getPreco());
-            stmt.setInt(3, produto.getQuantidade());
-            stmt.setInt(4, produto.getCategoria();
-            stmt.setInt(5, produto.getCdProduto());
-            stmt.execute();
-            return true;
-        } catch (SQLException ex) {
-            Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
-        }
-    }
-
-    public boolean remover(Produto produto) {
-        String sql = "DELETE FROM produtos WHERE cdProduto=?";
-        try {
-            PreparedStatement stmt = connection.prepareStatement(sql);
+    
+    public void adicionarProduto(Produto produto) throws SQLException {
+        String sql = "INSERT INTO produtos (codigo, nome, preco, quantidade, categoria, fornecedor, marca, referencia, localizacao, validade, unidade, subCategoria) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?)";
+        try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
             stmt.setInt(1, produto.getCdProduto());
-            stmt.execute();
-            return true;
-        } catch (SQLException ex) {
-            Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
+            stmt.setString(2, produto.getNome());
+            stmt.setDouble(3, produto.getPreco());
+            stmt.setString(4, produto.getCategoria().toString());
+            stmt.setString(5, produto.getFornecedor());
+            stmt.setString(6, produto.getMarca());
+            stmt.setString(7, produto.getReferencia());
+            stmt.setString(8, produto.getLocalizacao());
+            stmt.setString(9,produto.getValidade().toString());
+            stmt.setInt(10, produto.getUnidade());
+            stmt.setInt(11, produto.getUnidade());
+            stmt.setString(12, produto.getSubCategoria().toString());
+            stmt.executeUpdate();
         }
     }
 
-    public List<Produto> listar() {
-        String sql = "SELECT * FROM produtos";
-        List<Produto> retorno = new ArrayList<>();
-        try {
-            PreparedStatement stmt = connection.prepareStatement(sql);
-            ResultSet resultado = stmt.executeQuery();
-            while (resultado.next()) {
-                Produto produto = new Produto();
-                Categoria categoria = new Categoria();
-                produto.setCdProduto(resultado.getInt("cdProduto"));
-                produto.setNome(resultado.getString("nome"));
-                produto.setPreco(resultado.getDouble("preco"));
-                produto.setQuantidade(resultado.getInt("quantidade"));
-                categoria.setCdCategoria(resultado.getInt("cdCategoria"));
+    public List<Produto> listarProdutos() throws SQLException {
+        List<Produto> produtos = new ArrayList<>();
+        String sql = "SELECT * FROM Produto";
 
+        try (Statement stmt = conexao.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                Produto p = new Produto(
 
-                CategoriaDAO categoriaDAO = new CategoriaDAO();
-                categoriaDAO.setConnection(connection);
-                categoria = categoriaDAO.buscar(categoria);
-
-                produto.setCategoria(categoria);
-                retorno.add(produto);
+                );
+                produtos.add(p);
             }
-        } catch (SQLException ex) {
-            Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return retorno;
+        return produtos;
     }
 
-    public List<Produto> listarPorCategoria(Categoria categoria) {
-        String sql = "SELECT * FROM produtos WHERE cdCategoria=?";
-        List<Produto> retorno = new ArrayList<>();
-        try {
-            PreparedStatement stmt = connection.prepareStatement(sql);
-            stmt.setInt(1, categoria.getCdCategoria());
-            ResultSet resultado = stmt.executeQuery();
-            while (resultado.next()) {
-                Produto produto = new Produto();
-                produto.setCdProduto(resultado.getInt("cdProduto"));
-                produto.setNome(resultado.getString("nome"));
-                produto.setPreco(resultado.getDouble("preco"));
-                produto.setQuantidade(resultado.getInt("quantidade"));
-                categoria.setCdCategoria(resultado.getInt("cdCategoria"));
-                produto.setCategoria(categoria);
-                retorno.add(produto);
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE, null, ex);
+    public void atualizarProduto(Produto produto) throws SQLException {
+        String sql = "UPDATE produtos SET preco = ?, localizacao = ?, validade = ? WHERE codigo = ?";
+        try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
+            stmt.setFloat(1, produto.getPreco());
+            stmt.setString(2, produto.getLocalizacao());
+            stmt.setString(3, produto.getValidade().toString());
+            stmt.setInt(4, produto.getCdProduto());
+            stmt.executeUpdate();
         }
-        return retorno;
     }
 
-    public Produto buscar(Produto produto) {
-        String sql = "SELECT * FROM produtos WHERE cdProduto=?";
-        Produto retorno = new Produto();
-        Categoria categoria = new Categoria();
-        try {
-            PreparedStatement stmt = connection.prepareStatement(sql);
-            stmt.setInt(1, produto.getCdProduto());
-            ResultSet resultado = stmt.executeQuery();
-            if (resultado.next()) {
-                retorno.setCdProduto(resultado.getInt("cdProduto"));
-                retorno.setNome(resultado.getString("nome"));
-                retorno.setPreco(resultado.getDouble("preco"));
-                retorno.setQuantidade(resultado.getInt("quantidade"));
-                categoria.setCdCategoria(resultado.getInt("cdCategoria"));
-                retorno.setCategoria(categoria);
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE, null, ex);
+    public void removerProduto(int codigo) throws SQLException {
+        String sql = "DELETE FROM produtos WHERE codigo = ?";
+        try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
+            stmt.setInt(1, codigo);
+            stmt.executeUpdate();
         }
-        return retorno;
     }
 }

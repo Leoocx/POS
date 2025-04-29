@@ -20,5 +20,16 @@ public class ClienteService {
         System.out.println("Cliente cadastrado com sucesso!");
     }
 
+    public static void atualizarCliente(Cliente cliente) throws SQLException{
+         clienteDAO.atualizarCliente(cliente);
+    }
+
+    public void removerCliente(Cliente cliente) throws SQLException{
+        clienteDAO.removerCliente(cliente);
+    }
+
+    public void buscarClientePorCodigo(int codigo) throws SQLException{
+        clienteDAO.buscarClientePorCodigo(codigo);
+    }
 
 }

@@ -13,19 +13,19 @@ public class DatabaseInitialize {
                 Statement stmt = conn.createStatement();
 
                 String sql = """
-                    CREATE TABLE IF NOT EXISTS Cliente (
+                    CREATE TABLE IF NOT EXISTS clientes (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         nome TEXT NOT NULL,
                         email TEXT
                     );
 
-                    CREATE TABLE IF NOT EXISTS Produto (
+                    CREATE TABLE IF NOT EXISTS produtos (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         nome TEXT NOT NULL,
                         preco REAL
                     );
 
-                    CREATE TABLE IF NOT EXISTS Venda (
+                    CREATE TABLE IF NOT EXISTS vendas (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         cliente_id INTEGER,
                         data TEXT,

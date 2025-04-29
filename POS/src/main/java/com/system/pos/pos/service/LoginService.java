@@ -5,12 +5,23 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.system.pos.pos.database.ConnectionDB;
+
 public class LoginService {
 
     private final Connection connection;
 
-    public LoginService(Connection connection) {
-        this.connection = connection;
+    public LoginService() {
+        this.connection = ConnectionDB.conectar();
+    }
+
+    public void registrarConta(String username, String password) throws SQLException{
+        String sql = "INSERT INTO users (username, password) VALUES (?, ?)";
+        try(PreparedStatement stmt = connection.prepareStatement(sql)){
+            stmt.setString(0, username);
+            stmt.setString(1, password);
+            stmt.executeUpdate();
+        }
     }
 
     public boolean validarLogin(String username, String password) throws SQLException {
