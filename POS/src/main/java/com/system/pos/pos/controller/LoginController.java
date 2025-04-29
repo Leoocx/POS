@@ -17,6 +17,7 @@ public class LoginController {
                 System.out.println("Login realizado com sucesso!");
             } else {
                 System.out.println("Usuário ou senha inválidos.");
+                
             }
         } catch (Exception e) {
             System.out.println("Erro ao tentar logar: " + e.getMessage());

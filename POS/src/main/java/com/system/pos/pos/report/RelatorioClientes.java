@@ -11,11 +11,11 @@ import java.io.IOException;
 
 public class RelatorioClientes {
 
-    public static void gerarReciboPDF(Cliente cliente) {
-        String caminhoArquivo = "testeRecibo2.pdf";
+    public static void gerarPDF(Cliente cliente) {
+        String caminhoArquivo = "teste.pdf";
 
         try {
-            // Tamanho do cupom (Ajuste a largura e altura conforme necessário)
+            
             PdfWriter writer = new PdfWriter(new File(caminhoArquivo));
             PdfDocument pdfDoc = new PdfDocument(writer);
 
@@ -24,12 +24,11 @@ public class RelatorioClientes {
 
             Document document = new Document(pdfDoc);
 
-            // Remover margens para um cupom mais compacto
             document.setMargins(7, 7, 7, 7);  // Margens de 5 unidades
 
             // Título do recibo estilizado
             document.add(new Paragraph("=====RELATORIO=====")
-                    .setFontSize(5)  // Reduzir o tamanho da fonte
+                    .setFontSize(5)  // Reduz o tamanho da fonte
                     .setBold()
                     .setFontColor(ColorConstants.DARK_GRAY));
 

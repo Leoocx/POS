@@ -9,12 +9,12 @@ public class FornecedorDAO {
 
     private Connection connection;
 
-    public FornecedorDAO(Connection connection){
-        this.connection=connection;
+    public FornecedorDAO(){
+        this.connection=ConnectionDB.conectar();
     }
 
     public void adicionarFornecedor(Fornecedor fornecedor) throws SQLException {
-        String sql = "INSERT INTO Fornecedor (nome, cpf_cnpj, telefone, email, endereco, tipo, email) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO fornecedores (nome, cpf_cnpj, telefone, email, endereco, tipo, email) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try(PreparedStatement preparedStatement = connection.prepareStatement(sql)){
             preparedStatement.setString(1,fornecedor.getNome());
             preparedStatement.setString(2,fornecedor.getCnpj());
@@ -24,6 +24,15 @@ public class FornecedorDAO {
             preparedStatement.executeUpdate();
         }
     }
+
+    public void atualizarFornecedor(Fornecedor fornecedor) throws SQLException{
+
+    }
+
+    public void removerFornecedor(Fornecedor fornecedor) throws SQLException{
+
+    }
+
 
     public Fornecedor exibirFornecedores() throws SQLException{
 

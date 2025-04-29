@@ -3,101 +3,67 @@ package com.system.pos.pos.model;
 import java.time.LocalDate;
 
 public class Produto {
-    private int codigo;
-    private String descricao;
-    private String codigoBarras;
-    private String unidade;
-    private double precoCompra;
-    private double precoVenda;
-    private double lucro;
+    private int cdProduto;
+    private String nome;
+    private float preco;
+    private int quantidade;
     private Categoria categoria;
-    private SubCategoria subCategoria;
-    private Fornecedor fornecedor;
-    private int garantia;
+    private String fornecedor;
     private String marca;
     private String referencia;
-    private LocalDate validade;
-    private double comissao;
     private String localizacao;
-    private int estoqueAtual;
+    private LocalDate validade;
+    private int unidade;
+    private SubCategoria subCategoria;
 
-    public Produto(int codigo, int estoqueAtual, String localizacao, double comissao, LocalDate validade, String marca,
-                   double precoCompra, String descricao, Fornecedor fornecedor, double precoVenda, String unidade,
-                   String codigoBarras, double lucro, SubCategoria subCategoria, Categoria categoria, int garantia,
-                   String referencia) {
-        this.codigo = codigo;
-        this.estoqueAtual = estoqueAtual;
-        this.localizacao = localizacao;
-        this.comissao = comissao;
-        this.validade = validade;
-        this.marca = marca;
-        this.precoCompra = precoCompra;
-        this.precoVenda = precoVenda;
-        this.descricao = descricao;
-        this.fornecedor = fornecedor;
-        this.unidade = unidade;
-        this.codigoBarras = codigoBarras;
-        this.lucro = lucro;
-        this.subCategoria = subCategoria;
+
+    public Produto() {}
+
+    public Produto(int cdProduto, String nome, float preco, int quantidade, Categoria categoria, String fornecedor, String marca, String referencia, String localizacao, LocalDate validade, int unidade, SubCategoria subCategoria) {
+        this.cdProduto = cdProduto;
+        this.nome = nome;
+        this.preco = preco;
+        this.quantidade = quantidade;
         this.categoria = categoria;
-        this.garantia = garantia;
+        this.fornecedor = fornecedor;
+        this.marca = marca;
         this.referencia = referencia;
-    }
-
-    public int getCodigo() {
-        return codigo;
-    }
-
-    public void setCodigo(int codigo) {
-        this.codigo = codigo;
-    }
-
-    public String getDescricao() {
-        return descricao;
-    }
-
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
-    }
-
-    public String getCodigoBarras() {
-        return codigoBarras;
-    }
-
-    public void setCodigoBarras(String codigoBarras) {
-        this.codigoBarras = codigoBarras;
-    }
-
-    public String getUnidade() {
-        return unidade;
-    }
-
-    public void setUnidade(String unidade) {
+        this.localizacao = localizacao;
+        this.validade = validade;
         this.unidade = unidade;
+        this.subCategoria = subCategoria;
     }
 
-    public double getPrecoCompra() {
-        return precoCompra;
+    public int getCdProduto() {
+        return cdProduto;
     }
 
-    public void setPrecoCompra(double precoCompra) {
-        this.precoCompra = precoCompra;
+    public void setCdProduto(int cdProduto) {
+        this.cdProduto = cdProduto;
     }
 
-    public double getPrecoVenda() {
-        return precoVenda;
+    public String getNome() {
+        return nome;
     }
 
-    public void setPrecoVenda(double precoVenda) {
-        this.precoVenda = precoVenda;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
-    public double getLucro() {
-        return lucro;
+    public float getPreco() {
+        return preco;
     }
 
-    public void setLucro(double lucro) {
-        this.lucro = lucro;
+    public void setPreco(float preco) {
+        this.preco = preco;
+    }
+
+    public int getQuantidade() {
+        return quantidade;
+    }
+
+    public void setQuantidade(int quantidade) {
+        this.quantidade = quantidade;
     }
 
     public Categoria getCategoria() {
@@ -108,28 +74,12 @@ public class Produto {
         this.categoria = categoria;
     }
 
-    public SubCategoria getSubCategoria() {
-        return subCategoria;
-    }
-
-    public void setSubCategoria(SubCategoria subCategoria) {
-        this.subCategoria = subCategoria;
-    }
-
-    public Fornecedor getFornecedor() {
+    public String getFornecedor() {
         return fornecedor;
     }
 
-    public void setFornecedor(Fornecedor fornecedor) {
+    public void setFornecedor(String fornecedor) {
         this.fornecedor = fornecedor;
-    }
-
-    public int getGarantia() {
-        return garantia;
-    }
-
-    public void setGarantia(int garantia) {
-        this.garantia = garantia;
     }
 
     public String getMarca() {
@@ -148,22 +98,6 @@ public class Produto {
         this.referencia = referencia;
     }
 
-    public LocalDate getValidade() {
-        return validade;
-    }
-
-    public void setValidade(LocalDate validade) {
-        this.validade = validade;
-    }
-
-    public double getComissao() {
-        return comissao;
-    }
-
-    public void setComissao(double comissao) {
-        this.comissao = comissao;
-    }
-
     public String getLocalizacao() {
         return localizacao;
     }
@@ -172,11 +106,27 @@ public class Produto {
         this.localizacao = localizacao;
     }
 
-    public int getEstoqueAtual() {
-        return estoqueAtual;
+    public LocalDate getValidade() {
+        return validade;
     }
 
-    public void setEstoqueAtual(int estoqueAtual) {
-        this.estoqueAtual = estoqueAtual;
+    public void setValidade(LocalDate validade) {
+        this.validade = validade;
+    }
+
+    public int getUnidade() {
+        return unidade;
+    }
+
+    public void setUnidade(int unidade) {
+        this.unidade = unidade;
+    }
+
+    public SubCategoria getSubCategoria() {
+        return subCategoria;
+    }
+
+    public void setSubCategoria(SubCategoria subCategoria) {
+        this.subCategoria = subCategoria;
     }
 }

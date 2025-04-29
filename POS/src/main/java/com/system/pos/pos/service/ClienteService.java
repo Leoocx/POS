@@ -15,10 +15,21 @@ public class ClienteService {
         this.connection=connection;
     }
 
-    public void cadastrarCliente(Cliente cliente) throws SQLException {
+    public static void cadastrarCliente(Cliente cliente) throws SQLException {
         clienteDAO.adicionarCliente(cliente);
         System.out.println("Cliente cadastrado com sucesso!");
     }
 
+    public static void atualizarCliente(Cliente cliente) throws SQLException{
+         clienteDAO.atualizarCliente(cliente);
+    }
+
+    public void removerCliente(Cliente cliente) throws SQLException{
+        clienteDAO.removerCliente(cliente);
+    }
+
+    public void buscarClientePorCodigo(int codigo) throws SQLException{
+        clienteDAO.buscarClientePorCodigo(codigo);
+    }
 
 }

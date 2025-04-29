@@ -12,30 +12,19 @@ public class Cliente {
     private String rg;
     private String emissor;
     private LocalDate dataEmissao;
-    private Endereco endereco;
+    private String endereco;
     private String email;
     private String naturalidade;
     private LocalDate dataNascimento;
     private String estadoCivil;
     private boolean bloqueado;
 
-    public Cliente(TipoCliente tipo, String nome, int codigo, LocalDate dataCadastro, String telefone, String celular, String cpfCNPJ, String rg, String emissor, LocalDate dataEmissao, String email, Endereco endereco, String naturalidade, LocalDate dataNascimento, boolean bloqueado, String estadoCivil) {
-        this.tipo = tipo;
-        this.nome = nome;
-        this.codigo = codigo;
-        this.dataCadastro = dataCadastro;
-        this.telefone = telefone;
-        this.celular = celular;
-        this.cpfCNPJ = cpfCNPJ;
-        this.rg = rg;
-        this.emissor = emissor;
-        this.dataEmissao = dataEmissao;
-        this.email = email;
-        this.endereco = endereco;
-        this.naturalidade = naturalidade;
-        this.dataNascimento = dataNascimento;
-        this.bloqueado = bloqueado;
-        this.estadoCivil = estadoCivil;
+    public Cliente(String nome, String telefone, String cpf, String email, String endereco ) {
+        this.nome=nome;
+        this.telefone=telefone;
+        this.cpfCNPJ=cpf;
+        this.email=email;
+        this.endereco=endereco;
     }
 
     public String getNaturalidade() {
@@ -126,11 +115,11 @@ public class Cliente {
         this.dataCadastro = dataCadastro;
     }
 
-    public Endereco getEndereco() {
+    public String getEndereco() {
         return endereco;
     }
 
-    public void setEndereco(Endereco endereco) {
+    public void setEndereco(String endereco) {
         this.endereco = endereco;
     }
 

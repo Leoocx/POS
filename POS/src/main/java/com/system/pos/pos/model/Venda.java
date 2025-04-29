@@ -8,10 +8,11 @@ public class Venda {
     private LocalDateTime data;
     private Cliente cliente;
     private Pagamento formaPagamento;
-    private double desconto;
+    private float desconto;
     private StatusVenda status;
+    private float valorTotal;
 
-    public Venda(int codigo, int quantidade, double valorTotal, StatusVenda status, double desconto, Pagamento formaPagamento, LocalDateTime data, Cliente cliente, int precoUnitario) {
+    public Venda(int codigo, int quantidade, float valorTotal, StatusVenda status, float desconto, Pagamento formaPagamento, LocalDateTime data, Cliente cliente, int precoUnitario) {
         this.codigo = codigo;
         this.quantidade = quantidade;
         this.valorTotal = valorTotal;
@@ -23,7 +24,6 @@ public class Venda {
         this.precoUnitario = precoUnitario;
     }
 
-    private double valorTotal;
 
     public StatusVenda getStatus() {
         return status;
@@ -81,19 +81,19 @@ public class Venda {
         this.formaPagamento = formaPagamento;
     }
 
-    public double getDesconto() {
+    public float getDesconto() {
         return desconto;
     }
 
-    public void setDesconto(double desconto) {
+    public void setDesconto(float desconto) {
         this.desconto = desconto;
     }
 
-    public double getValorTotal() {
+    public float getValorTotal() {
         return valorTotal;
     }
 
-    public void setValorTotal(double valorTotal) {
+    public void setValorTotal(float valorTotal) {
         this.valorTotal = valorTotal;
     }
 
