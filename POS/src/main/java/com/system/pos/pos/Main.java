@@ -11,6 +11,7 @@ import java.sql.Connection;
 
 import com.system.pos.pos.database.CaixaDAO;
 import com.system.pos.pos.database.ConnectionDB;
+import com.system.pos.pos.database.DatabaseInitialize;
 import com.system.pos.pos.database.FornecedorDAO;
 import com.system.pos.pos.database.ProdutoDAO;
 import com.system.pos.pos.database.VendaDAO;
@@ -19,10 +20,7 @@ import com.system.pos.pos.model.Fornecedor;
 public class Main extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/system/pos/pos/cadastroCliente.fxml"));
-
-
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/system/pos/pos/login.fxml"));
 
         URL fxml = getClass().getResource("/com/system/pos/pos/login.fxml");
         System.out.println(fxml);

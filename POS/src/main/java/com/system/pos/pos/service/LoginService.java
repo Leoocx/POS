@@ -18,8 +18,8 @@ public class LoginService {
     public void registrarConta(String username, String password) throws SQLException{
         String sql = "INSERT INTO users (username, password) VALUES (?, ?)";
         try(PreparedStatement stmt = connection.prepareStatement(sql)){
-            stmt.setString(0, username);
-            stmt.setString(1, password);
+            stmt.setString(1, username);
+            stmt.setString(2, password);
             stmt.executeUpdate();
         }
     }

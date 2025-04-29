@@ -11,20 +11,23 @@ public class LoginView {
     @FXML
     private TextField password;
 
-    private LoginController loginController;
-
-    public void setLoginController(LoginController loginController) {
-        this.loginController = loginController;
-    }
 
     public void loginButton() {
         String user = username.getText();
         String pass = password.getText();
 
         if (!user.isBlank() && !pass.isBlank()) {
-            loginController.login(user, pass);
+            LoginController.login(user, pass);
         } else {
             System.out.println("Entre com usuário e senha.");
         }
+    }
+
+    public void registrarButton(){
+        String user = username.getText();
+        String pass = password.getText();
+
+        LoginController.registrar(user, pass);
+
     }
 }
