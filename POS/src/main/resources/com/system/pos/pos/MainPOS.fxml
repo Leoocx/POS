@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import java.net.URL?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+    <top>
+        <ToolBar styleClass="toolbar">
+           <items>
+               <Button prefHeight="108.0" prefWidth="190.0" text="Produtos">
+                   <graphic>
+                       <ImageView fitHeight="87.0" fitWidth="89.0">
+                           <image>
+                               <Image url="@../../style/css/box_9018787.png" />
+                           </image>
+                       </ImageView>
+                   </graphic>
+               </Button>
+               <Separator />
+               <Button prefHeight="107.0" prefWidth="175.0" text="Fornecedores">
+                   <graphic>
+                       <ImageView fitHeight="75.0" fitWidth="81.0">
+                           <image>
+                               <Image url="@../../style/css/delivery-man_3690611.png" />
+                           </image>
+                       </ImageView>
+                   </graphic>
+               </Button>
+               <Separator />
+               <Button prefHeight="105.0" prefWidth="147.0" text="Clientes">
+                   <graphic>
+                       <ImageView fitHeight="74.0" fitWidth="77.0">
+                           <image>
+                               <Image url="@../../style/css/target_1605401.png" />
+                           </image>
+                       </ImageView>
+                   </graphic>
+               </Button>
+            <Button prefHeight="105.0" prefWidth="147.0" text="Venda">
+               <graphic>
+                  <ImageView fitHeight="64.0" fitWidth="76.0">
+                     <image>
+                        <Image url="@../../style/css/adicionar-ao-carrinho.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+               <Separator />
+               <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="105.0" prefWidth="994.0" HBox.hgrow="ALWAYS" />
+               <Separator />
+               <Button text="Sair">
+                   <graphic>
+                       <ImageView fitHeight="84.0" fitWidth="89.0">
+                           <image>
+                               <Image url="@../../style/css/esboco-de-logout.png" />
+                           </image>
+                       </ImageView>
+                   </graphic>
+               </Button>
+           </items>
+        </ToolBar>
+    </top>
+    <center>
+        <VBox styleClass="content">
+           <children>
+               <Label styleClass="heading" />
+               <Label />
+               <Label />
+           </children>
+        </VBox>
+    </center>
+    <bottom>
+        <HBox prefHeight="329.0" prefWidth="400.0" styleClass="footer">
+           <children>
+               <Label />
+           </children>
+        </HBox>
+    </bottom>
+
+    <stylesheets>
+        <URL value="@../../style/css/bootstrap.css" />
+    </stylesheets>
+</BorderPane>

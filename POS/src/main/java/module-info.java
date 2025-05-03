@@ -7,7 +7,9 @@ module com.system.pos.pos {
     requires kernel;
     requires layout;
     requires java.sql;
-    
+    requires barcodes;
+    requires io;
+
     opens com.system.pos.pos to javafx.fxml;
     opens com.system.pos.pos.view to javafx.fxml;
     opens com.system.pos.pos.model to javafx.fxml;

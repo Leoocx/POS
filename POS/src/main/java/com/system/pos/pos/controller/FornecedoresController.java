@@ -16,21 +16,15 @@ public class FornecedoresController {
     private FornecedorDAO fornecedorDAO;
 
     public boolean cadastrarFornecedor(Fornecedor fornecedor) throws SQLException {
-        FornecedorService.cadastrarFornecedor(fornecedor);
+        fornecedorDAO.adicionarFornecedor(fornecedor);
         System.out.println("Fornecedor cadastrado!");
         return true;
     }
 
-    public void atualizarFornecedor(){
-
+    public void atualizarFornecedor(Fornecedor fornecedor) throws SQLException{
+        fornecedorDAO.atualizarFornecedor(fornecedor);
     }
-
-    public void excluirFornecedor(){
-        }
-
-    public void exibirFornecedores() throws SQLException {
-        fornecedorDAO.exibirFornecedores();
+    public void excluirFornecedor(Fornecedor fornecedor) throws  SQLException{
+        fornecedorDAO.removerFornecedor(fornecedor);
     }
-
-
 }

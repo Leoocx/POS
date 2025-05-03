@@ -1,5 +1,6 @@
 package com.system.pos.pos.view;
 
+import com.system.pos.pos.controller.ProdutoController;
 import com.system.pos.pos.model.Categoria;
 import com.system.pos.pos.model.Produto;
 import com.system.pos.pos.model.SubCategoria;
@@ -27,7 +28,7 @@ public class CadastroProdutoView {
     @FXML public ComboBox<String> subCategoria;
     @FXML public TextField descricao;
 
-    private ProdutoService produtoService;
+    private ProdutoController produtoController;
 
 
     @FXML
@@ -39,20 +40,28 @@ public class CadastroProdutoView {
     @FXML
     public void cadastrarProdutoButton() {
         try {
-            Produto produto = new Produto();
-            produto.setCdProduto(Integer.parseInt(codigo.getText()));
-            produto.setLocalizacao(localizacao.getText());
-            produto.setValidade(LocalDate.parse(validade.getText()));
-            produto.setMarca(marca.getText());
-            produto.setUnidade(Integer.parseInt(unidade.getText()));
-            produto.setSubCategoria(SubCategoria.valueOf(subCategoria.getValue()));
-            produto.setCategoria(Categoria.valueOf(categoria.getValue()));
-            produto.setReferencia(referencia.getText());
+            if (!codigo.getText().isBlank() &&
+                            !localizacao.getText().isBlank() &&
+                            !validade.getText().isBlank() &&
+                            !marca.getText().isBlank() &&
+                            !unidade.getText().isBlank() &&
+                            subCategoria.getValue() != null &&
+                            categoria.getValue() != null &&
+                            !referencia.getText().isBlank()
+            ) {
+                Produto produto = new Produto();
+                produto.setCdProduto(Integer.parseInt(codigo.getText()));
+                produto.setLocalizacao(localizacao.getText());
+                produto.setValidade(LocalDate.parse(validade.getText()));
+                produto.setMarca(marca.getText());
+                produto.setUnidade(Integer.parseInt(unidade.getText()));
+                produto.setSubCategoria(SubCategoria.valueOf(subCategoria.getValue()));
+                produto.setCategoria(Categoria.valueOf(categoria.getValue()));
+                produto.setReferencia(referencia.getText());
 
-            if (produtoService.adicionarProduto(produto)) {
-                showAlert("Sucesso", "Produto cadastrado com sucesso!", AlertType.INFORMATION);
+                produtoController.adicionarProduto(produto);
             } else {
-                showAlert("Erro", "Falha ao cadastrar o produto.", AlertType.ERROR);
+                System.out.println("Preencha todos os campos obrigatórios.");
             }
         } catch (Exception e) {
             showAlert("Erro", "Erro ao cadastrar o produto: " + e.getMessage(), AlertType.ERROR);

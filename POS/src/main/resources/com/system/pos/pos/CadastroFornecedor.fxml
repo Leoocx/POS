@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.DatePicker?>
@@ -13,7 +18,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="720.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.system.pos.pos.view.CadastroClienteView">
+<AnchorPane prefHeight="720.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.system.pos.pos.view.CadastroClienteView">
    <children>
       <BorderPane layoutX="322.0" layoutY="187.0" prefHeight="720.0" prefWidth="1080.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <top>
@@ -56,26 +61,12 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <TextField fx:id="cnpj" prefHeight="82.0" prefWidth="299.0" promptText="CNPJ" GridPane.rowIndex="2">
-                           <GridPane.margin>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </GridPane.margin>
-                        </TextField>
-                        <TextField fx:id="email" prefHeight="84.0" prefWidth="299.0" promptText="E-mail" GridPane.rowIndex="3">
-                           <GridPane.margin>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </GridPane.margin>
-                        </TextField>
-                        <TextField fx:id="endereco" prefHeight="53.0" prefWidth="289.0" promptText="Endereço" GridPane.rowIndex="4">
-                           <GridPane.margin>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </GridPane.margin>
-                        </TextField>
-                        <TextField fx:id="telefone" prefHeight="82.0" prefWidth="299.0" promptText="Telefone" GridPane.rowIndex="1" />
-                        <TextField fx:id="nome" prefHeight="82.0" prefWidth="299.0" promptText="Nome" />
+                        <TextField fx:id="nome" prefHeight="82.0" prefWidth="299.0" promptText="Buscar por ID" GridPane.rowIndex="1" />
+                        <TextField fx:id="nome1" prefHeight="82.0" prefWidth="299.0" promptText="Buscar por Email" GridPane.rowIndex="2" />
+                        <TextField fx:id="nome11" prefHeight="82.0" prefWidth="299.0" promptText="Buscar por Telefone" GridPane.rowIndex="3" />
                      </children>
                   </GridPane>
-                  <Button fx:id="cadastroProdutoBtn" mnemonicParsing="false" onAction="#cadastrarProdutoButton" prefHeight="71.0" prefWidth="299.0" style="-fx-background-color: #1c435e;" text="Cadastrar Fornecedor" textFill="WHITE" GridPane.rowIndex="1">
+                  <Button fx:id="cadastroProdutoBtn" mnemonicParsing="false" onAction="#cadastrarProdutoButton" prefHeight="71.0" prefWidth="299.0" style="-fx-background-color: #1c435e;" text="Cadastro de Fornecedor" textFill="WHITE" GridPane.rowIndex="2">
                      <GridPane.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </GridPane.margin>

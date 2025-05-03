@@ -63,26 +63,24 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <TextField fx:id="cpf" prefHeight="82.0" prefWidth="299.0" promptText="CPF" GridPane.rowIndex="2">
+                        <TextField fx:id="cpf" prefHeight="82.0" prefWidth="299.0" promptText="Buscar por ID" GridPane.rowIndex="2">
                            <GridPane.margin>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="email" prefHeight="84.0" prefWidth="299.0" promptText="E-mail" GridPane.rowIndex="3">
+                        <TextField fx:id="email" prefHeight="84.0" prefWidth="299.0" promptText="Buscar por Email" GridPane.rowIndex="3">
                            <GridPane.margin>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="endereco" prefHeight="53.0" prefWidth="289.0" promptText="Endereço" GridPane.rowIndex="4">
+                        <TextField fx:id="endereco" prefHeight="53.0" prefWidth="289.0" promptText="Buscar por Telefone" GridPane.rowIndex="4">
                            <GridPane.margin>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="telefone" prefHeight="82.0" prefWidth="299.0" promptText="Telefone" GridPane.rowIndex="1" />
-                        <TextField fx:id="nome" prefHeight="82.0" prefWidth="299.0" promptText="Nome" />
                      </children>
                   </GridPane>
-                  <Button fx:id="cadastroClienteBtn" mnemonicParsing="false" onAction="#cadastrarClienteButton" prefHeight="71.0" prefWidth="299.0" style="-fx-background-color: #1c435e;" text="Cadastrar Cliente" textFill="WHITE" GridPane.rowIndex="1">
+                  <Button fx:id="cadastroClienteBtn" mnemonicParsing="false" onAction="#cadastrarClienteButton" prefHeight="71.0" prefWidth="299.0" style="-fx-background-color: #1c435e;" text="Cadastro de Cliente" textFill="WHITE" GridPane.rowIndex="2">
                      <GridPane.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </GridPane.margin>

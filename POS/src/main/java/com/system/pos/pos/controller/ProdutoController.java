@@ -18,8 +18,6 @@ public class ProdutoController {
     }
 
     public void removerProduto(int cdProduto) throws SQLException {
-        Produto produto = new Produto();
-        produto.setCdProduto(cdProduto);
         produtoService.removerProduto(cdProduto);
     }
 

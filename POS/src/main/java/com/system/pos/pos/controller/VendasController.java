@@ -23,7 +23,7 @@ public class VendasController {
     private final VendaService vendaService = new VendaService();
 
     public void initialize() {
-        formaPagamento.setItems(FXCollections.observableArrayList(Pagamento.values()));
+    //    formaPagamento.setItems(FXCollections.observableArrayList(Pagamento.values()));
         totalVenda.setText("0.00");
     }
 
@@ -36,21 +36,21 @@ public class VendasController {
             float desc = Float.parseFloat(desconto.getText());
             Pagamento pagamento = formaPagamento.getValue();
 
-            Cliente cliente = buscarCliente(); // Suponha que vem de outra tela ou login
+        //    Cliente cliente = buscarCliente();
 
-            Venda venda = new Venda(
-                gerarCodigoVenda(),
-                qtd,
-                calcularValorTotal(preco, qtd, desc),
-                StatusVenda.FINALIZADA,
-                desc,
-                pagamento,
-                LocalDateTime.now(),
-                cliente,
-                preco
-            );
+            //Venda venda = new Venda(
+           //     gerarCodigoVenda(),
+           //     qtd,
+            //    calcularValorTotal(preco, qtd, desc),
+            //    StatusVenda.FINALIZADA,
+            //    desc,
+            //    pagamento,
+            //    LocalDateTime.now(),
+            //    cliente,
+            //    preco
+           // );
 
-            vendaService.registrarVenda(venda);
+            //vendaService.registrarVenda(venda);
             mostrarMensagem("Venda finalizada com sucesso!");
 
             limparCampos();
@@ -64,14 +64,9 @@ public class VendasController {
         return (preco * qtd) - desconto;
     }
 
-    private int gerarCodigoVenda() {
-        return vendaService.gerarNovoCodigo(); // simula geração sequencial
-    }
-
-    private Cliente buscarCliente() {
-        // Simulação, deve vir da view de cliente selecionado
-        return new Cliente(...); // completar com dados fictícios ou recebidos da view
-    }
+    //private int gerarCodigoVenda() {
+   //     return vendaService.gerarNovoCodigo(); // simula geração sequencial
+   // }
 
     private void limparCampos() {
         codigoProduto.clear();

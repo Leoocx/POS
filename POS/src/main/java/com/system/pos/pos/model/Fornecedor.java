@@ -1,6 +1,6 @@
 package com.system.pos.pos.model;
 public class Fornecedor {
-    private String codigo;
+    private int codigo;
     private String nome;
     private Endereco endereco;
     private String telefone;
@@ -15,15 +15,15 @@ public class Fornecedor {
         this.cnpj = cnpj;
     }
 
-    public Fornecedor(String text, String text2, String text3, Endereco endereco2, String text4) {
-        //TODO Auto-generated constructor stub
+    public Fornecedor() {
+
     }
 
-    public String getCodigo() {
+    public int getCodigo() {
         return codigo;
     }
 
-    public void setCodigo(String codigo) {
+    public void setCodigo(int codigo) {
         this.codigo = codigo;
     }
 

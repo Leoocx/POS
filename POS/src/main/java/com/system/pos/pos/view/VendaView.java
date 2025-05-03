@@ -1,5 +1,19 @@
 package com.system.pos.pos.view;
 
+import com.system.pos.pos.model.Cliente;
+import com.system.pos.pos.model.Pagamento;
+import com.system.pos.pos.model.StatusVenda;
+import com.system.pos.pos.model.Venda;
+import javafx.scene.Scene;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
+
 public class VendaView {
     private TextField codigoField = new TextField();
     private TextField quantidadeField = new TextField();
