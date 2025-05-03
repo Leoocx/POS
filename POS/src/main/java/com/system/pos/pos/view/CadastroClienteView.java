@@ -35,7 +35,7 @@ public class CadastroClienteView {
                     email.getText(),
                     endereco.getText()
             );
-            clientesController.cadastrarCliente(cliente);
+            clientesController.cadastrarCliente();
         }
     }
     @FXML

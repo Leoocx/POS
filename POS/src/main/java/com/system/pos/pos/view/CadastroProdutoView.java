@@ -1,78 +1,204 @@
 package com.system.pos.pos.view;
 
 import com.system.pos.pos.controller.ProdutoController;
-import com.system.pos.pos.model.Categoria;
+import com.system.pos.pos.database.ProdutoDAO;
 import com.system.pos.pos.model.Produto;
-import com.system.pos.pos.model.SubCategoria;
-import com.system.pos.pos.service.ProdutoService;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 
-import java.sql.Connection;
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
+import java.sql.SQLException;
 
 public class CadastroProdutoView {
-    @FXML public TextField codigo;
-    @FXML public TextField unidade;
-    @FXML public TextField fornecedor;
-    @FXML public TextField marca;
-    @FXML public TextField referencia;
-    @FXML public TextField localizacao;
-    @FXML public TextField validade;
-    @FXML public ComboBox<String> categoria;
-    @FXML public ComboBox<String> subCategoria;
-    @FXML public TextField descricao;
+    // Campos FXML
+    @FXML private TextField nomeProduto;
+    @FXML private TextField quantidade;
+    @FXML private TextField preco;
+    @FXML private ComboBox<String> statusComboBox;
+    @FXML private TableView<Produto> table;
+    @FXML private Button cadastroProdutoBTN;
+    @FXML private Button atualizarProdutoBTN;
+    @FXML private Button deleteProdutoBTN;
+    @FXML private Button clearFieldsBTN;
 
     private ProdutoController produtoController;
-
+    private ObservableList<Produto> produtos;
 
     @FXML
     public void initialize() {
-        categoria.getItems().addAll(Arrays.asList(Categoria.values()).stream().map(Enum::name).toArray(String[]::new));
-        subCategoria.getItems().addAll(Arrays.asList(SubCategoria.values()).stream().map(Enum::name).toArray(String[]::new));
+        this.produtoController = new ProdutoController();
+        inicializarTabela();
+        carregarDadosIniciais();
+        configurarComponentes();
     }
 
-    @FXML
-    public void cadastrarProdutoButton() {
-        try {
-            if (!codigo.getText().isBlank() &&
-                            !localizacao.getText().isBlank() &&
-                            !validade.getText().isBlank() &&
-                            !marca.getText().isBlank() &&
-                            !unidade.getText().isBlank() &&
-                            subCategoria.getValue() != null &&
-                            categoria.getValue() != null &&
-                            !referencia.getText().isBlank()
-            ) {
-                Produto produto = new Produto();
-                produto.setCdProduto(Integer.parseInt(codigo.getText()));
-                produto.setLocalizacao(localizacao.getText());
-                produto.setValidade(LocalDate.parse(validade.getText()));
-                produto.setMarca(marca.getText());
-                produto.setUnidade(Integer.parseInt(unidade.getText()));
-                produto.setSubCategoria(SubCategoria.valueOf(subCategoria.getValue()));
-                produto.setCategoria(Categoria.valueOf(categoria.getValue()));
-                produto.setReferencia(referencia.getText());
+    private void configurarComponentes() {
+        statusComboBox.getItems().addAll("Estoque normal", "Baixo Estoque");
 
-                produtoController.adicionarProduto(produto);
-            } else {
-                System.out.println("Preencha todos os campos obrigatórios.");
+        // Configura validação para campos numéricos
+        quantidade.textProperty().addListener((obs, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) {
+                quantidade.setText(newValue.replaceAll("[^\\d]", ""));
             }
+        });
+
+        preco.textProperty().addListener((obs, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*(\\.\\d*)?")) {
+                preco.setText(newValue.replaceAll("[^\\d.]", ""));
+            }
+        });
+    }
+
+    private void inicializarTabela() {
+        TableColumn<Produto, Integer> idColumn = new TableColumn<>("ID");
+        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+
+        TableColumn<Produto, String> nomeColumn = new TableColumn<>("PRODUTO");
+        nomeColumn.setCellValueFactory(new PropertyValueFactory<>("nome"));
+
+        TableColumn<Produto, Integer> quantidadeColumn = new TableColumn<>("QUANTIDADE");
+        quantidadeColumn.setCellValueFactory(new PropertyValueFactory<>("quantidade"));
+
+        TableColumn<Produto, Double> precoColumn = new TableColumn<>("PREÇO");
+        precoColumn.setCellValueFactory(new PropertyValueFactory<>("preco"));
+
+        TableColumn<Produto, String> statusColumn = new TableColumn<>("STATUS");
+        statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
+
+        table.getColumns().setAll(idColumn, nomeColumn, quantidadeColumn, precoColumn, statusColumn);
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        // Listener para seleção na tabela
+        table.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                preencherCampos(newSelection);
+            }
+        });
+    }
+
+    private void carregarDadosIniciais() {
+        try {
+            produtos = FXCollections.observableArrayList(produtoController.listarTodos());
+            table.setItems(produtos);
         } catch (Exception e) {
-            showAlert("Erro", "Erro ao cadastrar o produto: " + e.getMessage(), AlertType.ERROR);
+            mostrarAlerta("Erro", "Falha ao carregar produtos: " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
-    private void showAlert(String title, String message, AlertType alertType) {
-        Alert alert = new Alert(alertType);
-        alert.setTitle(title);
+    @FXML
+    private void cadastraProdutoeButton() {
+        try {
+            if (validarCampos()) {
+                Produto produto = criarProdutoFromInputs();
+                produtoController.adicionarProduto(produto);
+                atualizarTabela();
+                limparCampos();
+                mostrarAlerta("Sucesso", "Produto cadastrado com sucesso!", Alert.AlertType.INFORMATION);
+            }
+        } catch (Exception e) {
+            mostrarAlerta("Erro", "Falha ao cadastrar produto: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+
+    @FXML
+    private void atualizarProdutoBTN() {
+        Produto selecionado = table.getSelectionModel().getSelectedItem();
+        if (selecionado != null) {
+            try {
+                if (validarCampos()) {
+                    atualizarProdutoFromInputs(selecionado);
+                    produtoController.atualizarProduto(selecionado);
+                    atualizarTabela();
+                    limparCampos();
+                    mostrarAlerta("Sucesso", "Produto atualizado com sucesso!", Alert.AlertType.INFORMATION);
+                }
+            } catch (Exception e) {
+                mostrarAlerta("Erro", "Falha ao atualizar produto: " + e.getMessage(), Alert.AlertType.ERROR);
+            }
+        } else {
+            mostrarAlerta("Aviso", "Nenhum produto selecionado", Alert.AlertType.WARNING);
+        }
+    }
+
+    @FXML
+    private void removerProdutoBTN() {
+        Produto selecionado = table.getSelectionModel().getSelectedItem();
+        if (selecionado != null) {
+            try {
+                produtoController.removerProduto(selecionado.getId());
+                atualizarTabela();
+                limparCampos();
+                mostrarAlerta("Sucesso", "Produto removido com sucesso!", Alert.AlertType.INFORMATION);
+            } catch (Exception e) {
+                mostrarAlerta("Erro", "Falha ao remover produto: " + e.getMessage(), Alert.AlertType.ERROR);
+            }
+        } else {
+            mostrarAlerta("Aviso", "Nenhum produto selecionado", Alert.AlertType.WARNING);
+        }
+    }
+
+    @FXML
+    private void clearFields() {
+        limparCampos();
+    }
+
+    @FXML
+    private void gerarPDFButton(){
+
+    }
+
+
+    private boolean validarCampos() {
+        if (nomeProduto.getText().isBlank() || quantidade.getText().isBlank() ||
+                preco.getText().isBlank() || statusComboBox.getValue() == null) {
+            mostrarAlerta("Aviso", "Preencha todos os campos obrigatórios", Alert.AlertType.WARNING);
+            return false;
+        }
+        return true;
+    }
+
+    private Produto criarProdutoFromInputs() {
+        return new Produto(
+                nomeProduto.getText(),
+                Integer.parseInt(quantidade.getText()),
+                Double.parseDouble(preco.getText().replace(",", ".")),
+                statusComboBox.getValue()
+        );
+    }
+
+    private void atualizarProdutoFromInputs(Produto produto) {
+        produto.setNome(nomeProduto.getText());
+        produto.setQuantidade(Integer.parseInt(quantidade.getText()));
+        produto.setPreco(Double.parseDouble(preco.getText().replace(",", ".")));
+        produto.setStatus(statusComboBox.getValue());
+    }
+
+    private void preencherCampos(Produto produto) {
+        nomeProduto.setText(produto.getNome());
+        quantidade.setText(String.valueOf(produto.getQuantidade()));
+        preco.setText(String.valueOf(produto.getPreco()));
+        statusComboBox.setValue(produto.getStatus());
+    }
+
+    private void limparCampos() {
+        nomeProduto.clear();
+        quantidade.clear();
+        preco.clear();
+        statusComboBox.getSelectionModel().clearSelection();
+        table.getSelectionModel().clearSelection();
+    }
+
+    private void atualizarTabela() {
+        produtos.setAll(produtoController.listarTodos());
+    }
+
+    private void mostrarAlerta(String titulo, String mensagem, Alert.AlertType tipo) {
+        Alert alert = new Alert(tipo);
+        alert.setTitle(titulo);
         alert.setHeaderText(null);
-        alert.setContentText(message);
+        alert.setContentText(mensagem);
         alert.showAndWait();
     }
 }

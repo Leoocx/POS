@@ -1,5 +1,7 @@
 package com.system.pos.pos.service;
 
+import com.system.pos.pos.database.ConnectionDB;
+
 import java.sql.Connection;
 
 public class PagamentoService {
@@ -7,7 +9,7 @@ public class PagamentoService {
     private final Connection connection;
 
     public PagamentoService(Connection connection){
-        this.connection=connection;
+        this.connection= ConnectionDB.conectar();
     }
 
     public void realizarPagamento(){}

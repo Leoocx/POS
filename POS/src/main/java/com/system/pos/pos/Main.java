@@ -20,7 +20,7 @@ import com.system.pos.pos.model.Fornecedor;
 public class Main extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/system/pos/pos/login.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/system/pos/pos/CadastroProduto.fxml"));
 
         URL fxml = getClass().getResource("/com/system/pos/pos/login.fxml");
         System.out.println(fxml);

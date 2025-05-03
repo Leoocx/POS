@@ -13,12 +13,52 @@ public class DatabaseInitialize {
                 Statement stmt = conn.createStatement();
 
                 String sql = """
-                    CREATE TABLE IF NOT EXISTS users (
-                        username TEXT NOT NULL,
-                        password TEXT
-                    );
+    CREATE TABLE IF NOT EXISTS users (
+        username TEXT NOT NULL,
+        password TEXT NOT NULL,
+        PRIMARY KEY (username)
+    );
+    
+    CREATE TABLE IF NOT EXISTS clientes (
+        codigo INTEGER PRIMARY KEY,
+        nome TEXT NOT NULL,
+        cpfCNPJ TEXT UNIQUE NOT NULL,
+        telefone TEXT,
+        email TEXT,
+        endereco TEXT,
+        tipo_cliente TEXT
+    );
+    
+    CREATE TABLE IF NOT EXISTS fornecedores (
+        id INTEGER PRIMARY KEY,
+        nome TEXT NOT NULL,
+        cpf_cnpj TEXT UNIQUE NOT NULL,
+        telefone TEXT,
+        email TEXT,
+        endereco TEXT
+    );
+    
+    CREATE TABLE IF NOT EXISTS produtos (
+        id_produto INTEGER PRIMARY KEY,
+        nome_produto TEXT NOT NULL,
+        quantidade INTEGER,
+        preco REAL,
+        status TEXT
+    );
+    
+    CREATE TABLE IF NOT EXISTS vendas (
+        codigo INTEGER PRIMARY KEY,
+        quantidade INTEGER NOT NULL,
+        precoUnitario REAL NOT NULL,
+        data TEXT NOT NULL,
+        cliente INTEGER,
+        formaPagamento TEXT,
+        desconto REAL,
+        status TEXT,
+        FOREIGN KEY (cliente) REFERENCES clientes(codigo)
+    );
+""";
 
-                """;
 
                 stmt.executeUpdate(sql);
                 System.out.println("Tabelas criadas ou já existentes.");

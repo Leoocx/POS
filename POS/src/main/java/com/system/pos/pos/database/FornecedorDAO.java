@@ -2,18 +2,18 @@ package com.system.pos.pos.database;
 
 import com.system.pos.pos.model.Endereco;
 import com.system.pos.pos.model.Fornecedor;
+import com.system.pos.pos.repository.FornecedorRepository;
 
 import java.sql.*;
 
-public class FornecedorDAO {
+public class FornecedorDAO implements FornecedorRepository {
 
     private Connection connection;
 
     public FornecedorDAO() {
         this.connection = ConnectionDB.conectar();
     }
-
-    // Adicionar novo fornecedor
+    @Override
     public void adicionarFornecedor(Fornecedor fornecedor) throws SQLException {
         String sql = "INSERT INTO fornecedores (nome, cpf_cnpj, telefone, email, endereco) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -25,7 +25,7 @@ public class FornecedorDAO {
             preparedStatement.executeUpdate();
         }
     }
-
+    @Override
     public void atualizarFornecedor(Fornecedor fornecedor) throws SQLException {
         String sql = "UPDATE fornecedores SET nome = ?, cpf_cnpj = ?, telefone = ?, email = ?, endereco = ?,  WHERE id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -38,8 +38,7 @@ public class FornecedorDAO {
             preparedStatement.executeUpdate();
         }
     }
-
-    // Remover fornecedor
+    @Override
     public void removerFornecedor(Fornecedor fornecedor) throws SQLException {
         String sql = "DELETE FROM fornecedores WHERE id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -47,8 +46,7 @@ public class FornecedorDAO {
             preparedStatement.executeUpdate();
         }
     }
-
-    // Exibir um fornecedor pelo ID (ou modificar para retornar lista, se quiser todos)
+    @Override
     public Fornecedor exibirFornecedorPorId(int id) throws SQLException {
         String sql = "SELECT * FROM fornecedores WHERE id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {

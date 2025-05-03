@@ -2,34 +2,42 @@ package com.system.pos.pos.service;
 
 import com.system.pos.pos.database.ClienteDAO;
 import com.system.pos.pos.model.Cliente;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 public class ClienteService {
 
-    static ClienteDAO clienteDAO;
-    private final Connection connection;
+    private final ClienteDAO clienteDAO;
 
-    public ClienteService(Connection connection){
-        this.connection=connection;
+    public ClienteService(){
+        this.clienteDAO = new ClienteDAO();
     }
 
-    public static void cadastrarCliente(Cliente cliente) throws SQLException {
+    public void cadastrarCliente(Cliente cliente) throws SQLException {
         clienteDAO.adicionarCliente(cliente);
         System.out.println("Cliente cadastrado com sucesso!");
     }
 
-    public static void atualizarCliente(Cliente cliente) throws SQLException{
-         clienteDAO.atualizarCliente(cliente);
+    public void atualizarCliente(Cliente cliente) throws SQLException {
+        clienteDAO.atualizarCliente(cliente);
+        System.out.println("Cliente atualizado com sucesso!");
     }
 
-    public void removerCliente(Cliente cliente) throws SQLException{
+    public void removerCliente(Cliente cliente) throws SQLException {
         clienteDAO.removerCliente(cliente);
+        System.out.println("Cliente removido com sucesso!");
     }
 
-    public void buscarClientePorCodigo(int codigo) throws SQLException{
-        clienteDAO.buscarClientePorCodigo(codigo);
+    public Cliente buscarClientePorCodigo(int codigo) throws SQLException {
+        return clienteDAO.buscarClientePorCodigo(codigo);
     }
 
+    public ObservableList<Cliente> listarClientes() throws SQLException {
+        List<Cliente> lista = clienteDAO.listarClientes();
+        return FXCollections.observableArrayList(lista);
+    }
 }
