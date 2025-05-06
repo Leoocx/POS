@@ -27,7 +27,7 @@ public class Main extends Application {
 
         HBox toolbar = createToolbar();
         VBox sideMenu = createSideMenu();
-        contentArea = new Label("\uD83D\uDCBB Bem-vindo ao Yzidro ERP");
+        contentArea = new Label("\uD83D\uDCBB Bem-vindo ");
         contentArea.setFont(new Font("Arial", 18));
         contentArea.setPadding(new Insets(20));
 
