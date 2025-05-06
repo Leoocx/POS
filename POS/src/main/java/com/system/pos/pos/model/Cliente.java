@@ -2,7 +2,7 @@ package com.system.pos.pos.model;
 import java.time.LocalDate;
 
 public class Cliente {
-    private int codigo;
+    private int id;
     private String nome;
     private LocalDate dataCadastro;
     private String telefone;
@@ -27,6 +27,7 @@ public class Cliente {
         this.endereco=endereco;
     }
 
+    public Cliente(){}
     public String getNaturalidade() {
         return naturalidade;
     }
@@ -35,12 +36,12 @@ public class Cliente {
         this.naturalidade = naturalidade;
     }
 
-    public int getCodigo() {
-        return codigo;
+    public int getId() {
+        return id;
     }
 
-    public void setCodigo(int codigo) {
-        this.codigo = codigo;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public boolean isBloqueado() {

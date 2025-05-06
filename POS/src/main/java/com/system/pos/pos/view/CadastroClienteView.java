@@ -88,7 +88,7 @@ public class CadastroClienteView {
         Cliente selecionado = table.getSelectionModel().getSelectedItem();
         if (selecionado != null) {
             try {
-                clientesController.removerCliente(selecionado.getCodigo());
+                clientesController.removerCliente(selecionado.getId());
                 atualizarTabela();
                 limparCampos();
                 mostrarAlerta("Sucesso", "Cliente removido com sucesso!", Alert.AlertType.INFORMATION);
@@ -106,6 +106,10 @@ public class CadastroClienteView {
     }
 
     private void inicializarTabela() {
+
+        TableColumn<Cliente, Integer> idColumn = new TableColumn<>("ID");
+        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+
         TableColumn<Cliente, String> nomeColumn = new TableColumn<>("NOME");
         nomeColumn.setCellValueFactory(new PropertyValueFactory<>("nome"));
 
@@ -122,7 +126,7 @@ public class CadastroClienteView {
         enderecoColumn.setCellValueFactory(new PropertyValueFactory<>("endereco"));
 
         table.setItems(clientes);
-        table.getColumns().setAll(nomeColumn, telefoneColumn, cpfColumn, emailColumn, enderecoColumn);
+        table.getColumns().setAll(idColumn,nomeColumn, telefoneColumn, cpfColumn, emailColumn, enderecoColumn);
 
         table.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {

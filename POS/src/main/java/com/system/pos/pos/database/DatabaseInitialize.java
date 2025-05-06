@@ -20,7 +20,7 @@ public class DatabaseInitialize {
     );
     
     CREATE TABLE IF NOT EXISTS clientes (
-        codigo INTEGER PRIMARY KEY,
+        id INTEGER PRIMARY KEY,
         nome TEXT NOT NULL,
         telefone TEXT,
         cpf INTEGER,
