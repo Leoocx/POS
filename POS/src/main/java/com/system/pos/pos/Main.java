@@ -37,7 +37,7 @@ public class Main extends Application {
 
         Scene scene = new Scene(root, 1000, 600);
         primaryStage.setScene(scene);
-        primaryStage.setTitle("YZIDRO - Sistema de Gestão Corporativa");
+        primaryStage.setTitle("Sistema PDV");
         primaryStage.show();
     }
 
@@ -126,7 +126,7 @@ public class Main extends Application {
         try {
             // Remove espaços e coloca nome padrão (ex: Clientes → Clientes.fxml)
             String fileName = name.replaceAll(" ", "") + ".fxml";
-            String path = "/com/system/pos/pos/" + fileName; // caminho completo com slash inicial
+            String path = "/com/system/pos/pos/" + fileName; // caminho + nome padrão (ex: /com/system/pos/pos/Clientes.fxml )
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
             Parent view = loader.load();
