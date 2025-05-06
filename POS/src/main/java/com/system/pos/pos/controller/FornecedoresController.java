@@ -13,18 +13,29 @@ import java.sql.SQLException;
 
 public class FornecedoresController {
 
-    private FornecedorDAO fornecedorDAO;
+    private FornecedorService fornecedorService;
 
-    public boolean cadastrarFornecedor(Fornecedor fornecedor) throws SQLException {
-        fornecedorDAO.adicionarFornecedor(fornecedor);
-        System.out.println("Fornecedor cadastrado!");
-        return true;
+    public void cadastrarFornecedor(Fornecedor fornecedor) throws SQLException {
+        try{
+            fornecedorService.adicionarFornecedor(fornecedor);
+        } catch(SQLException e){
+            System.out.println("Erro ao tentar cadastrar fornecedor : " + e.getMessage()); 
+        }
     }
 
     public void atualizarFornecedor(Fornecedor fornecedor) throws SQLException{
-        fornecedorDAO.atualizarFornecedor(fornecedor);
+        try{
+            fornecedorService.atualizarFornecedor(fornecedor);
+        } catch  (SQLException e){
+           System.out.println("Erro ao tentar atualizar fornecedor: "+ e.getMessage());
+        }
     }
+
     public void excluirFornecedor(Fornecedor fornecedor) throws  SQLException{
-        fornecedorDAO.removerFornecedor(fornecedor);
+        try{
+            fornecedorService.removerFornecedor(fornecedor);
+        } catch(SQLException e){
+            System.out.println("Erro ao tentar excluir fornecedor : "+e.getMessage());
+        }
     }
 }

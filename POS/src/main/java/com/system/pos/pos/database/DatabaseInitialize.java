@@ -22,13 +22,12 @@ public class DatabaseInitialize {
     CREATE TABLE IF NOT EXISTS clientes (
         codigo INTEGER PRIMARY KEY,
         nome TEXT NOT NULL,
-        cpfCNPJ TEXT UNIQUE NOT NULL,
         telefone TEXT,
+        cpf INTEGER,
         email TEXT,
-        endereco TEXT,
-        tipo_cliente TEXT
+        endereco TEXT
     );
-    
+
     CREATE TABLE IF NOT EXISTS fornecedores (
         id INTEGER PRIMARY KEY,
         nome TEXT NOT NULL,

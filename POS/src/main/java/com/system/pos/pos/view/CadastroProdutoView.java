@@ -12,7 +12,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import java.sql.SQLException;
 
 public class CadastroProdutoView {
-    // Campos FXML
+    
     @FXML private TextField nomeProduto;
     @FXML private TextField quantidade;
     @FXML private TextField preco;
@@ -68,7 +68,7 @@ public class CadastroProdutoView {
         statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
 
         table.getColumns().setAll(idColumn, nomeColumn, quantidadeColumn, precoColumn, statusColumn);
-        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+       
 
         // Listener para seleção na tabela
         table.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {

@@ -73,12 +73,8 @@ public class CadastroFornecedorView {
             Endereco enderecoObj = new Endereco(null, null, 0, null, null, null, null);
             Fornecedor fornecedor = new Fornecedor(name, tel, enderecoObj, mail, cnpj);
     
-        
-            if (fornecedoresController.cadastrarFornecedor(fornecedor)) {
-                showAlert("Sucesso", "Produto cadastrado com sucesso!", AlertType.INFORMATION);
-            } else {
-                showAlert("Erro", "Falha ao cadastrar o produto.", AlertType.ERROR);
-            } clearFields();
+            fornecedoresController.cadastrarFornecedor(fornecedor);
+            clearFields();
         } catch (Exception e) {
             showAlert("Erro", "Erro ao cadastrar o produto: " + e.getMessage(), AlertType.ERROR);
         }

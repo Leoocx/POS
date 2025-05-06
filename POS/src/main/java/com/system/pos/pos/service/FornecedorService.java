@@ -16,7 +16,7 @@ public class FornecedorService {
         this.fornecedorDAO = new FornecedorDAO(); // garante inicialização
     }
 
-    public void cadastrarFornecedor(Fornecedor fornecedor) throws SQLException {
+    public void adicionarFornecedor(Fornecedor fornecedor) throws SQLException {
         fornecedorDAO.adicionarFornecedor(fornecedor);
         System.out.println("Fornecedor cadastrado!");
     }

@@ -8,7 +8,7 @@ public class Cliente {
     private String telefone;
     private String celular;
     private TipoCliente tipo;
-    private String cpfCNPJ;
+    private int cpf;
     private String rg;
     private String emissor;
     private LocalDate dataEmissao;
@@ -19,10 +19,10 @@ public class Cliente {
     private String estadoCivil;
     private boolean bloqueado;
 
-    public Cliente(String nome, String telefone, String cpf, String email, String endereco ) {
+    public Cliente(String nome, String telefone, int cpf, String email, String endereco ) {
         this.nome=nome;
         this.telefone=telefone;
-        this.cpfCNPJ=cpf;
+        this.cpf=cpf;
         this.email=email;
         this.endereco=endereco;
     }
@@ -75,20 +75,20 @@ public class Cliente {
         this.celular = celular;
     }
 
+    public int getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(int cpf) {
+        this.cpf = cpf;
+    }
+
     public String getTelefone() {
         return telefone;
     }
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
-    }
-
-    public String getCpfCNPJ() {
-        return cpfCNPJ;
-    }
-
-    public void setCpfCNPJ(String cpfCNPJ) {
-        this.cpfCNPJ = cpfCNPJ;
     }
 
     public TipoCliente getTipo() {

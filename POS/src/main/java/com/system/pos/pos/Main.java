@@ -20,9 +20,9 @@ import com.system.pos.pos.model.Fornecedor;
 public class Main extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/system/pos/pos/CadastroProduto.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/system/pos/pos/CadastroCliente.fxml"));
 
-        URL fxml = getClass().getResource("/com/system/pos/pos/login.fxml");
+        URL fxml = getClass().getResource("/com/system/pos/pos/CadastroCliente.fxml");
         System.out.println(fxml);
 
         Scene scene = new Scene(fxmlLoader.load(), 1200, 700);

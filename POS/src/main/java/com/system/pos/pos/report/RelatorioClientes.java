@@ -44,7 +44,7 @@ public class RelatorioClientes {
                     .setFontColor(ColorConstants.BLACK));
 
             // Quantidade
-            document.add(new Paragraph("|CPF: " + cliente.getCpfCNPJ())
+            document.add(new Paragraph("|CPF: " + cliente.getCpf())
                     .setFontSize(4)
                     .setFontColor(ColorConstants.BLACK));
 
