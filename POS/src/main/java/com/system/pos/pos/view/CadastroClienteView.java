@@ -35,9 +35,9 @@ public class CadastroClienteView {
     @FXML
     public void initialize() throws SQLException {
         this.clientesController = new ClientesController();
-        this.clientes = FXCollections.observableArrayList(); 
+        this.clientes = FXCollections.observableArrayList();
         inicializarTabela();
-        atualizarTabela(); 
+        atualizarTabela();
     }
 
     @FXML
@@ -49,7 +49,7 @@ public class CadastroClienteView {
                 Cliente cliente = new Cliente(
                         nome.getText(),
                         telefone.getText(),
-                        Integer.parseInt(cpf.getText()),
+                        cpf.getText(),
                         email.getText(),
                         endereco.getText()
                 );
@@ -117,7 +117,7 @@ public class CadastroClienteView {
         telefoneColumn.setCellValueFactory(new PropertyValueFactory<>("telefone"));
 
         TableColumn<Cliente, Integer> cpfColumn = new TableColumn<>("CPF");
-        cpfColumn.setCellValueFactory(new PropertyValueFactory<>("cpf")); 
+        cpfColumn.setCellValueFactory(new PropertyValueFactory<>("cpf"));
 
         TableColumn<Cliente, String> emailColumn = new TableColumn<>("EMAIL");
         emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
@@ -141,7 +141,7 @@ public class CadastroClienteView {
 
     private void atualizarClienteFromInputs(Cliente cliente) {
         cliente.setNome(nome.getText());
-        cliente.setCpf(Integer.parseInt(cpf.getText()));
+        cliente.setCpf(cpf.getText());
         cliente.setTelefone(telefone.getText());
         cliente.setEmail(email.getText());
         cliente.setEndereco(endereco.getText());
@@ -173,7 +173,7 @@ public class CadastroClienteView {
     private void clearFields() {
         limparCampos();
     }
-    
+
     private void limparCampos() {
         nome.clear();
         cpf.clear();

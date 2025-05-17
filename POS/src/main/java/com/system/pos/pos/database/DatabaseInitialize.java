@@ -23,7 +23,7 @@ public class DatabaseInitialize {
         id INTEGER PRIMARY KEY,
         nome TEXT NOT NULL,
         telefone TEXT,
-        cpf INTEGER,
+        cpf TEXT UNIQUE NOT NULL,
         email TEXT,
         endereco TEXT
     );

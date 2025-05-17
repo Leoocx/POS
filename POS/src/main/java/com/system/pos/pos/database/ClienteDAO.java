@@ -20,7 +20,7 @@ public class ClienteDAO {
         try (PreparedStatement stmt = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, cliente.getNome());
             stmt.setString(2, cliente.getTelefone());
-            stmt.setInt(3, cliente.getCpf());
+            stmt.setString(3, cliente.getCpf());
             stmt.setString(4, cliente.getEmail());
             stmt.setString(5, cliente.getEndereco());
             stmt.executeUpdate();
@@ -38,7 +38,7 @@ public class ClienteDAO {
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, cliente.getNome());
             stmt.setString(2, cliente.getTelefone());
-            stmt.setInt(3, cliente.getCpf());
+            stmt.setString(3, cliente.getCpf());
             stmt.setString(4, cliente.getEmail());
             stmt.setString(5, cliente.getEndereco());
             stmt.setInt(6, cliente.getId());
@@ -63,7 +63,7 @@ public class ClienteDAO {
                 return new Cliente(
                         rs.getString("nome"),
                         rs.getString("telefone"),
-                        rs.getInt("cpf"),
+                        rs.getString("cpf"),
                         rs.getString("email"),
                         rs.getString("endereco")
                 );
@@ -82,7 +82,7 @@ public class ClienteDAO {
                 cliente.setId(rs.getInt("id"));
                 cliente.setNome(rs.getString("nome"));
                 cliente.setTelefone(rs.getString("telefone"));
-                cliente.setCpf(rs.getInt("cpf"));
+                cliente.setCpf(rs.getString("cpf"));
                 cliente.setEmail(rs.getString("email"));
                 cliente.setEndereco(rs.getString("endereco"));
                 clientes.add(cliente);
