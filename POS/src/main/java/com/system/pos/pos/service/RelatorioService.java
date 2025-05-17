@@ -1,11 +1,6 @@
 package com.system.pos.pos.service;
 
 import com.system.pos.pos.database.ConnectionDB;
-import com.system.pos.pos.report.RelatorioClientes;
-import com.system.pos.pos.report.RelatorioFinanceiro;
-import com.system.pos.pos.report.RelatorioVendas;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
 
 import java.sql.Connection;
 import java.sql.SQLException;

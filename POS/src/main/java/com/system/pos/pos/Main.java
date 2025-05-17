@@ -1,5 +1,7 @@
 package com.system.pos.pos;
 
+import com.system.pos.pos.controller.LoginController;
+import com.system.pos.pos.view.LoginView;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -23,6 +25,30 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        exibirTelaLogin(primaryStage);
+    }
+
+    private void exibirTelaLogin(Stage primaryStage) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/system/pos/pos/Login.fxml"));
+            Parent loginRoot = loader.load();
+
+            Scene loginScene = new Scene(loginRoot);
+            primaryStage.setScene(loginScene);
+            primaryStage.setTitle("Login");
+            primaryStage.show();
+
+            // Obtenha o controller e injete a referência ao Stage
+            LoginView controller = loader.getController();
+
+            controller.setOnLoginSucesso(() -> iniciarTelaPrincipal(primaryStage));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void iniciarTelaPrincipal(Stage primaryStage) {
         root = new BorderPane();
 
         HBox toolbar = createToolbar();
@@ -38,7 +64,6 @@ public class Main extends Application {
         Scene scene = new Scene(root, 1000, 600);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Sistema PDV");
-        primaryStage.show();
     }
 
     private HBox createToolbar() {

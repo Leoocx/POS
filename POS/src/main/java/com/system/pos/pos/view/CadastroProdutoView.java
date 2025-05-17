@@ -3,6 +3,7 @@ package com.system.pos.pos.view;
 import com.system.pos.pos.controller.ProdutoController;
 import com.system.pos.pos.database.ProdutoDAO;
 import com.system.pos.pos.model.Produto;
+import com.system.pos.pos.report.ReportPrinter;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -146,7 +147,7 @@ public class CadastroProdutoView {
 
     @FXML
     private void gerarPDFButton(){
-
+        ReportPrinter.imprimirTabela(table);
     }
 
 

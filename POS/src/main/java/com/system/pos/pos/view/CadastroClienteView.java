@@ -4,7 +4,7 @@ import java.sql.SQLException;
 
 import com.system.pos.pos.controller.ClientesController;
 import com.system.pos.pos.model.Cliente;
-import com.system.pos.pos.report.RelatorioClientes;
+import com.system.pos.pos.report.ReportPrinter;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -102,7 +102,7 @@ public class CadastroClienteView {
 
     @FXML
     public void gerarPDFButton() {
-        RelatorioClientes.gerarPDF(null);
+        ReportPrinter.imprimirTabela(table);
     }
 
     private void inicializarTabela() {

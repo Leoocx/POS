@@ -11,17 +11,27 @@ public class LoginView {
     @FXML
     private TextField password;
 
+    private Runnable onLoginSucesso;
 
+    public void setOnLoginSucesso(Runnable onLoginSucesso) {
+        this.onLoginSucesso = onLoginSucesso;
+    }
     public void loginButton() {
         String user = username.getText();
         String pass = password.getText();
 
         if (!user.isBlank() && !pass.isBlank()) {
-            LoginController.login(user, pass);
+            boolean autenticado = LoginController.login(user, pass);
+            if (autenticado && onLoginSucesso != null) {
+                onLoginSucesso.run();
+            }
         } else {
             System.out.println("Entre com usuário e senha.");
         }
     }
+
+
+
 
     public void registrarButton(){
         String user = username.getText();
