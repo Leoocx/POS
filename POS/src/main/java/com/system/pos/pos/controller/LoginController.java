@@ -16,6 +16,7 @@ public class LoginController {
                 System.out.println("Login realizado!");
                 return true;
             } else {
+                registrar(username,password);
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Erro de Login");
                 alert.setHeaderText("Usuário ou senha inválidos");

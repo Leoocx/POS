@@ -1,4 +1,5 @@
 package com.system.pos.pos.model;
+
 public class Fornecedor {
     private int codigo;
     private String nome;

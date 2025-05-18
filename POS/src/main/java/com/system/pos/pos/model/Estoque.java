@@ -10,6 +10,7 @@ public class Estoque {
         private int quantidadeAlterada;
         private String tipo;
         private String observacao;
+
         public Produto getProduto() {
             return produto;
         }

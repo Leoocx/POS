@@ -45,12 +45,24 @@ public class DatabaseInitialize {
         status TEXT
     );
     
+    CREATE TABLE IF NOT EXISTS contas (
+         id INTEGER PRIMARY KEY AUTOINCREMENT,
+         descricao TEXT NOT NULL,
+         valor REAL NOT NULL,
+         vencimento DATE NOT NULL,
+         pago BOOLEAN NOT NULL DEFAULT 0,
+         tipo TEXT NOT NULL CHECK (tipo IN ('PAGAR', 'RECEBER')),
+         data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+         data_pagamento DATE,
+         observacao TEXT
+    );
+    
     CREATE TABLE IF NOT EXISTS vendas (
         codigo INTEGER PRIMARY KEY,
         quantidade INTEGER NOT NULL,
         precoUnitario REAL NOT NULL,
         data TEXT NOT NULL,
-        cliente INTEGER,
+        cliente TEXT,
         formaPagamento TEXT,
         desconto REAL,
         status TEXT,

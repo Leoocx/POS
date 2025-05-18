@@ -133,8 +133,7 @@ public class Main extends Application {
 
         TreeItem<String> financeiro = new TreeItem<>("Financeiro");
         financeiro.getChildren().addAll(
-                new TreeItem<>("Contas a Pagar"),
-                new TreeItem<>("Contas a Receber")
+          new TreeItem<>("Contas")
         );
 
         TreeItem<String> fiscal = new TreeItem<>("Fiscal");
