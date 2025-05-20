@@ -38,7 +38,7 @@ public class Main extends Application {
             primaryStage.setTitle("Login");
             primaryStage.show();
 
-            // Obtenha o controller e injete a referência ao Stage
+            // injeta a referência ao Stage
             LoginView controller = loader.getController();
 
             controller.setOnLoginSucesso(() -> iniciarTelaPrincipal(primaryStage));

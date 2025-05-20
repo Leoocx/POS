@@ -31,10 +31,9 @@ public class DatabaseInitialize {
     CREATE TABLE IF NOT EXISTS fornecedores (
         id INTEGER PRIMARY KEY,
         nome TEXT NOT NULL,
-        cpf_cnpj TEXT UNIQUE NOT NULL,
+        cnpj TEXT UNIQUE NOT NULL,
         telefone TEXT,
-        email TEXT,
-        endereco TEXT
+        email TEXT
     );
     
     CREATE TABLE IF NOT EXISTS produtos (

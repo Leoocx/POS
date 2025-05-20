@@ -1,6 +1,9 @@
+
 package com.system.pos.pos.controller;
 
 import com.system.pos.pos.database.FornecedorDAO;
+import com.system.pos.pos.model.Cliente;
+import com.system.pos.pos.model.Conta;
 import com.system.pos.pos.model.Endereco;
 import com.system.pos.pos.model.Fornecedor;
 import com.system.pos.pos.service.FornecedorService;
@@ -10,10 +13,16 @@ import javafx.scene.control.TextField;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FornecedoresController {
 
     private FornecedorService fornecedorService;
+
+    public FornecedoresController(){
+        this.fornecedorService=new FornecedorService();
+    }
 
     public void cadastrarFornecedor(Fornecedor fornecedor) throws SQLException {
         try{
@@ -38,4 +47,9 @@ public class FornecedoresController {
             System.out.println("Erro ao tentar excluir fornecedor : "+e.getMessage());
         }
     }
+      public List<Fornecedor> listarTodos() throws SQLException {
+        return fornecedorService.listarTodos();
+    }
+
 }
+

@@ -1,31 +1,28 @@
 package com.system.pos.pos.model;
 
 public class Fornecedor {
-    private int codigo;
+    private int id;
     private String nome;
-    private Endereco endereco;
     private String telefone;
     private String email;
     private String cnpj;
 
-    public Fornecedor(String nome, String telefone, Endereco endereco, String email, String cnpj) {
+    public Fornecedor(String nome, String telefone, String email, String cnpj) {
         this.nome = nome;
         this.telefone = telefone;
-        this.endereco = endereco;
         this.email = email;
         this.cnpj = cnpj;
     }
 
     public Fornecedor() {
-
     }
 
-    public int getCodigo() {
-        return codigo;
+    public int getId() {
+        return id;
     }
 
-    public void setCodigo(int codigo) {
-        this.codigo = codigo;
+    public void setId(int id) {
+        this.id = id;
     }
 
 
@@ -52,15 +49,6 @@ public class Fornecedor {
     public void setNome(String nome) {
         this.nome = nome;
     }
-
-    public Endereco getEndereco() {
-        return endereco;
-    }
-
-    public void setEndereco(Endereco endereco) {
-        this.endereco = endereco;
-    }
-
     public String getEmail() {
         return email;
     }
