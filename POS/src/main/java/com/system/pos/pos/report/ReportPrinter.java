@@ -1,38 +1,59 @@
 package com.system.pos.pos.report;
 
-import javafx.print.PageLayout;
-import javafx.print.PrinterJob;
+import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.layout.*;
+import com.itextpdf.layout.element.*;
+import com.itextpdf.layout.property.UnitValue;
+import com.system.pos.pos.service.RelatorioService;
+import javafx.collections.ObservableList;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.transform.Scale;
+import javafx.stage.FileChooser;
+import javafx.stage.Window;
 
-public interface ReportPrinter {
+import java.io.File;
+import java.io.FileOutputStream;
+
+public class ReportPrinter {
+
     public static <T> void imprimirTabela(TableView<T> tabela) {
-        PrinterJob job = PrinterJob.createPrinterJob();
-        if (job != null && job.showPrintDialog(null)) {
+        Window window = tabela.getScene().getWindow();
+        FileChooser fileChooser = new FileChooser();
 
-            PageLayout pageLayout = job.getJobSettings().getPageLayout();
-            double larguraPagina = pageLayout.getPrintableWidth();
-            double alturaPagina = pageLayout.getPrintableHeight();
+        fileChooser.setTitle("Salvar como PDF");
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("PDF Files", "*.pdf")
+        );
+        fileChooser.setInitialFileName("relatorio_tabela.pdf");
 
-            double larguraTabela = tabela.getBoundsInParent().getWidth();
-            double alturaTabela = tabela.getBoundsInParent().getHeight();
+        File file = fileChooser.showSaveDialog(window);
+        if (file != null) {
+            try (PdfWriter writer = new PdfWriter(new FileOutputStream(file));
+                 PdfDocument pdfDoc = new PdfDocument(writer);
+                 Document doc = new Document(pdfDoc)) {
 
-            double escalaX = larguraPagina / larguraTabela;
-            double escalaY = alturaPagina / alturaTabela;
-            double escala = Math.min(escalaX, escalaY);
+                Table pdfTable = new Table(UnitValue.createPercentArray(tabela.getColumns().size()));
+                pdfTable.setWidth(UnitValue.createPercentValue(100));
 
+                // Cabeçalhos
+                for (TableColumn<?, ?> col : tabela.getColumns()) {
+                    pdfTable.addHeaderCell(col.getText());
+                }
 
-            Scale scale = new Scale(escala, escala);
-            tabela.getTransforms().add(scale);
+                // Linhas
+                for (T item : tabela.getItems()) {
+                    for (TableColumn<T, ?> col : (ObservableList<TableColumn<T, ?>>) tabela.getColumns()) {
+                        Object cellData = col.getCellObservableValue(item).getValue();
+                        pdfTable.addCell(cellData != null ? cellData.toString() : "");
+                    }
+                }
 
-            // para imprimir
-            boolean sucesso = job.printPage(tabela);
-            if (sucesso) {
-                job.endJob();
+                doc.add(pdfTable);
+                System.out.println("PDF gerado com sucesso: " + file.getAbsolutePath());
+
+            } catch (Exception e) {
+                System.err.println("Erro ao gerar PDF: " + e.getMessage());
             }
-
-            tabela.getTransforms().remove(scale);
         }
     }
-
 }

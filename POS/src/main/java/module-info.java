@@ -17,6 +17,7 @@ module com.system.pos.pos {
     opens com.system.pos.pos.database to javafx.fxml;
     opens com.system.pos.pos.controller to javafx.fxml;
 
+
     exports com.system.pos.pos;
     exports com.system.pos.pos.view;
     exports com.system.pos.pos.database;

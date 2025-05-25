@@ -1,29 +1,47 @@
 package com.system.pos.pos.service;
 
-import com.system.pos.pos.database.ConnectionDB;
-
-import java.sql.Connection;
-import java.sql.SQLException;
+import java.io.IOException;
+import java.nio.file.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class RelatorioService {
 
-    private final Connection connection;
+    private static final Path RELATORIOS_PATH = Paths.get("POS/src/main/java/com/system/pos/pos/report/relatorios");
 
-    public RelatorioService(Connection connection){
-        this.connection= ConnectionDB.conectar();
+    public List<Path> listarRelatoriosRecentes() {
+        try {
+            if (!Files.exists(RELATORIOS_PATH)) {
+                System.out.println("Pasta não existe, criando: " + RELATORIOS_PATH.toAbsolutePath());
+                Files.createDirectories(RELATORIOS_PATH);
+            } else {
+                System.out.println("Pasta já existe: " + RELATORIOS_PATH.toAbsolutePath());
+            }
+
+            try (Stream<Path> stream = Files.list(RELATORIOS_PATH)) {
+                return stream
+                        .filter(p -> p.toString().endsWith(".pdf"))
+                        .sorted(Comparator.comparingLong(p -> {
+                            try {
+                                return Files.getLastModifiedTime((Path) p).toMillis();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                return 0L;
+                            }
+                        }).reversed())
+                        .limit(10)
+                        .collect(Collectors.toList());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return List.of();
+        }
     }
 
 
-    public void gerarRelatorioClientes() throws SQLException {
-
+    public Path getCaminhoRelatorios() {
+        return RELATORIOS_PATH;
     }
-
-    public void gerarRelatorioFinanceiro() {
-
-    }
-
-    public void gerarRelatorioVendas() {
-
-    }
-
 }
