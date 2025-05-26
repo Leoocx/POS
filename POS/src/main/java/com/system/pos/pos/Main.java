@@ -91,8 +91,11 @@ public class Main extends Application {
         Label searchLabel = new Label("Pesquisar Menus:");
         TextField searchField = new TextField();
 
+        // Armazenar a árvore original
+        TreeItem<String> originalRoot = createMenuTree();
+
         treeMenu = new TreeView<>();
-        treeMenu.setRoot(createMenuTree());
+        treeMenu.setRoot(originalRoot);
         treeMenu.setShowRoot(false);
 
         treeMenu.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
@@ -103,6 +106,18 @@ public class Main extends Application {
             }
         });
 
+        // Listener para busca no menu
+        searchField.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal.isEmpty()) {
+                treeMenu.setRoot(originalRoot);
+                expandAll(originalRoot); // Expande tudo ao resetar
+            } else {
+                TreeItem<String> filteredRoot = new TreeItem<>("Root");
+                filterTree(originalRoot, filteredRoot, newVal.toLowerCase());
+                treeMenu.setRoot(filteredRoot);
+                expandAll(filteredRoot);
+            }
+        });
 
         vbox.getChildren().addAll(searchLabel, searchField, treeMenu);
         return vbox;
@@ -161,6 +176,28 @@ public class Main extends Application {
         }
     }
 
+    private void filterTree(TreeItem<String> source, TreeItem<String> target, String filterText) {
+        for (TreeItem<String> child : source.getChildren()) {
+            TreeItem<String> filteredChild = new TreeItem<>(child.getValue());
+
+            // Recursivamente filtra os filhos
+            filterTree(child, filteredChild, filterText);
+
+            // Adiciona se:
+            // - Nome contém o filtro
+            // - Ou tem filhos que foram adicionados
+            if (child.getValue().toLowerCase().contains(filterText) || !filteredChild.getChildren().isEmpty()) {
+                target.getChildren().add(filteredChild);
+            }
+        }
+    }
+
+    private void expandAll(TreeItem<String> item) {
+        item.setExpanded(true);
+        for (TreeItem<String> child : item.getChildren()) {
+            expandAll(child);
+        }
+    }
 
 
     public static void main(String[] args) {

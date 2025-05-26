@@ -34,4 +34,15 @@ public class LoginService {
             }
         }
     }
+
+    public boolean usuarioExiste(String username) throws SQLException {
+        String sql = "SELECT 1 FROM users WHERE username = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, username);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
 }

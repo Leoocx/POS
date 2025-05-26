@@ -8,7 +8,7 @@ public class Produto {
     private final IntegerProperty quantidade = new SimpleIntegerProperty();
     private final DoubleProperty preco = new SimpleDoubleProperty();
     private final StringProperty status = new SimpleStringProperty();
-
+    private StringProperty codigoBarras= new SimpleStringProperty();
     // Construtor
     public Produto() {
     }
@@ -85,5 +85,17 @@ public class Produto {
 
     public void setStatus(String status) {
         this.status.set(status);
+    }
+
+    public String getCodigoBarras() {
+        return codigoBarras.get();
+    }
+
+    public StringProperty codigoBarrasProperty() {
+        return codigoBarras;
+    }
+
+    public void setCodigoBarras(String codigoBarras) {
+        this.codigoBarras.set(codigoBarras);
     }
 }

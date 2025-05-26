@@ -8,11 +8,19 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import java.awt.Desktop;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class RelatorioView {
 
@@ -29,12 +37,19 @@ public class RelatorioView {
 
     public void carregarRelatorios() {
         List<Path> paths = service.listarRelatoriosRecentes();
-
-        // Converter Path -> Relatorio
         relatorios = paths.stream()
-                .map(p -> new Relatorio(p.getFileName().toString(), Date.valueOf(LocalDate.now()), p.toAbsolutePath().toString()))
-                .toList();
-
+                .map(p -> {
+                    try {
+                        BasicFileAttributes attrs = Files.readAttributes(p, BasicFileAttributes.class);
+                        LocalDate dataCriacao = attrs.creationTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                        return new Relatorio(p.getFileName().toString(), Date.valueOf(dataCriacao), p.toAbsolutePath().toString());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
         atualizarLista("");
     }
 

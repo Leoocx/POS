@@ -130,7 +130,7 @@
                                        </styleClass>
                                     </PasswordField>
                                     <Button fx:id="btnLogin" defaultButton="true" mnemonicParsing="false" onAction="#loginButton" prefWidth="121.0" styleClass="btn-alternate" text="Entrar" GridPane.rowIndex="5" />
-                                    <Button cancelButton="true" layoutX="38.0" layoutY="318.0" mnemonicParsing="false" prefWidth="121.0" styleClass="btn-ripple" text="Registrar" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                    <Button fx:id="btnRegister" cancelButton="true" layoutX="38.0" layoutY="318.0" mnemonicParsing="false" onAction="#registerButton" prefWidth="121.0" styleClass="btn-ripple" text="Registrar" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                                     <Label fx:id="welcome" alignment="CENTER" prefHeight="35.0" prefWidth="411.0" style="-fx-font-weight: bold;" text="Bem-Vindo" textAlignment="CENTER" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER">
                                        <styleClass>
                                           <String fx:value="h2" />

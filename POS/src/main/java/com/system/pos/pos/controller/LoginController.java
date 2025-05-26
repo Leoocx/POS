@@ -16,7 +16,6 @@ public class LoginController {
                 System.out.println("Login realizado!");
                 return true;
             } else {
-                registrar(username,password);
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Erro de Login");
                 alert.setHeaderText("Usuário ou senha inválidos");
@@ -28,12 +27,34 @@ public class LoginController {
         return false;
     }
 
-    public static void registrar(String username, String password){
-        try{
-             loginService.registrarConta(username, password);
-        } catch (Exception e){
-            System.out.print("Erro ao tentar registrar uma conta!" + e.getMessage());
+    public static boolean registrar(String username, String password) {
+        try {
+            if (loginService.usuarioExiste(username)) {
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Registro");
+                alert.setHeaderText("Usuário já existe");
+                alert.setContentText("Tente outro nome de usuário.");
+                alert.showAndWait();
+                return false;
+            }
+
+            loginService.registrarConta(username, password);
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Registro");
+            alert.setHeaderText("Conta criada com sucesso!");
+            alert.setContentText("Você já pode fazer login.");
+            alert.showAndWait();
+            return true;
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erro");
+            alert.setHeaderText("Erro ao registrar");
+            alert.setContentText("Detalhes: " + e.getMessage());
+            alert.showAndWait();
+            return false;
         }
     }
+
 
 }
