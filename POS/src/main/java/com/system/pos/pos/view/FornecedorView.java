@@ -19,7 +19,6 @@ public class FornecedorView {
     @FXML private TextField cnpj;
 
     @FXML private TableView<Fornecedor> table;
-    @FXML private Button cadastroFornecedorBTN, atualizarFornecedorBTN , deleteFornecedorBTN , clearFieldsBTN;
 
     private FornecedoresController fornecedorController;
     private ObservableList<Fornecedor> fornecedores;

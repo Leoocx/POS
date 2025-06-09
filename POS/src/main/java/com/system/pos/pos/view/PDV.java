@@ -4,21 +4,32 @@ import com.system.pos.pos.model.ItemVenda;
 import com.system.pos.pos.model.Produto;
 import com.system.pos.pos.service.ProdutoService;
 import com.system.pos.pos.service.VendaService;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.print.PrinterJob;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.stage.Stage;
+import javafx.util.Duration;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.Optional;
 
-public class CaixaView {
+public class PDV {
     // Labels
     @FXML private Label lblNumeroVenda;
     @FXML private Label lblDataVenda;
@@ -52,12 +63,47 @@ public class CaixaView {
     private final ProdutoService produtoService = new ProdutoService();
     private final VendaService vendaService = new VendaService();
 
+    // New field to track applied discount
+    private BigDecimal discountAmount = BigDecimal.ZERO;
+
     @FXML
     public void initialize() {
         configurarTabelas();
         carregarDadosIniciais();
         configurarTeclasAtalho();
         configurarListeners();
+        tableViewProdutos.setRowFactory(tv -> {
+            TableRow<Produto> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (!row.isEmpty() && event.getClickCount() == 1) {
+                    Produto produtoSelecionado = row.getItem();
+                    adicionarProdutoAVenda(produtoSelecionado);
+                }
+            });
+            return row;
+        });
+
+    }
+    private void adicionarProdutoAVenda(Produto produto) {
+        // Verifica se o produto já está na venda
+        Optional<ItemVenda> itemExistente = tableViewItensVenda.getItems().stream()
+                .filter(item -> item.getIdProduto() == (produto.getId()))
+                .findFirst();
+
+        if (itemExistente.isPresent()) {
+            // Se já existe, aumenta a quantidade
+            ItemVenda item = itemExistente.get();
+            item.setQuantidade(item.getQuantidade() + 1);
+            item.getTotalItem();
+            tableViewItensVenda.refresh(); // Atualiza a tabela
+        } else {
+            // Se não existe, cria novo item
+            ItemVenda novoItem = new ItemVenda(produto, 1);
+
+            tableViewItensVenda.getItems().add(novoItem);
+        }
+
+        atualizarTotais();
     }
 
     private void configurarTabelas() {
@@ -67,7 +113,7 @@ public class CaixaView {
         colValorUnitario.setCellValueFactory(cellData -> cellData.getValue().precoProperty().asObject());
 
         // Tabela de itens da venda
-        colItemDescricao.setCellValueFactory(cellData -> cellData.getValue().nomeProdutoProperty());
+        colItemDescricao.setCellValueFactory(cellData -> cellData.getValue().getProduto().nomeProperty());
         colItemQuantidade.setCellValueFactory(cellData -> cellData.getValue().quantidadeProperty().asObject());
         colItemTotal.setCellValueFactory(cellData -> {
             double total = cellData.getValue().getPrecoUnitario() * cellData.getValue().getQuantidade();
@@ -103,13 +149,26 @@ public class CaixaView {
     private void carregarDadosIniciais() {
         lblVendedor.setText("Operador 1");
         lblNumeroVenda.setText("001");
-        lblDataVenda.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
+        // Configura um Timeline que atualiza a cada 1 segundo
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.seconds(1), // Atualiza a cada segundo
+                        event -> {
+                            String dataHoraAtual = LocalDateTime.now()
+                                    .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+                            lblDataVenda.setText(dataHoraAtual);
+                        }
+                ));
+
+        timeline.setCycleCount(Timeline.INDEFINITE); // Executa indefinidamente
+        timeline.play(); // Inicia a atualização
         lblCliente.setText("CLIENTE PADRÃO");
         txtQuantidade.setText("1");
         lblTotalBruto.setText("R$ 0,00");
         lblTotalLiquido.setText("R$ 0,00");
         lblTotalPago.setText("R$ 0,00");
         lblTroco.setText("R$ 0,00");
+
+        discountAmount = BigDecimal.ZERO;
     }
 
     private void configurarTeclasAtalho() {
@@ -126,6 +185,7 @@ public class CaixaView {
             case F1 -> aplicarDesconto();
             case F2 -> novaVenda();
             case F3 -> buscarProduto();
+            case F9 -> cancelarVenda();
             case ENTER -> {
                 if (event.getTarget() instanceof TextField) {
                     tratarEnter((TextField) event.getTarget());
@@ -135,6 +195,13 @@ public class CaixaView {
             case ADD, PLUS -> aumentarQuantidade();
             case SUBTRACT, MINUS -> diminuirQuantidade();
         }
+    }
+
+    private void cancelarVenda(){
+        itensVenda.clear();
+        txtValorPgto1.clear();
+        discountAmount = BigDecimal.ZERO;
+        atualizarTotais();
     }
 
     private void tratarEnter(TextField campo) {
@@ -209,14 +276,10 @@ public class CaixaView {
                 }
                 itemExistente.setQuantidade(novaQuantidade);
             } else {
-                ItemVenda novoItem = new ItemVenda();
-                novoItem.setIdProduto(produto.getId());
-                novoItem.setPrecoUnitario(produto.getPreco());
-                novoItem.setQuantidade(quantidade);
+                ItemVenda novoItem = new ItemVenda(produto, quantidade);
                 itensVenda.add(novoItem);
             }
 
-            // Simula a retirada do estoque local durante a venda
             produto.setQuantidade(produto.getQuantidade() - quantidade);
 
             atualizarTotais();
@@ -238,7 +301,11 @@ public class CaixaView {
         }
 
         lblTotalBruto.setText(currencyFormat.format(totalBruto));
-        lblTotalLiquido.setText(currencyFormat.format(totalBruto)); // Considerando sem desconto
+        BigDecimal totalLiquido = totalBruto.subtract(discountAmount);
+        if (totalLiquido.compareTo(BigDecimal.ZERO) < 0) {
+            totalLiquido = BigDecimal.ZERO; // total no negative
+        }
+        lblTotalLiquido.setText(currencyFormat.format(totalLiquido));
         lblQtdItens.setText(String.valueOf(totalItens));
         lblTotalPago.setText(txtValorPgto1.getText().isEmpty() ? "R$ 0,00" : currencyFormat.format(new BigDecimal(txtValorPgto1.getText().replace(",", "."))));
         calcularTroco();
@@ -269,16 +336,44 @@ public class CaixaView {
                 BigDecimal total = calcularTotalVenda();
                 BigDecimal valorDesconto;
 
-                if (desconto.contains("%")) {
-                    double percentual = Double.parseDouble(desconto.replace("%", "")) / 100;
-                    valorDesconto = total.multiply(BigDecimal.valueOf(percentual));
-                } else {
-                    valorDesconto = new BigDecimal(desconto);
+                // Trata vírgula como separador decimal
+                String input = desconto.replace(",", ".").replace("%", "");
+
+                // Verifica se o valor é negativo
+                if (input.startsWith("-")) {
+                    mostrarAlerta("Erro", "O desconto não pode ser negativo.");
+                    return;
                 }
 
-                lblTotalLiquido.setText(currencyFormat.format(total.subtract(valorDesconto)));
+                // Calcula o desconto
+                if (desconto.contains("%")) {
+                    double percentual = Double.parseDouble(input) / 100;
+                    valorDesconto = total.multiply(BigDecimal.valueOf(percentual));
+                } else {
+                    valorDesconto = new BigDecimal(input);
+                }
+
+                // Garante que o desconto não seja maior que o total
+                if (valorDesconto.compareTo(total) > 0) {
+                    mostrarAlerta("Aviso", "Desconto maior que o total da venda. Ajustado para o valor total.");
+                    valorDesconto = total;
+                }
+
+                // Atualiza o desconto armazenado
+                discountAmount = valorDesconto;
+
+                // Atualiza a interface
+                BigDecimal totalLiquido = total.subtract(valorDesconto);
+                if (totalLiquido.compareTo(BigDecimal.ZERO) < 0) {
+                    totalLiquido = BigDecimal.ZERO; // evita negativo
+                }
+                lblTotalLiquido.setText(currencyFormat.format(totalLiquido));
+
+                // Recalcula o troco com o novo total
+                calcularTroco();
+
             } catch (NumberFormatException e) {
-                mostrarAlerta("Erro", "Valor inválido");
+                mostrarAlerta("Erro", "Valor inválido. Use números (ex: 10 ou 10.5%)");
             }
         });
     }
@@ -287,6 +382,7 @@ public class CaixaView {
     private void novaVenda() {
         itensVenda.clear();
         txtValorPgto1.clear();
+        discountAmount = BigDecimal.ZERO;  // reset discount
         atualizarTotais();
         lblNumeroVenda.setText(String.format("%03d", Integer.parseInt(lblNumeroVenda.getText()) + 1));
         lblDataVenda.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
@@ -318,6 +414,14 @@ public class CaixaView {
             return;
         }
 
+        // Validação dos itens
+        for (ItemVenda item : itensVenda) {
+            if (item.getQuantidade() <= 0 || item.getPrecoUnitario() <= 0) {
+                mostrarAlerta("Erro", "Quantidade e preço devem ser maiores que zero para todos os itens.");
+                return;
+            }
+        }
+
         calcularTroco();
 
         if (lblTroco.getText().equals("Insuficiente")) {
@@ -328,11 +432,91 @@ public class CaixaView {
         boolean sucesso = vendaService.registrarVenda(itensVenda, "DINHEIRO");
 
         if (sucesso) {
+            // Gera e exibe o comprovante
+            String comprovante = gerarComprovanteVenda();
+            exibirComprovante(comprovante);
+
             mostrarAlerta("Sucesso", "Venda registrada");
             novaVenda();
         } else {
             mostrarAlerta("Erro", "Falha ao registrar venda");
         }
+    }
+    private void exibirComprovante(String comprovante) {
+        // 1. Cria uma janela de visualização
+        TextArea textArea = new TextArea(comprovante);
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
+        textArea.setStyle("-fx-font-family: monospace;"); // Fonte de largura fixa para alinhamento correto
+
+        Button btnImprimir = new Button("Imprimir");
+        btnImprimir.setOnAction(e -> imprimirComprovante(comprovante));
+
+        VBox root = new VBox(10, textArea, btnImprimir);
+        root.setPadding(new Insets(15));
+
+        Stage stage = new Stage();
+        stage.setTitle("Comprovante de Venda");
+        stage.setScene(new Scene(root, 400, 500));
+        stage.show();
+    }
+
+    // 2. Método separado para impressão física
+    private void imprimirComprovante(String comprovante) {
+        PrinterJob job = PrinterJob.createPrinterJob();
+        if (job != null && job.showPrintDialog(null)) {
+            // Cria um nó de impressão formatado
+            Text printerText = new Text(comprovante);
+            printerText.setFont(Font.font("Monospaced", 10));
+            printerText.setTextAlignment(TextAlignment.LEFT);
+
+            StackPane printRoot = new StackPane(printerText);
+            printRoot.setPadding(new Insets(20));
+
+            boolean success = job.printPage(printRoot);
+            if (success) {
+                job.endJob();
+            } else {
+                mostrarAlerta("Erro", "Falha ao imprimir comprovante.");
+            }
+        }
+    }
+
+    private String gerarComprovanteVenda() {
+        StringBuilder comprovante = new StringBuilder();
+
+        // Cabeçalho
+        comprovante.append("----------------------------------------\n");
+        comprovante.append("          COMPROVANTE DE VENDA          \n");
+        comprovante.append("----------------------------------------\n");
+        comprovante.append("Número: ").append(lblNumeroVenda.getText()).append("\n");
+        comprovante.append("Data: ").append(lblDataVenda.getText()).append("\n");
+        comprovante.append("Vendedor: ").append(lblVendedor.getText()).append("\n");
+        comprovante.append("Cliente: ").append(lblCliente.getText()).append("\n");
+        comprovante.append("----------------------------------------\n");
+        comprovante.append("ITENS:\n");
+
+        // Itens da venda
+        for (ItemVenda item : itensVenda) {
+            comprovante.append(String.format(
+                    "%-20s %3d x %-8s %10s\n",
+                    item.getProduto().getNome(),
+                    item.getQuantidade(),
+                    currencyFormat.format(item.getPrecoUnitario()),
+                    currencyFormat.format(item.getPrecoUnitario() * item.getQuantidade())
+            ));
+        }
+
+        // Totais
+        comprovante.append("----------------------------------------\n");
+        comprovante.append(String.format("%-30s %10s\n", "TOTAL BRUTO:", lblTotalBruto.getText()));
+        comprovante.append(String.format("%-30s %10s\n", "TOTAL LÍQUIDO:", lblTotalLiquido.getText()));
+        comprovante.append(String.format("%-30s %10s\n", "VALOR PAGO:", lblTotalPago.getText()));
+        comprovante.append(String.format("%-30s %10s\n", "TROCO:", lblTroco.getText()));
+        comprovante.append("----------------------------------------\n");
+        comprovante.append("Obrigado pela preferência!\n");
+
+        return comprovante.toString();
     }
 
     private void mostrarAlerta(String titulo, String mensagem) {
@@ -343,3 +527,4 @@ public class CaixaView {
         alert.showAndWait();
     }
 }
+

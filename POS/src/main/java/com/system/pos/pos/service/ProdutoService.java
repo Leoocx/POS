@@ -57,15 +57,24 @@ public class ProdutoService {
         }
     }
 
-    public void atualizarEstoque(int idProduto, int quantidadeVendida) {
+    public boolean atualizarEstoque(int idProduto, int quantidadeVendida) {
         try {
             Produto produto = produtoDAO.searchByID(idProduto);
             if (produto != null) {
-                produto.setQuantidade(produto.getQuantidade() - quantidadeVendida);
-                produtoDAO.updateProduto(produto);
+                // Verifica se a quantidade disponível é suficiente
+                if (produto.getQuantidade() >= quantidadeVendida) {
+                    produto.setQuantidade(produto.getQuantidade() - quantidadeVendida);
+                    produtoDAO.updateProduto(produto);
+                    return true; // Atualização bem-sucedida
+                } else {
+                    System.out.println("Quantidade insuficiente em estoque.");
+                    return false; // Quantidade insuficiente
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return false; // Produto não encontrado ou erro
     }
+
 }
