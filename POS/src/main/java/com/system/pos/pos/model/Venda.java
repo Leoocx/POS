@@ -49,54 +49,6 @@ public class Venda {
         this.cliente = cliente;
     }
 
-    public int getPrecoUnitario() {
-        return precoUnitario;
-    }
-
-    public void setPrecoUnitario(int precoUnitario) {
-        this.precoUnitario = precoUnitario;
-    }
-
-    public int getCodigo() {
-        return codigo;
-    }
-
-    public void setCodigo(int codigo) {
-        this.codigo = codigo;
-    }
-
-    public LocalDateTime getData() {
-        return data;
-    }
-
-    public void setData(LocalDateTime data) {
-        this.data = data;
-    }
-
-    public Pagamento getFormaPagamento() {
-        return formaPagamento;
-    }
-
-    public void setFormaPagamento(Pagamento formaPagamento) {
-        this.formaPagamento = formaPagamento;
-    }
-
-    public float getDesconto() {
-        return desconto;
-    }
-
-    public void setDesconto(float desconto) {
-        this.desconto = desconto;
-    }
-
-    public float getValorTotal() {
-        return valorTotal;
-    }
-
-    public void setValorTotal(float valorTotal) {
-        this.valorTotal = valorTotal;
-    }
-
 }
 
 

@@ -1,4 +1,5 @@
 package com.system.pos.pos.model;
+
 public enum FormaPagamento {
     DINHEIRO,
     CARTAO_CREDITO,

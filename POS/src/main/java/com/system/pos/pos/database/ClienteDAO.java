@@ -1,76 +1,94 @@
 package com.system.pos.pos.database;
+
 import com.system.pos.pos.model.Cliente;
-import com.system.pos.pos.model.Endereco;
-import com.system.pos.pos.model.TipoCliente;
+import com.system.pos.pos.model.Produto;
 
 import java.sql.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class ClienteDAO {
-    private Connection conexao;
+
+    private final Connection connection;
 
     public ClienteDAO() {
-        this.conexao=ConnectionDB.conectar();
+        this.connection = ConnectionDB.conectar();
     }
 
     public void adicionarCliente(Cliente cliente) throws SQLException {
-        String sql = "INSERT INTO clientes (codigo ,nome, cpfCNPJ, telefone, email, endereco, email) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
+        String sql = "INSERT INTO clientes (nome, telefone, cpf, email, endereco) VALUES (?, ?, ?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, cliente.getNome());
-            stmt.setString(2, cliente.getCpfCNPJ());
-            stmt.setString(3, cliente.getTelefone());
+            stmt.setString(2, cliente.getTelefone());
+            stmt.setString(3, cliente.getCpf());
             stmt.setString(4, cliente.getEmail());
-            stmt.setString(5, cliente.getEndereco().toString());
-            stmt.setString(6, cliente.getTipo().toString());
-            stmt.setString(7, cliente.getEmail());
+            stmt.setString(5, cliente.getEndereco());
+            stmt.executeUpdate();
+
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    cliente.setId(rs.getInt(1));
+                }
+            }
+        }
+    }
+
+    public void atualizarCliente(Cliente cliente) throws SQLException {
+        String sql = "UPDATE clientes SET nome = ?, telefone = ?, cpf = ?, email = ?, endereco = ? WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, cliente.getNome());
+            stmt.setString(2, cliente.getTelefone());
+            stmt.setString(3, cliente.getCpf());
+            stmt.setString(4, cliente.getEmail());
+            stmt.setString(5, cliente.getEndereco());
+            stmt.setInt(6, cliente.getId());
             stmt.executeUpdate();
         }
     }
 
-    public void atualizarCliente(Cliente cliente) throws SQLException{
-
+    public void removerCliente(int codigo) throws SQLException {
+        String sql = "DELETE FROM clientes WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, codigo);
+            stmt.executeUpdate();
+        }
     }
 
-    public void removerCliente(Cliente cliente) throws SQLException{
-
+    public Cliente buscarClientePorCodigo(int codigo) throws SQLException {
+        String sql = "SELECT * FROM clientes WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, codigo);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return new Cliente(
+                        rs.getString("nome"),
+                        rs.getString("telefone"),
+                        rs.getString("cpf"),
+                        rs.getString("email"),
+                        rs.getString("endereco")
+                );
+            }
+        }
+        return null;
     }
 
     public List<Cliente> listarClientes() throws SQLException {
         List<Cliente> clientes = new ArrayList<>();
         String sql = "SELECT * FROM clientes";
-        try (Statement stmt = conexao.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                Cliente c = new Cliente(
-                       rs.getString("nome"),
-                       rs.getString("codigo"),
-                       rs.getString("cpfCNPJ"),
-                       rs.getString("email"),
-                       rs.getString("endereco")
-                );
-
-                clientes.add(c);
+                Cliente cliente = new Cliente();
+                cliente.setId(rs.getInt("id"));
+                cliente.setNome(rs.getString("nome"));
+                cliente.setTelefone(rs.getString("telefone"));
+                cliente.setCpf(rs.getString("cpf"));
+                cliente.setEmail(rs.getString("email"));
+                cliente.setEndereco(rs.getString("endereco"));
+                clientes.add(cliente);
             }
         }
         return clientes;
     }
-    public Cliente buscarClientePorCodigo(int codigo) throws SQLException {
-        String sql = "SELECT * FROM clientes WHERE codigo = ?";
-        try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
-            stmt.setInt(1, codigo);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return new Cliente(
-                           rs.getString("nome"),
-                           rs.getString("codigo"),
-                       rs.getString("cpfCNPJ"),
-                       rs.getString("email"),
-                       rs.getString("endereco")
-                    );
-                }
-            }
-        }
-        return null; // Retorna null caso não encontre o cliente
-    }
+
 }

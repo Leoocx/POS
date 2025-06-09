@@ -1,132 +1,101 @@
 package com.system.pos.pos.model;
 
-import java.time.LocalDate;
+import javafx.beans.property.*;
 
 public class Produto {
-    private int cdProduto;
-    private String nome;
-    private float preco;
-    private int quantidade;
-    private Categoria categoria;
-    private String fornecedor;
-    private String marca;
-    private String referencia;
-    private String localizacao;
-    private LocalDate validade;
-    private int unidade;
-    private SubCategoria subCategoria;
+    private final IntegerProperty id = new SimpleIntegerProperty();
+    private final StringProperty nome = new SimpleStringProperty();
+    private final IntegerProperty quantidade = new SimpleIntegerProperty();
+    private final DoubleProperty preco = new SimpleDoubleProperty();
+    private final StringProperty status = new SimpleStringProperty();
+    private StringProperty codigoBarras= new SimpleStringProperty();
 
-
-    public Produto() {}
-
-    public Produto(int cdProduto, String nome, float preco, int quantidade, Categoria categoria, String fornecedor, String marca, String referencia, String localizacao, LocalDate validade, int unidade, SubCategoria subCategoria) {
-        this.cdProduto = cdProduto;
-        this.nome = nome;
-        this.preco = preco;
-        this.quantidade = quantidade;
-        this.categoria = categoria;
-        this.fornecedor = fornecedor;
-        this.marca = marca;
-        this.referencia = referencia;
-        this.localizacao = localizacao;
-        this.validade = validade;
-        this.unidade = unidade;
-        this.subCategoria = subCategoria;
+    public Produto() {
+    }
+    public Produto(String nome, int quantidade, double preco, String status) {
+        this.nome.set(nome);
+        this.quantidade.set(quantidade);
+        this.preco.set(preco);
+        this.status.set(status);
+    }
+    public Produto(int id, String nome, int quantidade, double preco, String status) {
+        this.id.set(id);
+        this.nome.set(nome);
+        this.quantidade.set(quantidade);
+        this.preco.set(preco);
+        this.status.set(status);
     }
 
-    public int getCdProduto() {
-        return cdProduto;
+    // Métodos de acesso para as properties
+    public IntegerProperty idProperty() {
+        return id;
     }
 
-    public void setCdProduto(int cdProduto) {
-        this.cdProduto = cdProduto;
+    public int getId() {
+        return id.get();
     }
 
-    public String getNome() {
+    public void setId(int id) {
+        this.id.set(id);
+    }
+
+    public StringProperty nomeProperty() {
         return nome;
     }
 
+    public String getNome() {
+        return nome.get();
+    }
+
     public void setNome(String nome) {
-        this.nome = nome;
+        this.nome.set(nome);
     }
 
-    public float getPreco() {
-        return preco;
-    }
-
-    public void setPreco(float preco) {
-        this.preco = preco;
-    }
-
-    public int getQuantidade() {
+    public IntegerProperty quantidadeProperty() {
         return quantidade;
     }
 
+    public int getQuantidade() {
+        return quantidade.get();
+    }
+
     public void setQuantidade(int quantidade) {
-        this.quantidade = quantidade;
+        this.quantidade.set(quantidade);
     }
 
-    public Categoria getCategoria() {
-        return categoria;
+    public DoubleProperty precoProperty() {
+        return preco;
     }
 
-    public void setCategoria(Categoria categoria) {
-        this.categoria = categoria;
+    public double getPreco() {
+        return preco.get();
     }
 
-    public String getFornecedor() {
-        return fornecedor;
+    public void setPreco(double preco) {
+        this.preco.set(preco);
     }
 
-    public void setFornecedor(String fornecedor) {
-        this.fornecedor = fornecedor;
+    public StringProperty statusProperty() {
+        return status;
     }
 
-    public String getMarca() {
-        return marca;
+    public String getStatus() {
+        return status.get();
     }
 
-    public void setMarca(String marca) {
-        this.marca = marca;
+    public void setStatus(String status) {
+        this.status.set(status);
     }
 
-    public String getReferencia() {
-        return referencia;
+    public String getCodigoBarras() {
+        return codigoBarras.get();
     }
 
-    public void setReferencia(String referencia) {
-        this.referencia = referencia;
+    public StringProperty codigoBarrasProperty() {
+        return codigoBarras;
     }
 
-    public String getLocalizacao() {
-        return localizacao;
-    }
-
-    public void setLocalizacao(String localizacao) {
-        this.localizacao = localizacao;
-    }
-
-    public LocalDate getValidade() {
-        return validade;
-    }
-
-    public void setValidade(LocalDate validade) {
-        this.validade = validade;
-    }
-
-    public int getUnidade() {
-        return unidade;
-    }
-
-    public void setUnidade(int unidade) {
-        this.unidade = unidade;
-    }
-
-    public SubCategoria getSubCategoria() {
-        return subCategoria;
-    }
-
-    public void setSubCategoria(SubCategoria subCategoria) {
-        this.subCategoria = subCategoria;
+    public void setCodigoBarras(String codigoBarras) {
+        this.codigoBarras.set(codigoBarras);
     }
 }

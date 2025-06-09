@@ -1,36 +1,34 @@
 package com.system.pos.pos.controller;
 
-import com.system.pos.pos.database.ClienteDAO;
 import com.system.pos.pos.model.Cliente;
-import com.system.pos.pos.model.Endereco;
-import com.system.pos.pos.model.TipoCliente;
 import com.system.pos.pos.service.ClienteService;
-import javafx.collections.ObservableList;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
 
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.List;
 
 public class ClientesController {
 
-    
-    public void cadastrarCliente(Cliente cliente) {
-        try {
-            ClienteService.cadastrarCliente(cliente);
-            } catch (Exception ex) {
-                System.out.println("Erro ao cadastrar cliente: " + ex.getMessage());
-                ex.printStackTrace();
-            }
+    private ClienteService clienteService;
+
+    public ClientesController() {
+        this.clienteService = new ClienteService();
     }
 
+    public void cadastrarCliente(Cliente cliente) throws SQLException {
+        clienteService.cadastrarCliente(cliente);
+    }
 
+    public void atualizarCliente(Cliente cliente) throws SQLException {
+        clienteService.atualizarCliente(cliente);
+    }
 
+    public void removerCliente(int id) throws SQLException {
+        clienteService.removerCliente(id);
+    }
 
+    public List<Cliente> listarTodos() throws SQLException {
+        return clienteService.listarTodos();
+    }
 
 }
 

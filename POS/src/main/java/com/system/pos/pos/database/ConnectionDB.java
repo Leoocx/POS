@@ -32,4 +32,9 @@ public class ConnectionDB {
             return null;
           }
         }
+
+        public static void main(String[] args){
+           conectar();
+           DatabaseInitialize.criarTabelas();
+        }
 }

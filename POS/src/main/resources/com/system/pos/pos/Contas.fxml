@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.cell.*?>
+
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.system.pos.pos.view.ContasView" spacing="10"
+      style="-fx-background-color: #f5f5f5;" >
+
+    <Label text="CONTAS A PAGAR/RECEBER" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Filtro:" />
+        <TextField fx:id="campoFiltro" promptText="Filtrar por descrição..." prefWidth="300" />
+        <Button fx:id="btnLimparFiltro" text="Limpar" styleClass="btn-secondary" onAction="#handleLimpar" />
+        <ComboBox fx:id="tipoContaCombo" promptText="Tipo de Conta">
+            <items>
+                <FXCollections fx:factory="observableArrayList">
+                    <String fx:value="Todas" />
+                    <String fx:value="A Pagar" />
+                    <String fx:value="A Receber" />
+                </FXCollections>
+            </items>
+        </ComboBox>
+    </HBox>
+
+    <TableView fx:id="tabelaContas" prefHeight="400">
+        <columns>
+            <TableColumn text="Descrição" prefWidth="250">
+                <cellValueFactory><PropertyValueFactory property="descricao" /></cellValueFactory>
+            </TableColumn>
+            <TableColumn text="Valor">
+                <cellValueFactory><PropertyValueFactory property="valor" /></cellValueFactory>
+            </TableColumn>
+            <TableColumn text="Vencimento">
+                <cellValueFactory><PropertyValueFactory property="vencimento" /></cellValueFactory>
+            </TableColumn>
+            <TableColumn text="Status">
+                <cellValueFactory><PropertyValueFactory property="pago" /></cellValueFactory>
+            </TableColumn>
+        </columns>
+    </TableView>
+
+    <HBox spacing="15" alignment="CENTER_RIGHT">
+        <Button fx:id="btnNovaConta" text="+ Nova Conta" styleClass="btn-primary" onAction="#handleNovaConta" />
+        <Button fx:id="btnEditar" text="Editar" styleClass="btn-info" disable="true" onAction="#handleEditar" />
+        <Button fx:id="btnRegistrar" text="Registrar Pagamento" styleClass="btn-success" disable="true" onAction="#handleRegistrar" />
+        <Button fx:id="btnRemover" text="Remover" styleClass="btn-danger" disable="true" onAction="#handleRemover" />
+    </HBox>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label fx:id="statusBar" style="-fx-font-weight: bold;" />
+    </HBox>
+
+    <GridPane hgap="10" vgap="10">
+        <Label text="Nova Conta" style="-fx-font-size: 16px; -fx-font-weight: bold;" GridPane.columnSpan="2" />
+
+        <Label text="Descrição:" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+        <TextField fx:id="descricaoField" promptText="Descrição" GridPane.rowIndex="1" GridPane.columnIndex="1" />
+
+        <Label text="Valor:" GridPane.rowIndex="2" GridPane.columnIndex="0" />
+        <TextField fx:id="valorField" promptText="Valor" GridPane.rowIndex="2" GridPane.columnIndex="1" />
+
+        <Label text="Vencimento:" GridPane.rowIndex="3" GridPane.columnIndex="0" />
+        <DatePicker fx:id="vencimentoPicker" GridPane.rowIndex="3" GridPane.columnIndex="1" />
+
+        <Label text="Tipo:" GridPane.rowIndex="4" GridPane.columnIndex="0" />
+        <HBox spacing="10" GridPane.rowIndex="4" GridPane.columnIndex="1">
+            <RadioButton fx:id="radioPagar" text="Conta a Pagar" selected="true" />
+            <RadioButton fx:id="radioReceber" text="Conta a Receber" />
+        </HBox>
+
+        <HBox spacing="10" GridPane.rowIndex="5" GridPane.columnIndex="1">
+            <Button fx:id="btnSalvar" text="Salvar" styleClass="btn-primary" onAction="#handleSalvar" />
+            <Button fx:id="btnLimpar" text="Limpar" styleClass="btn-secondary" onAction="#handleLimpar" />
+        </HBox>
+    </GridPane>
+</VBox>
