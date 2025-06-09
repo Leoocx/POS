@@ -6,9 +6,9 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface FornecedorRepository {
-    public void adicionarFornecedor(Fornecedor fornecedor) throws SQLException;
-    public void atualizarFornecedor(Fornecedor fornecedor) throws SQLException;
-    public void removerFornecedor(Fornecedor fornecedor) throws SQLException;
-    public List<Fornecedor> showAll() throws SQLException;
+    void adicionarFornecedor(Fornecedor fornecedor) throws SQLException;
+    List<Fornecedor> showAll() throws SQLException;
+    void atualizarFornecedor(Fornecedor fornecedor) throws SQLException;
+    void removerFornecedor(Fornecedor fornecedor) throws SQLException;
 
 }

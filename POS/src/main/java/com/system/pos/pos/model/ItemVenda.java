@@ -4,34 +4,37 @@ import javafx.beans.property.*;
 import java.math.BigDecimal;
 
 public class ItemVenda {
-    private final IntegerProperty idProduto = new SimpleIntegerProperty();
-    private final StringProperty nomeProduto = new SimpleStringProperty();
+    private final Produto produto;
     private final IntegerProperty quantidade = new SimpleIntegerProperty();
-    private final DoubleProperty precoUnitario = new SimpleDoubleProperty();
+    private final ReadOnlyObjectWrapper<Double> totalItem = new ReadOnlyObjectWrapper<>();
 
-    // Getters e Setters para as properties
-    public IntegerProperty idProdutoProperty() {
-        return idProduto;
+    public ItemVenda(Produto produto, int quantidade) {
+        this.produto = produto;
+        setQuantidade(quantidade);
+        atualizarTotal();
+
+        this.quantidade.addListener((obs, oldVal, newVal) -> atualizarTotal());
+    }
+
+    private void atualizarTotal() {
+        Double total = produto.getPreco()*getQuantidade();
+        totalItem.set(total);
+    }
+
+    public Produto getProduto() {
+        return produto;
     }
 
     public int getIdProduto() {
-        return idProduto.get();
-    }
-
-    public void setIdProduto(int idProduto) {
-        this.idProduto.set(idProduto);
-    }
-
-    public StringProperty nomeProdutoProperty() {
-        return nomeProduto;
+        return produto.getId();
     }
 
     public String getNomeProduto() {
-        return nomeProduto.get();
+        return produto.getNome();
     }
 
-    public void setNomeProduto(String nomeProduto) {
-        this.nomeProduto.set(nomeProduto);
+    public double getPrecoUnitario() {
+        return produto.getPreco();
     }
 
     public IntegerProperty quantidadeProperty() {
@@ -46,29 +49,19 @@ public class ItemVenda {
         this.quantidade.set(quantidade);
     }
 
-    public DoubleProperty precoUnitarioProperty() {
-        return precoUnitario;
+    public ReadOnlyObjectProperty<Double> totalItemProperty() {
+        return totalItem.getReadOnlyProperty();
     }
 
-    public double getPrecoUnitario() {
-        return precoUnitario.get();
+    public double getTotalItem() {
+        return totalItem.get();
     }
 
-    public void setPrecoUnitario(double precoUnitario) {
-        this.precoUnitario.set(precoUnitario);
-    }
-
-    public ReadOnlyObjectProperty<BigDecimal> totalItemProperty() {
-        return new SimpleObjectProperty<>(
-                BigDecimal.valueOf(precoUnitario.get()).multiply(BigDecimal.valueOf(quantidade.get()))
-        );
-    }
-
-    public BigDecimal getTotalItem() {
-        return BigDecimal.valueOf(precoUnitario.get()).multiply(BigDecimal.valueOf(quantidade.get()));
+    public double getSubTotal() {
+        return getTotalItem();
     }
 
     public String getDummy() {
-        return ""; // Retorna string vazia para a coluna de remoção
+        return "";
     }
 }

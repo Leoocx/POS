@@ -16,10 +16,6 @@ public class ProdutoView {
     @FXML private TextField preco;
     @FXML private ComboBox<String> statusComboBox;
     @FXML private TableView<Produto> table;
-    @FXML private Button cadastroProdutoBTN;
-    @FXML private Button atualizarProdutoBTN;
-    @FXML private Button deleteProdutoBTN;
-    @FXML private Button clearFieldsBTN;
 
     private ProdutoController produtoController;
     private ObservableList<Produto> produtos;

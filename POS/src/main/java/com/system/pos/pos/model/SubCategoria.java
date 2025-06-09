@@ -17,7 +17,21 @@ public enum SubCategoria {
         this.categoria = categoria;
     }
 
-    public Categoria getCategoria() {
-        return categoria;
+    @Override
+    public String toString() {
+        switch (this) {
+            case NOTEBOOKS: return "Notebooks";
+            case SMARTPHONES: return "Smartphones";
+            case CAMISAS: return "Camisas";
+            case CALÇADOS: return "Calçados";
+            case LIVROS_TECNICOS: return "Livros Técnicos";
+            case LIVROS_FICCAO: return "Livros de Ficção";
+            case MOVEIS_ESCRITORIO: return "Móveis para Escritório";
+            case MOVEIS_SALA: return "Móveis para Sala";
+            case BEBIDAS_ALCOOLICAS: return "Bebidas Alcoólicas";
+            case BEBIDAS_NAO_ALCOOLICAS: return "Bebidas Não Alcoólicas";
+            default: return super.toString();
+        }
     }
+
 }

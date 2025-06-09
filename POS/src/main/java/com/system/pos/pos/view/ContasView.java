@@ -18,7 +18,6 @@ public class ContasView {
     @FXML private TextField campoFiltro;
     @FXML private ComboBox<String> tipoContaCombo;
     @FXML private TableView<Conta> tabelaContas;
-    @FXML private Button btnNovaConta;
     @FXML private Button btnEditar;
     @FXML private Button btnRegistrar;
     @FXML private Button btnRemover;

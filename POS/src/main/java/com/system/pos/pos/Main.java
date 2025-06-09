@@ -72,7 +72,7 @@ public class Main extends Application {
         toolbar.setStyle("-fx-background-color: #0078D7;");
         toolbar.setAlignment(Pos.CENTER_LEFT);
 
-        String[] labels = {"Cadastros", "Estoque", "Compra", "Produção", "Vendas", "Financeiro", "Fiscal"};
+        String[] labels = {"Cadastros", "Estoque", "Compra", "Produção", "Vendas", "Financeiro"};
         for (String label : labels) {
             Button btn = new Button(label);
             btn.setStyle("-fx-background-color: white; -fx-border-radius: 4; -fx-background-radius: 4;");
@@ -149,13 +149,8 @@ public class Main extends Application {
           new TreeItem<>("Contas")
         );
 
-        TreeItem<String> fiscal = new TreeItem<>("Fiscal");
-        fiscal.getChildren().addAll(
-                new TreeItem<>("Notas Fiscais"),
-                new TreeItem<>("Apuração de Impostos")
-        );
 
-        rootItem.getChildren().addAll(cadastros, estoque, vendas, financeiro, fiscal);
+        rootItem.getChildren().addAll(cadastros, estoque, vendas, financeiro);
         return rootItem;
     }
 

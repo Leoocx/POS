@@ -2,19 +2,20 @@ package com.system.pos.pos.database;
 
 import com.system.pos.pos.model.Cliente;
 import com.system.pos.pos.model.Produto;
+import com.system.pos.pos.repository.ClienteRepository;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClienteDAO {
+public class ClienteDAO implements ClienteRepository {
 
     private final Connection connection;
 
     public ClienteDAO() {
         this.connection = ConnectionDB.conectar();
     }
-
+    @Override
     public void adicionarCliente(Cliente cliente) throws SQLException {
         String sql = "INSERT INTO clientes (nome, telefone, cpf, email, endereco) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
@@ -32,7 +33,7 @@ public class ClienteDAO {
             }
         }
     }
-
+    @Override
     public void atualizarCliente(Cliente cliente) throws SQLException {
         String sql = "UPDATE clientes SET nome = ?, telefone = ?, cpf = ?, email = ?, endereco = ? WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -45,7 +46,7 @@ public class ClienteDAO {
             stmt.executeUpdate();
         }
     }
-
+    @Override
     public void removerCliente(int codigo) throws SQLException {
         String sql = "DELETE FROM clientes WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -53,7 +54,7 @@ public class ClienteDAO {
             stmt.executeUpdate();
         }
     }
-
+    @Override
     public Cliente buscarClientePorCodigo(int codigo) throws SQLException {
         String sql = "SELECT * FROM clientes WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -71,7 +72,7 @@ public class ClienteDAO {
         }
         return null;
     }
-
+    @Override
     public List<Cliente> listarClientes() throws SQLException {
         List<Cliente> clientes = new ArrayList<>();
         String sql = "SELECT * FROM clientes";

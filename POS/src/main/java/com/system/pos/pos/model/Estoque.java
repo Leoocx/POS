@@ -3,7 +3,6 @@ package com.system.pos.pos.model;
 import java.time.LocalDateTime;
 
 public class Estoque {
-
         private Long id;
         private Produto produto;
         private LocalDateTime dataHora;
