@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import com.system.pos.pos.controller.ClientesController;
 import com.system.pos.pos.model.Cliente;
 import com.system.pos.pos.report.ReportPrinter;
+import com.system.pos.pos.utils.AlertUtil;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -13,6 +14,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+
+import static com.system.pos.pos.utils.AlertUtil.mostrarAlerta;
 
 public class ClienteView {
 
@@ -73,13 +76,13 @@ public class ClienteView {
                     clientesController.atualizarCliente(selecionado);
                     atualizarTabela();
                     limparCampos();
-                    mostrarAlerta("Sucesso", "Cliente atualizado com sucesso!", Alert.AlertType.INFORMATION);
+                     mostrarAlerta("Sucesso", "Cliente atualizado com sucesso!", Alert.AlertType.INFORMATION);
                 }
             } catch (Exception e) {
-                mostrarAlerta("Erro", "Falha ao atualizar cliente: " + e.getMessage(), Alert.AlertType.ERROR);
+                 mostrarAlerta("Erro", "Falha ao atualizar cliente: " + e.getMessage(), Alert.AlertType.ERROR);
             }
         } else {
-            mostrarAlerta("Aviso", "Nenhum cliente selecionado", Alert.AlertType.WARNING);
+             mostrarAlerta("Aviso", "Nenhum cliente selecionado", Alert.AlertType.WARNING);
         }
     }
 
@@ -91,12 +94,12 @@ public class ClienteView {
                 clientesController.removerCliente(selecionado.getId());
                 atualizarTabela();
                 limparCampos();
-                mostrarAlerta("Sucesso", "Cliente removido com sucesso!", Alert.AlertType.INFORMATION);
+                 mostrarAlerta("Sucesso", "Cliente removido com sucesso!", Alert.AlertType.INFORMATION);
             } catch (Exception e) {
-                mostrarAlerta("Erro", "Falha ao remover cliente: " + e.getMessage(), Alert.AlertType.ERROR);
+                 mostrarAlerta("Erro", "Falha ao remover cliente: " + e.getMessage(), Alert.AlertType.ERROR);
             }
         } else {
-            mostrarAlerta("Aviso", "Nenhum cliente selecionado", Alert.AlertType.WARNING);
+             mostrarAlerta("Aviso", "Nenhum cliente selecionado", Alert.AlertType.WARNING);
         }
     }
 
@@ -155,13 +158,7 @@ public class ClienteView {
         endereco.setText(cliente.getEndereco());
     }
 
-    private void mostrarAlerta(String titulo, String mensagem, Alert.AlertType tipo) {
-        Alert alert = new Alert(tipo);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensagem);
-        alert.showAndWait();
-    }
+    
 
     private void atualizarTabela() throws SQLException {
         if (clientes != null) {

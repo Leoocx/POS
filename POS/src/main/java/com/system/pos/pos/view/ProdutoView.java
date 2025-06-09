@@ -9,6 +9,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
+import static com.system.pos.pos.utils.AlertUtil.mostrarAlerta;
+
 public class ProdutoView {
     
     @FXML private TextField nomeProduto;
@@ -188,11 +190,5 @@ public class ProdutoView {
         produtos.setAll(produtoController.listarTodos());
     }
 
-    private void mostrarAlerta(String titulo, String mensagem, Alert.AlertType tipo) {
-        Alert alert = new Alert(tipo);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensagem);
-        alert.showAndWait();
-    }
+
 }

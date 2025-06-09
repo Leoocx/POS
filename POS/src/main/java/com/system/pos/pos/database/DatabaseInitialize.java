@@ -114,8 +114,4 @@ public class DatabaseInitialize {
             System.out.println("Erro ao criar tabelas: " + e.getMessage());
         }
     }
-
-    public static void main(String[] args){
-        criarTabelas();
-    }
 }

@@ -1,6 +1,7 @@
  package com.system.pos.pos.view;
 
 import com.system.pos.pos.controller.FornecedoresController;
+import com.system.pos.pos.model.Endereco;
 import com.system.pos.pos.model.Fornecedor;
 import com.system.pos.pos.report.ReportPrinter;
 import javafx.collections.FXCollections;
@@ -11,12 +12,21 @@ import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.sql.SQLException;
 
-public class FornecedorView {
+import static com.system.pos.pos.utils.AlertUtil.mostrarAlerta;
+
+ public class FornecedorView {
     
     @FXML private TextField nome;
     @FXML private TextField email;
     @FXML private TextField telefone;
     @FXML private TextField cnpj;
+    @FXML private TextField cep;
+    @FXML private TextField logradouro;
+    @FXML private TextField numero;
+    @FXML private TextField complemento;
+    @FXML private TextField bairro;
+    @FXML private TextField cidade;
+    @FXML private TextField uf;
 
     @FXML private TableView<Fornecedor> table;
 
@@ -41,8 +51,8 @@ public class FornecedorView {
                         nome.getText(),
                         telefone.getText(),
                         email.getText(),
-                        cnpj.getText()
-                       
+                        cnpj.getText(),
+                       new Endereco(cep.getText(), logradouro.getText(), numero.getText(), complemento.getText(), bairro.getText(), cidade.getText(), uf.getText())
                 );
                 fornecedorController.cadastrarFornecedor(fornecedor);
                 atualizarTabela();
@@ -140,14 +150,6 @@ public class FornecedorView {
         cnpj.setText(String.valueOf(fornecedor.getCnpj()));
         email.setText(fornecedor.getEmail());
         telefone.setText(fornecedor.getTelefone());
-    }
-
-    private void mostrarAlerta(String titulo, String mensagem, Alert.AlertType tipo) {
-        Alert alert = new Alert(tipo);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensagem);
-        alert.showAndWait();
     }
 
     private void atualizarTabela() throws SQLException {

@@ -29,10 +29,6 @@ public class ClienteService {
         System.out.println("Cliente removido com sucesso!");
     }
 
-    public Cliente buscarClientePorCodigo(int codigo) throws SQLException {
-        return clienteDAO.buscarClientePorCodigo(codigo);  
-    }
-
     public List<Cliente> listarTodos() throws SQLException {
         return clienteDAO.listarClientes(); 
     }

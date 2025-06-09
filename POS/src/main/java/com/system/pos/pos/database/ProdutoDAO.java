@@ -1,6 +1,5 @@
 package com.system.pos.pos.database;
 
-import com.system.pos.pos.database.ConnectionDB;
 import com.system.pos.pos.model.Produto;
 import com.system.pos.pos.repository.ProdutoRepository;
 
@@ -12,7 +11,7 @@ public class ProdutoDAO implements ProdutoRepository {
     private final Connection CONEXAO_DB;
 
     public ProdutoDAO() {
-        this.CONEXAO_DB = ConnectionDB.conectar();
+        this.CONEXAO_DB = ConnectionManager.getConnection();
     }
 
     @Override

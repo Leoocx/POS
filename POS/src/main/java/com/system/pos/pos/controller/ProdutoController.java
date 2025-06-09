@@ -37,15 +37,6 @@ public class ProdutoController {
         }
     }
 
-    public Produto buscarPorId(int id) {
-        try {
-            return produtoService.buscarPorId(id);
-        } catch (SQLException e) {
-            System.err.println("Erro ao buscar produto por ID: " + e.getMessage());
-            return null;
-        }
-    }
-
     public List<Produto> listarTodos() {
         try {
             return produtoService.listarTodos();

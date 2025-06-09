@@ -11,7 +11,7 @@ public class ContaDAO implements ContaRepository {
     private final Connection CONEXAO_DB;
 
     public ContaDAO() {
-        this.CONEXAO_DB = ConnectionDB.conectar();
+        this.CONEXAO_DB = ConnectionManager.getConnection();
     }
 
     @Override

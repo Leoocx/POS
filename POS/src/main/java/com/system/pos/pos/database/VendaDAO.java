@@ -11,7 +11,7 @@ public class VendaDAO implements VendaRepository {
     private final Connection CONEXAO_DB;
 
     public VendaDAO() {
-        this.CONEXAO_DB = ConnectionDB.conectar();
+        this.CONEXAO_DB = ConnectionManager.getConnection();
     }
     @Override
     public int registrarVenda(List<ItemVenda> itens, String formaPagamento) throws SQLException {

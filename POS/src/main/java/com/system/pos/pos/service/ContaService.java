@@ -46,15 +46,6 @@ public class ContaService {
         }
     }
 
-    public Conta buscarPorId(int id) {
-        try {
-            return contaDAO.searchByID(id);
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erro ao buscar conta por ID", e);
-            throw new RuntimeException("Falha ao buscar conta", e);
-        }
-    }
-
     public ObservableList<Conta> listarTodas(boolean isPagar) {
         try {
             List<Conta> contas = contaDAO.showAll(isPagar);
@@ -72,35 +63,5 @@ public class ContaService {
             LOGGER.log(Level.SEVERE, "Erro ao registrar pagamento", e);
             throw new RuntimeException("Falha ao registrar pagamento", e);
         }
-    }
-
-    public double calcularTotal(ObservableList<Conta> contas) {
-        return contas.stream()
-                .filter(conta -> !conta.isPago())
-                .mapToDouble(Conta::getValor)
-                .sum();
-    }
-
-    public double calcularTotalPago(ObservableList<Conta> contas) {
-        return contas.stream()
-                .filter(Conta::isPago)
-                .mapToDouble(Conta::getValor)
-                .sum();
-    }
-
-    public ObservableList<Conta> filtrarPorVencimento(ObservableList<Conta> contas, LocalDate dataInicio, LocalDate dataFim) {
-        return contas.filtered(conta ->
-                !conta.isPago() &&
-                        !conta.getVencimento().isBefore(dataInicio) &&
-                        !conta.getVencimento().isAfter(dataFim)
-        );
-    }
-
-    public ObservableList<Conta> filtrarAtrasadas(ObservableList<Conta> contas) {
-        LocalDate hoje = LocalDate.now();
-        return contas.filtered(conta ->
-                !conta.isPago() &&
-                        conta.getVencimento().isBefore(hoje)
-        );
     }
 }

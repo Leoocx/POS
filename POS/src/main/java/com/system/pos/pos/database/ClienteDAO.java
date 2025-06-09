@@ -13,7 +13,7 @@ public class ClienteDAO implements ClienteRepository {
     private final Connection connection;
 
     public ClienteDAO() {
-        this.connection = ConnectionDB.conectar();
+        this.connection = ConnectionManager.getConnection();
     }
     @Override
     public void adicionarCliente(Cliente cliente) throws SQLException {

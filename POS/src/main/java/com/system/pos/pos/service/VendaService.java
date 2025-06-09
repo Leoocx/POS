@@ -1,6 +1,6 @@
 package com.system.pos.pos.service;
 
-import com.system.pos.pos.database.ConnectionDB;
+import com.system.pos.pos.database.ConnectionManager;
 import com.system.pos.pos.database.VendaDAO;
 import com.system.pos.pos.model.ItemVenda;
 import java.sql.Connection;
@@ -10,7 +10,12 @@ import java.util.List;
 public class VendaService {
     private final VendaDAO vendaDAO = new VendaDAO();
     private final ProdutoService produtoService = new ProdutoService();
-    private final Connection CONEXAO_DB = ConnectionDB.conectar();
+    private final Connection CONEXAO_DB;
+
+
+    public VendaService(){
+        this.CONEXAO_DB= ConnectionManager.getConnection();
+    }
 
     public boolean registrarVenda(List<ItemVenda> itens, String formaPagamento) {
         try {

@@ -5,14 +5,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.system.pos.pos.database.ConnectionDB;
+import com.system.pos.pos.database.ConnectionManager;
 
 public class LoginService {
 
     private final Connection connection;
 
     public LoginService() {
-        this.connection = ConnectionDB.conectar();
+        this.connection = ConnectionManager.getConnection();
     }
 
     public void registrarConta(String username, String password) throws SQLException{

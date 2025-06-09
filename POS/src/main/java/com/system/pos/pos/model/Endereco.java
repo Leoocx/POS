@@ -2,13 +2,13 @@ package com.system.pos.pos.model;
 public class Endereco {
     private String cep;
     private String logradouro;
-    private int numero;
+    private String numero;
     private String complemento;
     private String bairro;
     private String cidade;
     private String UF;
 
-    public Endereco(String cep, String logradouro, int numero, String complemento, String bairro, String cidade, String UF) {
+    public Endereco(String cep, String logradouro, String numero, String complemento, String bairro, String cidade, String UF) {
         this.cep = cep;
         this.logradouro = logradouro;
         this.numero = numero;
@@ -50,11 +50,11 @@ public class Endereco {
         this.complemento = complemento;
     }
 
-    public int getNumero() {
+    public String getNumero() {
         return numero;
     }
 
-    public void setNumero(int numero) {
+    public void setNumero(String numero) {
         this.numero = numero;
     }
 

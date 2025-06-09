@@ -1,6 +1,7 @@
 package com.system.pos.pos.view;
 
 import com.system.pos.pos.controller.LoginController;
+import com.system.pos.pos.utils.AlertUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -48,7 +49,7 @@ public class LoginView {
                 onLoginSucesso.run();
             }
         } else {
-            showAlert(Alert.AlertType.WARNING, "Campos vazios", "Preencha todos os campos");
+            AlertUtil.mostrarAlerta("Campos vazios", "Preencha todos os campos",Alert.AlertType.WARNING);
         }
     }
 
@@ -66,12 +67,12 @@ public class LoginView {
         String confirmPass = confirmPassword.getText();
 
         if (user.isBlank() || pass.isBlank() || confirmPass.isBlank()) {
-            showAlert(Alert.AlertType.WARNING, "Campos vazios", "Preencha todos os campos");
+            AlertUtil.mostrarAlerta("Campos vazios", "Preencha todos os campos",Alert.AlertType.WARNING);
             return;
         }
 
         if (!pass.equals(confirmPass)) {
-            showAlert(Alert.AlertType.ERROR, "Erro de senha", "As senhas não coincidem");
+            AlertUtil.mostrarAlerta("Erro de senha", "As senhas não coincidem",Alert.AlertType.WARNING);
             return;
         }
 
@@ -113,11 +114,4 @@ public class LoginView {
         }
     }
 
-    private void showAlert(Alert.AlertType type, String title, String message) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
 }

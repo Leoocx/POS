@@ -37,7 +37,4 @@ public class ContaController {
         contaService.registrarPagamento(id);
     }
 
-    public Conta buscarPorId(int id) {
-        return contaService.buscarPorId(id);
-    }
 }

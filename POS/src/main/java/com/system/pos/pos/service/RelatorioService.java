@@ -39,9 +39,4 @@ public class RelatorioService {
             return List.of();
         }
     }
-
-
-    public Path getCaminhoRelatorios() {
-        return RELATORIOS_PATH;
-    }
 }

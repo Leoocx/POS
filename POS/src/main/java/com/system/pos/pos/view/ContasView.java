@@ -14,6 +14,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
+import static com.system.pos.pos.utils.AlertUtil.mostrarAlerta;
+
 public class ContasView {
     @FXML private TextField campoFiltro;
     @FXML private ComboBox<String> tipoContaCombo;
@@ -286,11 +288,4 @@ public class ContasView {
                 total, pagas, total - pagas, valorTotal));
     }
 
-    private void mostrarAlerta(String titulo, String mensagem, Alert.AlertType tipo) {
-        Alert alert = new Alert(tipo);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensagem);
-        alert.showAndWait();
-    }
 }

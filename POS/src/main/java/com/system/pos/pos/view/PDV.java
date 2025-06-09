@@ -2,8 +2,10 @@ package com.system.pos.pos.view;
 
 import com.system.pos.pos.model.ItemVenda;
 import com.system.pos.pos.model.Produto;
+import com.system.pos.pos.model.Venda;
 import com.system.pos.pos.service.ProdutoService;
 import com.system.pos.pos.service.VendaService;
+import com.system.pos.pos.utils.AlertUtil;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.property.SimpleStringProperty;
@@ -28,6 +30,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Optional;
+
+import static com.system.pos.pos.utils.AlertUtil.mostrarAlerta;
 
 public class PDV {
     // Labels
@@ -62,8 +66,7 @@ public class PDV {
     private final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
     private final ProdutoService produtoService = new ProdutoService();
     private final VendaService vendaService = new VendaService();
-
-    // New field to track applied discount
+    private Venda vendaAtual;
     private BigDecimal discountAmount = BigDecimal.ZERO;
 
     @FXML
@@ -242,28 +245,27 @@ public class PDV {
         }
     }
 
-    @FXML
     private void adicionarItem() {
         Produto produto = tableViewProdutos.getSelectionModel().getSelectedItem();
         if (produto == null) {
-            mostrarAlerta("Aviso", "Nenhum produto selecionado.");
+            mostrarAlerta("Aviso", "Nenhum produto selecionado.", Alert.AlertType.INFORMATION);
             return;
         }
 
         try {
             int quantidade = Integer.parseInt(txtQuantidade.getText());
             if (quantidade <= 0) {
-                mostrarAlerta("Erro", "A quantidade deve ser maior que zero.");
+                mostrarAlerta("Erro", "A quantidade deve ser maior que zero.", Alert.AlertType.INFORMATION);
                 return;
             }
 
             if (quantidade > produto.getQuantidade()) {
-                mostrarAlerta("Estoque insuficiente", "Quantidade disponível: " + produto.getQuantidade());
+                mostrarAlerta("Estoque insuficiente", "Quantidade disponível: " + produto.getQuantidade(), Alert.AlertType.INFORMATION);
                 return;
             }
 
             // Verifica se já existe um item com o mesmo produto na venda
-            ItemVenda itemExistente = itensVenda.stream()
+            ItemVenda itemExistente = vendaAtual.getItensVenda().stream()
                     .filter(item -> item.getIdProduto() == produto.getId())
                     .findFirst()
                     .orElse(null);
@@ -271,13 +273,13 @@ public class PDV {
             if (itemExistente != null) {
                 int novaQuantidade = itemExistente.getQuantidade() + quantidade;
                 if (novaQuantidade > produto.getQuantidade()) {
-                    mostrarAlerta("Estoque insuficiente", "Quantidade disponível: " + produto.getQuantidade());
+                    mostrarAlerta("Estoque insuficiente", "Quantidade disponível: " + produto.getQuantidade(), Alert.AlertType.INFORMATION);
                     return;
                 }
                 itemExistente.setQuantidade(novaQuantidade);
             } else {
                 ItemVenda novoItem = new ItemVenda(produto, quantidade);
-                itensVenda.add(novoItem);
+                vendaAtual.adicionarItem(novoItem); // Adiciona o novo item à venda
             }
 
             produto.setQuantidade(produto.getQuantidade() - quantidade);
@@ -286,9 +288,10 @@ public class PDV {
             limparCamposProduto();
 
         } catch (NumberFormatException e) {
-            mostrarAlerta("Erro", "Quantidade inválida.");
+            mostrarAlerta("Erro", "Quantidade inválida.", Alert.AlertType.INFORMATION);
         }
     }
+
 
     private void atualizarTotais() {
         BigDecimal totalBruto = BigDecimal.ZERO;
@@ -341,7 +344,7 @@ public class PDV {
 
                 // Verifica se o valor é negativo
                 if (input.startsWith("-")) {
-                    mostrarAlerta("Erro", "O desconto não pode ser negativo.");
+                    mostrarAlerta("Erro", "O desconto não pode ser negativo.", Alert.AlertType.INFORMATION);
                     return;
                 }
 
@@ -355,7 +358,7 @@ public class PDV {
 
                 // Garante que o desconto não seja maior que o total
                 if (valorDesconto.compareTo(total) > 0) {
-                    mostrarAlerta("Aviso", "Desconto maior que o total da venda. Ajustado para o valor total.");
+                    mostrarAlerta("Aviso", "Desconto maior que o total da venda. Ajustado para o valor total.", Alert.AlertType.INFORMATION);
                     valorDesconto = total;
                 }
 
@@ -373,13 +376,14 @@ public class PDV {
                 calcularTroco();
 
             } catch (NumberFormatException e) {
-                mostrarAlerta("Erro", "Valor inválido. Use números (ex: 10 ou 10.5%)");
+                mostrarAlerta("Erro", "Valor inválido. Use números (ex: 10 ou 10.5%)", Alert.AlertType.INFORMATION);
             }
         });
     }
 
     @FXML
     private void novaVenda() {
+        vendaAtual = new Venda();
         itensVenda.clear();
         txtValorPgto1.clear();
         discountAmount = BigDecimal.ZERO;  // reset discount
@@ -387,6 +391,7 @@ public class PDV {
         lblNumeroVenda.setText(String.format("%03d", Integer.parseInt(lblNumeroVenda.getText()) + 1));
         lblDataVenda.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
     }
+
 
     @FXML
     private void calcularTroco() {
@@ -410,14 +415,14 @@ public class PDV {
     @FXML
     private void finalizarVenda() {
         if (itensVenda.isEmpty()) {
-            mostrarAlerta("Aviso", "Adicione itens à venda");
+            mostrarAlerta("Aviso", "Adicione itens à venda", Alert.AlertType.INFORMATION);
             return;
         }
 
         // Validação dos itens
         for (ItemVenda item : itensVenda) {
             if (item.getQuantidade() <= 0 || item.getPrecoUnitario() <= 0) {
-                mostrarAlerta("Erro", "Quantidade e preço devem ser maiores que zero para todos os itens.");
+                mostrarAlerta("Erro", "Quantidade e preço devem ser maiores que zero para todos os itens.", Alert.AlertType.INFORMATION);
                 return;
             }
         }
@@ -425,7 +430,7 @@ public class PDV {
         calcularTroco();
 
         if (lblTroco.getText().equals("Insuficiente")) {
-            mostrarAlerta("Aviso", "Valor pago é menor que o total");
+            mostrarAlerta("Aviso", "Valor pago é menor que o total", Alert.AlertType.INFORMATION);
             return;
         }
 
@@ -436,10 +441,10 @@ public class PDV {
             String comprovante = gerarComprovanteVenda();
             exibirComprovante(comprovante);
 
-            mostrarAlerta("Sucesso", "Venda registrada");
+            mostrarAlerta("Sucesso", "Venda registrada", Alert.AlertType.INFORMATION);
             novaVenda();
         } else {
-            mostrarAlerta("Erro", "Falha ao registrar venda");
+            mostrarAlerta("Erro", "Falha ao registrar venda", Alert.AlertType.INFORMATION);
         }
     }
     private void exibirComprovante(String comprovante) {
@@ -477,7 +482,7 @@ public class PDV {
             if (success) {
                 job.endJob();
             } else {
-                mostrarAlerta("Erro", "Falha ao imprimir comprovante.");
+                mostrarAlerta("Erro", "Falha ao imprimir comprovante.", Alert.AlertType.INFORMATION);
             }
         }
     }
@@ -519,12 +524,5 @@ public class PDV {
         return comprovante.toString();
     }
 
-    private void mostrarAlerta(String titulo, String mensagem) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensagem);
-        alert.showAndWait();
-    }
 }
 

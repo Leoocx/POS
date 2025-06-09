@@ -1,6 +1,9 @@
 package com.system.pos.pos;
 
-import com.system.pos.pos.controller.LoginController;
+
+import com.system.pos.pos.database.ConnectionManager;
+import com.system.pos.pos.database.DatabaseInitialize;
+import com.system.pos.pos.database.DatabaseType;
 import com.system.pos.pos.view.LoginView;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -11,7 +14,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
@@ -25,6 +27,9 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        ConnectionManager.setTipoBanco(DatabaseType.SQLITE);
+        DatabaseInitialize.criarTabelas();
+
         exibirTelaLogin(primaryStage);
     }
 
