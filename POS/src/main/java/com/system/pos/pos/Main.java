@@ -141,10 +141,8 @@ public class Main extends Application {
 
         TreeItem<String> vendas = new TreeItem<>("Venda");
         TreeItem<String> pdv = new TreeItem<>("PDV");
-        TreeItem<String> ecf = new TreeItem<>("ECF");
         TreeItem<String> relatorios = new TreeItem<>("Relatorios");
-        TreeItem<String> bi = new TreeItem<>("Business Intelligence");
-        vendas.getChildren().addAll(pdv, ecf, relatorios, bi);
+        vendas.getChildren().addAll(pdv, relatorios);
 
         TreeItem<String> financeiro = new TreeItem<>("Financeiro");
         financeiro.getChildren().addAll(

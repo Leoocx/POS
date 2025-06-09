@@ -29,8 +29,6 @@ public class ContasView {
     @FXML private RadioButton radioPagar;
     @FXML private RadioButton radioReceber;
 
-
-
     private final ToggleGroup tipoToggleGroup = new ToggleGroup();
     private final ContaController contaController;
     private final ObservableList<Conta> todasContas;

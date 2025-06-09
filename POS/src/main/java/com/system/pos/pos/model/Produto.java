@@ -9,7 +9,7 @@ public class Produto {
     private final DoubleProperty preco = new SimpleDoubleProperty();
     private final StringProperty status = new SimpleStringProperty();
     private StringProperty codigoBarras= new SimpleStringProperty();
-    // Construtor
+
     public Produto() {
     }
     public Produto(String nome, int quantidade, double preco, String status) {

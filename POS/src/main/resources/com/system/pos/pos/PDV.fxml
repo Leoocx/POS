@@ -53,9 +53,18 @@
       </style>
    </TableView>
 
-   <!-- Área de Busca e Pagamento - Card Moderno -->
+   <TableView fx:id="tableViewItensVenda" style="-fx-pref-height: 150; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 1);">
+      <columns>
+         <TableColumn text="PRODUTO" fx:id="colItemDescricao" prefWidth="200"/>
+         <TableColumn text="QTD" fx:id="colItemQuantidade" prefWidth="50"/>
+         <TableColumn text="TOTAL" fx:id="colItemTotal" prefWidth="100"/>
+      </columns>
+   </TableView>
+
+   <!-- Área de Busca e Pagamento  -->
    <HBox spacing="15" style="-fx-padding: 10; -fx-background-color: white; -fx-background-radius: 5; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 1);">
       <!-- Área de Busca -->
+      <TextField fx:id="txtQuantidade" text="1" style="-fx-pref-width: 50;"/>
       <VBox spacing="8" style="-fx-padding: 5; -fx-border-color: #e0e0e0; -fx-border-width: 0 1 0 0; -fx-border-style: solid;">
          <Label text="PESQUISAR PRODUTO" style="-fx-font-weight: bold; -fx-text-fill: #3f51b5;"/>
          <TextField fx:id="txtDescricao" promptText="Digite a descrição" style="-fx-pref-width: 250;"/>
@@ -64,7 +73,7 @@
             <Button text="BUSCAR" onAction="#buscarProduto" style="-fx-base: #3f51b5; -fx-text-fill: white;"/>
          </HBox>
          <Label text="VALOR UNITÁRIO" style="-fx-font-weight: bold; -fx-text-fill: #3f51b5;"/>
-         <TextField fx:id="txtValorUnitario" editable="false" style="-fx-font-weight: bold; -fx-font-size: 14;"/>
+         <TextField fx:id="txtValorUnitario" editable="false" style="-fx-font-weight: bold;"/>
       </VBox>
 
       <!-- Área de Pagamento -->
@@ -72,30 +81,8 @@
          <Label text="FORMA DE PAGAMENTO" style="-fx-font-weight: bold; -fx-text-fill: #3f51b5;"/>
          <HBox spacing="10">
             <VBox spacing="5">
-               <ComboBox fx:id="cbFormaPgto1" style="-fx-pref-width: 150;">
-                  <items>
-                     <FXCollections fx:factory="observableArrayList">
-                        <String fx:value="DINHEIRO"/>
-                        <String fx:value="CARTÃO CRÉDITO"/>
-                        <String fx:value="CARTÃO DÉBITO"/>
-                        <String fx:value="PIX"/>
-                     </FXCollections>
-                  </items>
-               </ComboBox>
+               <Label text="DINHEIRO" style="-fx-font-weight: bold; -fx-text-fill: #3f51b5;"/>
                <TextField fx:id="txtValorPgto1" promptText="R$ 0,00" style="-fx-font-weight: bold;"/>
-            </VBox>
-            <VBox spacing="5">
-               <ComboBox fx:id="cbFormaPgto2" style="-fx-pref-width: 150;">
-                  <items>
-                     <FXCollections fx:factory="observableArrayList">
-                        <String fx:value="DINHEIRO"/>
-                        <String fx:value="CARTÃO CRÉDITO"/>
-                        <String fx:value="CARTÃO DÉBITO"/>
-                        <String fx:value="PIX"/>
-                     </FXCollections>
-                  </items>
-               </ComboBox>
-               <TextField fx:id="txtValorPgto2" promptText="R$ 0,00" style="-fx-font-weight: bold;"/>
             </VBox>
          </HBox>
       </VBox>
@@ -144,12 +131,7 @@
 
       <Button text="F1 - DESCONTO" style="-fx-base: #5c6bc0; -fx-text-fill: white; -fx-font-weight: bold;" GridPane.columnIndex="0"/>
       <Button text="F3 - LOCALIZAR" style="-fx-base: #5c6bc0; -fx-text-fill: white; -fx-font-weight: bold;" GridPane.columnIndex="1"/>
-      <Button text="F5 - PAGAMENTO" style="-fx-base: #5c6bc0; -fx-text-fill: white; -fx-font-weight: bold;" GridPane.columnIndex="2"/>
-      <Button text="F7 - IMPRIMIR" style="-fx-base: #5c6bc0; -fx-text-fill: white; -fx-font-weight: bold;" GridPane.columnIndex="3"/>
-
       <Button text="F2 - NOVA VENDA" style="-fx-base: #43a047; -fx-text-fill: white; -fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-      <Button text="F4 - ALTERAR" style="-fx-base: #5c6bc0; -fx-text-fill: white; -fx-font-weight: bold;" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-      <Button text="F6 - PRODUTOS" style="-fx-base: #5c6bc0; -fx-text-fill: white; -fx-font-weight: bold;" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
       <Button text="F9 - CANCELAR" style="-fx-base: #e53935; -fx-text-fill: white; -fx-font-weight: bold;" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
    </GridPane>
 
