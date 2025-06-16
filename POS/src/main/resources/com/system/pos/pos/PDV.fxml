@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+
+<?import java.net.URL?>
+<VBox xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.system.pos.pos.view.PDV" spacing="10"
+      style="-fx-background-color: #f5f7fa; -fx-padding: 15;">
+
+   <!-- Estilo CSS interno -->
+   <stylesheets>
+      <URL value="@../../style/css/styles.css" />
+   </stylesheets>
+
+   <!-- Cabeçalho da Venda - Moderno -->
+   <VBox style="-fx-background-color: #3f51b5; -fx-padding: 12; -fx-background-radius: 5;">
+      <Label text="SISTEMA DE VENDAS - CAIXA LIVRE" style="-fx-font-weight: bold; -fx-font-size: 18; -fx-text-fill: white;"/>
+      <HBox spacing="25" style="-fx-padding: 8 0 0 0;">
+         <VBox spacing="2">
+            <Label text="NÚMERO DA VENDA:" style="-fx-text-fill: #e0e0e0; -fx-font-size: 11;"/>
+            <Label fx:id="lblNumeroVenda" text="000000" style="-fx-font-weight: bold; -fx-font-size: 14; -fx-text-fill: white;"/>
+         </VBox>
+         <VBox spacing="2">
+            <Label text="DATA/HORA:" style="-fx-text-fill: #e0e0e0; -fx-font-size: 11;"/>
+            <Label fx:id="lblDataVenda" text="02/10/2020 12:58:17" style="-fx-font-weight: bold; -fx-font-size: 14; -fx-text-fill: white;"/>
+         </VBox>
+         <VBox spacing="2">
+            <Label text="CLIENTE:" style="-fx-text-fill: #e0e0e0; -fx-font-size: 11;"/>
+            <Label fx:id="lblCliente" text="CLIENTE PADRÃO" style="-fx-font-weight: bold; -fx-font-size: 14; -fx-text-fill: white;"/>
+         </VBox>
+         <VBox spacing="2">
+            <Label text="VENDEDOR:" style="-fx-text-fill: #e0e0e0; -fx-font-size: 11;"/>
+            <Label fx:id="lblVendedor" text="-" style="-fx-font-weight: bold; -fx-font-size: 14; -fx-text-fill: white;"/>
+         </VBox>
+      </HBox>
+   </VBox>
+
+   <!-- Tabela de Produtos - Estilizada -->
+   <TableView fx:id="tableViewProdutos" style="-fx-pref-height: 220; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 1);">
+      <columns>
+         <TableColumn text="DESCRIÇÃO" fx:id="colDescricao" style="-fx-font-weight: bold;"/>
+         <TableColumn text="ID" fx:id="colID" style="-fx-font-weight: bold;"/>
+         <TableColumn text="VALOR UNITÁRIO" fx:id="colValorUnitario" style="-fx-font-weight: bold;"/>
+      </columns>
+      <style>
+         -fx-font-size: 13;
+      </style>
+   </TableView>
+
+   <TableView fx:id="tableViewItensVenda" style="-fx-pref-height: 150; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 1);">
+      <columns>
+         <TableColumn text="PRODUTO" fx:id="colItemDescricao" prefWidth="200"/>
+         <TableColumn text="QTD" fx:id="colItemQuantidade" prefWidth="50"/>
+         <TableColumn text="TOTAL" fx:id="colItemTotal" prefWidth="100"/>
+      </columns>
+   </TableView>
+
+   <!-- Área de Busca e Pagamento  -->
+   <HBox spacing="15" style="-fx-padding: 10; -fx-background-color: white; -fx-background-radius: 5; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 1);">
+      <!-- Área de Busca -->
+      <TextField fx:id="txtQuantidade" text="1" style="-fx-pref-width: 50;"/>
+      <VBox spacing="8" style="-fx-padding: 5; -fx-border-color: #e0e0e0; -fx-border-width: 0 1 0 0; -fx-border-style: solid;">
+         <Label text="PESQUISAR PRODUTO" style="-fx-font-weight: bold; -fx-text-fill: #3f51b5;"/>
+         <TextField fx:id="txtDescricao" promptText="Digite a descrição" style="-fx-pref-width: 250;"/>
+         <HBox spacing="5" alignment="CENTER_LEFT">
+            <TextField fx:id="txtID" promptText="ID" style="-fx-pref-width: 200;"/>
+            <Button text="BUSCAR" onAction="#buscarProduto" style="-fx-base: #3f51b5; -fx-text-fill: white;"/>
+         </HBox>
+         <Label text="VALOR UNITÁRIO" style="-fx-font-weight: bold; -fx-text-fill: #3f51b5;"/>
+         <TextField fx:id="txtValorUnitario" editable="false" style="-fx-font-weight: bold;"/>
+      </VBox>
+
+      <!-- Área de Pagamento -->
+      <VBox spacing="8" style="-fx-padding: 5;">
+         <Label text="FORMA DE PAGAMENTO" style="-fx-font-weight: bold; -fx-text-fill: #3f51b5;"/>
+         <HBox spacing="10">
+            <VBox spacing="5">
+               <Label text="DINHEIRO" style="-fx-font-weight: bold; -fx-text-fill: #3f51b5;"/>
+               <TextField fx:id="txtValorPgto1" promptText="R$ 0,00" style="-fx-font-weight: bold;"/>
+            </VBox>
+         </HBox>
+      </VBox>
+   </HBox>
+
+   <!-- Resumo Financeiro - Destaque -->
+   <GridPane style="-fx-padding: 10; -fx-background-color: white; -fx-background-radius: 5; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 1);">
+      <columnConstraints>
+         <ColumnConstraints percentWidth="25" halignment="CENTER"/>
+         <ColumnConstraints percentWidth="25" halignment="CENTER"/>
+         <ColumnConstraints percentWidth="25" halignment="CENTER"/>
+         <ColumnConstraints percentWidth="25" halignment="CENTER"/>
+      </columnConstraints>
+      <rowConstraints>
+         <RowConstraints prefHeight="30"/>
+         <RowConstraints prefHeight="40"/>
+      </rowConstraints>
+
+      <Label text="TOTAL BRUTO" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-font-weight: bold;"/>
+      <Label fx:id="lblTotalBruto" text="R$ 0,00" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-font-weight: bold; -fx-font-size: 16;"/>
+
+      <Label text="QTD. ITENS" GridPane.columnIndex="1" GridPane.rowIndex="0" style="-fx-font-weight: bold;"/>
+      <Label fx:id="lblQtdItens" text="0" GridPane.columnIndex="1" GridPane.rowIndex="1" style="-fx-font-weight: bold; -fx-font-size: 16;"/>
+
+      <Label text="TOTAL PAGO" GridPane.columnIndex="2" GridPane.rowIndex="0" style="-fx-font-weight: bold;"/>
+      <Label fx:id="lblTotalPago" text="R$ 0,00" GridPane.columnIndex="2" GridPane.rowIndex="1" style="-fx-font-weight: bold; -fx-font-size: 16;"/>
+
+      <Label text="TROCO" GridPane.columnIndex="3" GridPane.rowIndex="0" style="-fx-font-weight: bold;"/>
+      <Label fx:id="lblTroco" text="R$ 0,00" GridPane.columnIndex="3" GridPane.rowIndex="1" style="-fx-font-weight: bold; -fx-font-size: 16;"/>
+   </GridPane>
+
+   <!-- Total Líquido - Destaque -->
+   <HBox alignment="CENTER_RIGHT" style="-fx-padding: 5; -fx-background-color: #e8f5e9; -fx-background-radius: 5;">
+      <Label text="TOTAL LÍQUIDO: " style="-fx-font-weight: bold; -fx-font-size: 16;"/>
+      <Label fx:id="lblTotalLiquido" text="R$ 0,00" style="-fx-font-weight: bold; -fx-font-size: 20; -fx-text-fill: #2e7d32;"/>
+   </HBox>
+
+   <!-- Botões de Ação - Organizados -->
+   <GridPane hgap="10" vgap="8" style="-fx-padding: 10 0;">
+      <columnConstraints>
+         <ColumnConstraints percentWidth="25" halignment="CENTER"/>
+         <ColumnConstraints percentWidth="25" halignment="CENTER"/>
+         <ColumnConstraints percentWidth="25" halignment="CENTER"/>
+         <ColumnConstraints percentWidth="25" halignment="CENTER"/>
+      </columnConstraints>
+
+      <Button text="F1 - DESCONTO" style="-fx-base: #5c6bc0; -fx-text-fill: white; -fx-font-weight: bold;" GridPane.columnIndex="0"/>
+      <Button text="F3 - LOCALIZAR" style="-fx-base: #5c6bc0; -fx-text-fill: white; -fx-font-weight: bold;" GridPane.columnIndex="1"/>
+      <Button text="F2 - NOVA VENDA" style="-fx-base: #43a047; -fx-text-fill: white; -fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+      <Button text="F9 - CANCELAR" style="-fx-base: #e53935; -fx-text-fill: white; -fx-font-weight: bold;" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+   </GridPane>
+
+   <!-- Botão Principal -->
+   <Button text="FINALIZAR VENDA (F10)" style="-fx-base: #43a047; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16; -fx-pref-width: 300; -fx-pref-height: 40;" alignment="CENTER"/>
+</VBox>
