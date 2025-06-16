@@ -1,4 +1,5 @@
 package com.system.pos.pos.service;
+
 import com.system.pos.pos.database.ProdutoDAO;
 import com.system.pos.pos.model.Produto;
 import javafx.collections.FXCollections;
@@ -9,11 +10,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ProdutoService {
-    private ProdutoDAO produtoDAO;
+    private final ProdutoDAO produtoDAO;
 
-    public ProdutoService(){
-        this.produtoDAO=new ProdutoDAO();
+    public ProdutoService() {
+        this.produtoDAO = new ProdutoDAO();
     }
+
     public void adicionarProduto(Produto produto) throws SQLException {
         produtoDAO.insertProduto(produto);
     }
@@ -33,12 +35,12 @@ public class ProdutoService {
     public List<Produto> listarTodos() throws SQLException {
         return produtoDAO.showAll();
     }
+
     public ObservableList<Produto> listarProdutos() {
         try {
             return FXCollections.observableArrayList(produtoDAO.showAll());
         } catch (SQLException e) {
-            e.printStackTrace();
-            return FXCollections.observableArrayList();
+            throw new RuntimeException("Erro ao listar produtos", e);
         }
     }
 
@@ -48,33 +50,24 @@ public class ProdutoService {
             return FXCollections.observableArrayList(
                     todosProdutos.stream()
                             .filter(p -> String.valueOf(p.getId()).contains(termo) ||
-                                    p.getNome().toLowerCase().contains(termo.toLowerCase()))
+                                    p.getNome().toLowerCase().contains(termo.toLowerCase()) ||
+                                    (p.getCodigoBarras() != null && p.getCodigoBarras().contains(termo)))
                             .collect(Collectors.toList())
             );
         } catch (SQLException e) {
-            e.printStackTrace();
-            return FXCollections.observableArrayList();
+            throw new RuntimeException("Erro ao buscar produtos", e);
         }
     }
 
-    public boolean atualizarEstoque(int idProduto, int quantidadeVendida) {
-        try {
-            Produto produto = produtoDAO.searchByID(idProduto);
-            if (produto != null) {
-                // Verifica se a quantidade disponível é suficiente
-                if (produto.getQuantidade() >= quantidadeVendida) {
-                    produto.setQuantidade(produto.getQuantidade() - quantidadeVendida);
-                    produtoDAO.updateProduto(produto);
-                    return true; // Atualização bem-sucedida
-                } else {
-                    System.out.println("Quantidade insuficiente em estoque.");
-                    return false; // Quantidade insuficiente
-                }
+    public boolean atualizarEstoque(int idProduto, int quantidadeVendida) throws SQLException {
+        Produto produto = produtoDAO.searchByID(idProduto);
+        if (produto != null) {
+            if (produto.getQuantidade() >= quantidadeVendida) {
+                produto.setQuantidade(produto.getQuantidade() - quantidadeVendida);
+                produtoDAO.updateProduto(produto);
+                return true;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-        return false; // Produto não encontrado ou erro
+        return false;
     }
-
 }

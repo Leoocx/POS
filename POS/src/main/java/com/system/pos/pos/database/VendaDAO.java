@@ -41,7 +41,7 @@ public class VendaDAO implements VendaRepository {
                 stmt.setInt(1, idVenda); // Usa idVenda corretamente
                 stmt.setInt(2, item.getIdProduto());
                 stmt.setInt(3, item.getQuantidade()); // Certifique-se de que quantidade não é nula
-                stmt.setDouble(4, item.getPrecoUnitario()); // Certifique-se de que preco_unitario não é nulo
+                stmt.setBigDecimal(4, item.getPrecoUnitario()); // Certifique-se de que preco_unitario não é nulo
                 stmt.addBatch();
             }
             stmt.executeBatch();

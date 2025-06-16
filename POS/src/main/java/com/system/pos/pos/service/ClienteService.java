@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class ClienteService {
-
     private final ClienteDAO clienteDAO;
 
     public ClienteService() {
@@ -15,21 +14,33 @@ public class ClienteService {
     }
 
     public void cadastrarCliente(Cliente cliente) throws SQLException {
-        clienteDAO.adicionarCliente(cliente);  
-        System.out.println("Cliente cadastrado com sucesso!");
+        validarCliente(cliente);
+        clienteDAO.adicionarCliente(cliente);
     }
 
     public void atualizarCliente(Cliente cliente) throws SQLException {
+        validarCliente(cliente);
         clienteDAO.atualizarCliente(cliente);
-        System.out.println("Cliente atualizado com sucesso!");
     }
 
-    public void removerCliente(int codigo) throws SQLException {
-        clienteDAO.removerCliente(codigo); 
-        System.out.println("Cliente removido com sucesso!");
+    public void removerCliente(int id) throws SQLException {
+        clienteDAO.removerCliente(id);
     }
 
     public List<Cliente> listarTodos() throws SQLException {
-        return clienteDAO.listarClientes(); 
+        return clienteDAO.listarClientes();
+    }
+
+    public Cliente buscarPorId(int id) throws SQLException {
+        return clienteDAO.buscarClientePorCodigo(id);
+    }
+
+    private void validarCliente(Cliente cliente) {
+        if (cliente.getNome() == null || cliente.getNome().trim().isEmpty()) {
+            throw new IllegalArgumentException("Nome do cliente é obrigatório");
+        }
+        if (cliente.getDocumento() == null || cliente.getDocumento().trim().isEmpty()) {
+            throw new IllegalArgumentException("CPF do cliente é obrigatório");
+        }
     }
 }

@@ -6,7 +6,8 @@ import java.math.BigDecimal;
 public class ItemVenda {
     private final Produto produto;
     private final IntegerProperty quantidade = new SimpleIntegerProperty();
-    private final ReadOnlyObjectWrapper<Double> totalItem = new ReadOnlyObjectWrapper<>();
+    private final ReadOnlyObjectWrapper<BigDecimal> totalItem = new ReadOnlyObjectWrapper<>(BigDecimal.ZERO);
+
 
     public ItemVenda(Produto produto, int quantidade) {
         this.produto = produto;
@@ -17,9 +18,10 @@ public class ItemVenda {
     }
 
     private void atualizarTotal() {
-        Double total = produto.getPreco()*getQuantidade();
+        BigDecimal total = produto.getPreco().multiply(BigDecimal.valueOf(getQuantidade()));
         totalItem.set(total);
     }
+
 
     public Produto getProduto() {
         return produto;
@@ -33,7 +35,7 @@ public class ItemVenda {
         return produto.getNome();
     }
 
-    public double getPrecoUnitario() {
+    public BigDecimal getPrecoUnitario() {
         return produto.getPreco();
     }
 
@@ -49,17 +51,18 @@ public class ItemVenda {
         this.quantidade.set(quantidade);
     }
 
-    public ReadOnlyObjectProperty<Double> totalItemProperty() {
+    public ReadOnlyObjectProperty<BigDecimal> totalItemProperty() {
         return totalItem.getReadOnlyProperty();
     }
 
-    public double getTotalItem() {
+    public BigDecimal getTotalItem() {
         return totalItem.get();
     }
 
-    public double getSubTotal() {
+    public BigDecimal getSubTotal() {
         return getTotalItem();
     }
+
 
     public String getDummy() {
         return "";

@@ -5,96 +5,125 @@ import com.system.pos.pos.model.Fornecedor;
 import com.system.pos.pos.repository.FornecedorRepository;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FornecedorDAO implements FornecedorRepository {
-
-    private Connection connection;
+    private final Connection connection;
 
     public FornecedorDAO() {
         this.connection = ConnectionManager.getConnection();
     }
 
+    @Override
+    public int salvarEndereco(Endereco endereco) throws SQLException {
+        return 0;
+    }
 
     @Override
     public void adicionarFornecedor(Fornecedor fornecedor) throws SQLException {
-        int enderecoId = salvarEndereco(fornecedor.getEndereco());
+        String sql = "INSERT INTO fornecedores (nome, cnpj, telefone, email, " +
+                "representante, telefone_representante, email_representante, " +
+                "cep, logradouro, numero, complemento, bairro, localidade, uf, data_cadastro) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        String sql = "INSERT INTO fornecedores (nome, cnpj, telefone, email, endereco_id) VALUES (?, ?, ?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            preencherStatement(fornecedor, stmt);
+            stmt.executeUpdate();
+
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    fornecedor.setId(rs.getInt(1));
+                }
+            }
+        }
+    }
+
+    @Override
+    public void atualizarFornecedor(Fornecedor fornecedor) throws SQLException {
+        String sql = "UPDATE fornecedores SET nome = ?, telefone = ?, email = ?, " +
+                "representante = ?, telefone_representante = ?, email_representante = ?, " +
+                "cep = ?, logradouro = ?, numero = ?, complemento = ?, " +
+                "bairro = ?, localidade = ?, uf = ? WHERE id = ?";
+
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, fornecedor.getNome());
-            stmt.setString(2, fornecedor.getCnpj());
-            stmt.setString(3, fornecedor.getTelefone());
-            stmt.setString(4, fornecedor.getEmail());
-            stmt.setInt(5, enderecoId);
+            preencherStatement(fornecedor, stmt);
+            stmt.setInt(14, fornecedor.getId());
             stmt.executeUpdate();
         }
     }
-    @Override
-    public void atualizarFornecedor(Fornecedor fornecedor) throws SQLException {
-        String sql = "UPDATE fornecedores SET nome = ?, cnpj = ?, telefone = ?, email = ?,  WHERE id = ?";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setString(1, fornecedor.getNome());
-            preparedStatement.setString(2, fornecedor.getCnpj());
-            preparedStatement.setString(3, fornecedor.getTelefone());
-            preparedStatement.setString(4, fornecedor.getEmail());
-            preparedStatement.setInt(5, fornecedor.getId());
-            preparedStatement.executeUpdate();
-        }
+
+    private void preencherStatement(Fornecedor fornecedor, PreparedStatement stmt) throws SQLException {
+        Endereco endereco = fornecedor.getEndereco();
+
+        stmt.setString(1, fornecedor.getNome());
+        stmt.setString(2, fornecedor.getDocumento());
+        stmt.setString(3, fornecedor.getTelefone());
+        stmt.setString(4, fornecedor.getEmail());
+        stmt.setString(5, fornecedor.getRepresentante());
+        stmt.setString(6, fornecedor.getTelefoneRepresentante());
+        stmt.setString(7, fornecedor.getEmailRepresentante());
+
+        stmt.setString(8, endereco.getCep());
+        stmt.setString(9, endereco.getLogradouro());
+        stmt.setString(10, endereco.getNumero());
+        stmt.setString(11, endereco.getComplemento());
+        stmt.setString(12, endereco.getBairro());
+        stmt.setString(13, endereco.getLocalidade());
+        stmt.setString(14, endereco.getUf());
+
+        stmt.setDate(15, Date.valueOf(fornecedor.getDataCadastro()));
     }
+
     @Override
     public void removerFornecedor(Fornecedor fornecedor) throws SQLException {
         String sql = "DELETE FROM fornecedores WHERE id = ?";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setInt(1, fornecedor.getId());
-            preparedStatement.executeUpdate();
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, fornecedor.getId());
+            stmt.executeUpdate();
         }
     }
-    
 
     @Override
     public List<Fornecedor> showAll() throws SQLException {
         List<Fornecedor> fornecedores = new ArrayList<>();
         String sql = "SELECT * FROM fornecedores";
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            ResultSet rs = stmt.executeQuery();
+        try (PreparedStatement stmt = connection.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                Fornecedor fornecedor = new Fornecedor();
-                    fornecedor.setId(rs.getInt("id"));
-                    fornecedor.setNome(rs.getString("nome"));
-                    fornecedor.setCnpj(rs.getString("cnpj"));
-                    fornecedor.setTelefone(rs.getString("telefone"));
-                    fornecedor.setEmail(rs.getString("email"));
-                    fornecedores.add(fornecedor);
+                fornecedores.add(criarFornecedorFromResultSet(rs));
             }
         }
         return fornecedores;
     }
 
-    @Override
-    public int salvarEndereco(Endereco endereco) throws SQLException {
-        String sql = "INSERT INTO enderecos (cep, logradouro, numero, complemento, bairro, cidade, uf) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setString(1, endereco.getCep());
-            stmt.setString(2, endereco.getLogradouro());
-            stmt.setString(3, endereco.getNumero());
-            stmt.setString(4, endereco.getComplemento());
-            stmt.setString(5, endereco.getBairro());
-            stmt.setString(6, endereco.getCidade());
-            stmt.setString(7, endereco.getUF());
-            stmt.executeUpdate();
+    private Fornecedor criarFornecedorFromResultSet(ResultSet rs) throws SQLException {
+        Endereco endereco = new Endereco();
+        endereco.setCep(rs.getString("cep"));
+        endereco.setLogradouro(rs.getString("logradouro"));
+        endereco.setNumero(rs.getString("numero"));
+        endereco.setComplemento(rs.getString("complemento"));
+        endereco.setBairro(rs.getString("bairro"));
+        endereco.setLocalidade(rs.getString("localidade"));
+        endereco.setUf(rs.getString("uf"));
 
-            try (ResultSet keys = stmt.getGeneratedKeys()) {
-                if (keys.next()) {
-                    return keys.getInt(1); // id gerado
-                } else {
-                    throw new SQLException("ID do endereço não gerado.");
-                }
-            }
-        }
+        Fornecedor fornecedor = new Fornecedor(
+                rs.getString("nome"),
+                rs.getString("telefone"),
+                rs.getString("cnpj"),
+                rs.getString("email"),
+                endereco
+        );
+        fornecedor.setId(rs.getInt("id"));
+        fornecedor.setRepresentante(rs.getString("representante"));
+        fornecedor.setTelefoneRepresentante(rs.getString("telefone_representante"));
+        fornecedor.setEmailRepresentante(rs.getString("email_representante"));
+        fornecedor.setDataCadastro(rs.getDate("data_cadastro").toLocalDate());
+
+        return fornecedor;
     }
-
 }

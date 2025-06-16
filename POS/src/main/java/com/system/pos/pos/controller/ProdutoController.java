@@ -2,47 +2,43 @@ package com.system.pos.pos.controller;
 
 import com.system.pos.pos.model.Produto;
 import com.system.pos.pos.service.ProdutoService;
+import javafx.collections.ObservableList;
 
 import java.sql.SQLException;
 import java.util.List;
 
 public class ProdutoController {
-    private ProdutoService produtoService;
+    private final ProdutoService produtoService;
 
-    public ProdutoController(){
-        this.produtoService=new ProdutoService();
+    public ProdutoController() {
+        this.produtoService = new ProdutoService();
     }
 
-    public void adicionarProduto(Produto produto) {
-        try {
-            produtoService.adicionarProduto(produto);
-        } catch (SQLException e) {
-            System.err.println("Erro ao adicionar produto: " + e.getMessage());
-        }
+    public void adicionarProduto(Produto produto) throws SQLException {
+        produtoService.adicionarProduto(produto);
     }
 
-    public void atualizarProduto(Produto produto) {
-        try {
-            produtoService.atualizarProduto(produto);
-        } catch (SQLException e) {
-            System.err.println("Erro ao atualizar produto: " + e.getMessage());
-        }
+    public void atualizarProduto(Produto produto) throws SQLException {
+        produtoService.atualizarProduto(produto);
     }
 
-    public void removerProduto(int id) {
-        try {
-            produtoService.removerProduto(id);
-        } catch (SQLException e) {
-            System.err.println("Erro ao remover produto: " + e.getMessage());
-        }
+    public void removerProduto(int id) throws SQLException {
+        produtoService.removerProduto(id);
     }
 
-    public List<Produto> listarTodos() {
-        try {
-            return produtoService.listarTodos();
-        } catch (SQLException e) {
-            System.err.println("Erro ao listar produtos: " + e.getMessage());
-            return null;
-        }
+    public List<Produto> listarTodos() throws SQLException {
+        return produtoService.listarTodos();
+    }
+
+    public ObservableList<Produto> listarProdutos() {
+        return produtoService.listarProdutos();
+    }
+
+    public ObservableList<Produto> buscarProdutos(String termo) {
+        return produtoService.buscarProdutos(termo);
+    }
+
+    public boolean atualizarEstoque(int idProduto, int quantidadeVendida) throws SQLException {
+        return produtoService.atualizarEstoque(idProduto, quantidadeVendida);
     }
 }

@@ -2,7 +2,6 @@ package com.system.pos.pos.repository;
 
 import com.system.pos.pos.model.Produto;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 

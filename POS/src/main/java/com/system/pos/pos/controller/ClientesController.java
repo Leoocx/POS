@@ -7,8 +7,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class ClientesController {
-
-    private ClienteService clienteService;
+    private final ClienteService clienteService;
 
     public ClientesController() {
         this.clienteService = new ClienteService();
@@ -30,5 +29,7 @@ public class ClientesController {
         return clienteService.listarTodos();
     }
 
+    public Cliente buscarPorId(int id) throws SQLException {
+        return clienteService.buscarPorId(id);
+    }
 }
-

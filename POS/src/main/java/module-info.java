@@ -10,6 +10,8 @@ module com.system.pos.pos {
     requires barcodes;
     requires io;
     requires java.desktop;
+    requires java.net.http;
+    requires com.fasterxml.jackson.databind;
 
     opens com.system.pos.pos to javafx.fxml;
     opens com.system.pos.pos.view to javafx.fxml;

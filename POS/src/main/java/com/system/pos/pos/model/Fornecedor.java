@@ -1,65 +1,70 @@
 package com.system.pos.pos.model;
 
-public class Fornecedor {
-    private int id;
-    private String nome;
-    private String telefone;
-    private String email;
-    private String cnpj;
-    private Endereco endereco;
+import java.time.LocalDate;
 
-    public Fornecedor(String nome, String telefone, String email, String cnpj, Endereco endereco) {
-        this.nome = nome;
-        this.telefone = telefone;
-        this.email = email;
-        this.cnpj = cnpj;
-        this.endereco=endereco;
+public class Fornecedor extends Participante {
+    private String representante;
+    private String telefoneRepresentante;
+    private String emailRepresentante;
+    private LocalDate dataCadastro;
+
+    public Fornecedor(TipoParticipante tipoParticipante, String documento, String nome,
+                      String telefone, String email, Endereco endereco,
+                      String representante, String telefoneRepresentante,
+                      String emailRepresentante, LocalDate dataCadastro) {
+        super(tipoParticipante, documento, nome, telefone, email, endereco);
+        this.representante = representante;
+        this.telefoneRepresentante = telefoneRepresentante;
+        this.emailRepresentante = emailRepresentante;
+        this.dataCadastro = dataCadastro != null ? dataCadastro : LocalDate.now();
     }
 
-    public Fornecedor() {
+    // Construtor simplificado
+    public Fornecedor(String nome, String telefone, String cnpj,
+                      String email, Endereco endereco) {
+        this(TipoParticipante.PESSOA_JURIDICA, cnpj, nome, telefone, email,
+                endereco, null, null, null, LocalDate.now());
     }
 
-    public int getId() {
-        return id;
+    // Getters e Setters
+    public String getRepresentante() {
+        return representante;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setRepresentante(String representante) {
+        this.representante = representante;
     }
 
-
-    public String getCnpj() {
-        return cnpj;
+    public String getTelefoneRepresentante() {
+        return telefoneRepresentante;
     }
 
-    public void setCnpj(String cnpj) {
-        this.cnpj = cnpj;
+    public void setTelefoneRepresentante(String telefoneRepresentante) {
+        this.telefoneRepresentante = telefoneRepresentante;
     }
 
-    public String getTelefone() {
-        return telefone;
+    public String getEmailRepresentante() {
+        return emailRepresentante;
     }
 
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
+    public void setEmailRepresentante(String emailRepresentante) {
+        this.emailRepresentante = emailRepresentante;
     }
 
-    public String getNome() {
-        return nome;
+    public LocalDate getDataCadastro() {
+        return dataCadastro;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-    public String getEmail() {
-        return email;
+    public void setDataCadastro(LocalDate dataCadastro) {
+        this.dataCadastro = dataCadastro != null ? dataCadastro : LocalDate.now();
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public Endereco getEndereco() {
-        return endereco;
+    @Override
+    public String toString() {
+        return "Fornecedor{" +
+                "nome='" + getNome() + '\'' +
+                ", cnpj='" + getDocumento() + '\'' +
+                ", dataCadastro=" + dataCadastro +
+                '}';
     }
 }

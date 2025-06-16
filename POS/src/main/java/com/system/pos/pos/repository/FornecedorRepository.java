@@ -8,7 +8,6 @@ import java.util.List;
 
 public interface FornecedorRepository {
     int salvarEndereco(Endereco endereco) throws SQLException;
-
     void adicionarFornecedor(Fornecedor fornecedor) throws SQLException;
     List<Fornecedor> showAll() throws SQLException;
     void atualizarFornecedor(Fornecedor fornecedor) throws SQLException;

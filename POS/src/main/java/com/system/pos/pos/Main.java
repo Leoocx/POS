@@ -138,12 +138,7 @@ public class Main extends Application {
                 new TreeItem<>("Produtos")
         );
 
-        TreeItem<String> estoque = new TreeItem<>("Estoque");
-        estoque.getChildren().addAll(
-                new TreeItem<>("Entrada"),
-                new TreeItem<>("Saída")
-        );
-
+    
         TreeItem<String> vendas = new TreeItem<>("Venda");
         TreeItem<String> pdv = new TreeItem<>("PDV");
         TreeItem<String> relatorios = new TreeItem<>("Relatorios");
@@ -155,7 +150,7 @@ public class Main extends Application {
         );
 
 
-        rootItem.getChildren().addAll(cadastros, estoque, vendas, financeiro);
+        rootItem.getChildren().addAll(cadastros, vendas, financeiro);
         return rootItem;
     }
 
