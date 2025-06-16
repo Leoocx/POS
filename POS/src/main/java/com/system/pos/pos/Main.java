@@ -135,7 +135,8 @@ public class Main extends Application {
         cadastros.getChildren().addAll(
                 new TreeItem<>("Clientes"),
                 new TreeItem<>("Fornecedores"),
-                new TreeItem<>("Produtos")
+                new TreeItem<>("Produtos"),
+                new TreeItem<>("Funcionarios")
         );
 
     

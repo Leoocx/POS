@@ -1,39 +1,51 @@
 package com.system.pos.pos.service;
 
+import com.system.pos.pos.model.Relatorio;
+
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
-import java.util.Comparator;
+import java.sql.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class RelatorioService {
 
-    private static final Path RELATORIOS_PATH = Paths.get("POS/src/main/java/com/system/pos/pos/report/relatorios");
+    private static final Path REGISTRO_RELATORIOS = Paths.get("relatorios.csv");
 
-    public List<Path> listarRelatoriosRecentes() {
+    // Registra um novo relatório no arquivo CSV
+    public void registrarRelatorio(Relatorio relatorio) {
         try {
-            if (!Files.exists(RELATORIOS_PATH)) {
-                System.out.println("Pasta não existe, criando: " + RELATORIOS_PATH.toAbsolutePath());
-                Files.createDirectories(RELATORIOS_PATH);
-            } else {
-                System.out.println("Pasta já existe: " + RELATORIOS_PATH.toAbsolutePath());
-            }
+            Files.writeString(REGISTRO_RELATORIOS,
+                    String.format("%s;%s;%s%n", relatorio.getNomeArquivo(), relatorio.getDataGeracao(), relatorio.getCaminho()),
+                    StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-            try (Stream<Path> stream = Files.list(RELATORIOS_PATH)) {
-                return stream
-                        .filter(p -> p.toString().endsWith(".pdf"))
-                        .sorted(Comparator.comparingLong(p -> {
-                            try {
-                                return Files.getLastModifiedTime((Path) p).toMillis();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                                return 0L;
-                            }
-                        }).reversed())
-                        .limit(10)
-                        .collect(Collectors.toList());
-            }
+    // Carrega todos os relatórios registrados, validando se os arquivos ainda existem
+    public List<Relatorio> listarRelatoriosRegistrados() {
+        if (!Files.exists(REGISTRO_RELATORIOS)) return List.of();
+
+        try {
+            return Files.lines(REGISTRO_RELATORIOS)
+                    .map(linha -> {
+                        String[] partes = linha.split(";");
+                        if (partes.length < 3) return null;
+
+                        String nome = partes[0];
+                        Date data = Date.valueOf(partes[1]);
+                        String caminho = partes[2];
+
+                        File arquivo = new File(caminho);
+                        if (!arquivo.exists() || !arquivo.getName().endsWith(".pdf")) return null;
+
+                        return new Relatorio(nome, data, caminho);
+                    })
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
         } catch (IOException e) {
             e.printStackTrace();
             return List.of();

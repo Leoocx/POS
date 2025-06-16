@@ -9,6 +9,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public class EnderecoService {
+
     public Endereco buscarEnderecoPorCep(String cep) throws Exception {
         if (cep == null || cep.isEmpty() || !cep.matches("\\d{5}-?\\d{3}")) {
             throw new IllegalArgumentException("CEP inválido");

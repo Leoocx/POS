@@ -17,7 +17,6 @@ public class Endereco {
         this.logradouro = enderecoCompleto;
     }
 
-    // Getters e Setters
     public String getCep() {
         return cep;
     }

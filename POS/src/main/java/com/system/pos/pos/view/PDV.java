@@ -1,6 +1,7 @@
 package com.system.pos.pos.view;
 
 import com.system.pos.pos.exceptions.BusinessException;
+import com.system.pos.pos.exceptions.InsufficientStockException;
 import com.system.pos.pos.model.ItemVenda;
 import com.system.pos.pos.model.Produto;
 import com.system.pos.pos.model.Venda;
@@ -250,7 +251,7 @@ public class PDV {
     private void atualizarQuantidadeExistente(ItemVenda item, Produto produto) throws BusinessException {
         int novaQuantidade = item.getQuantidade() + 1;
         if (novaQuantidade > produto.getQuantidade()) {
-            throw new BusinessException("Estoque insuficiente. Disponível: " + produto.getQuantidade());
+            throw new InsufficientStockException(produto.getQuantidade());
         }
         item.setQuantidade(novaQuantidade);
         tableViewItensVenda.refresh();
@@ -258,7 +259,7 @@ public class PDV {
 
     private void adicionarNovoItem(Produto produto) throws BusinessException {
         if (produto.getQuantidade() < 1) {
-            throw new BusinessException("Produto sem estoque disponível");
+            throw new InsufficientStockException(produto.getQuantidade());
         }
         ItemVenda novoItem = new ItemVenda(produto, 1);
         itensVenda.add(novoItem);

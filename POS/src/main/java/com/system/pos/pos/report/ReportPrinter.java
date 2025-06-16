@@ -4,6 +4,7 @@ import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.layout.*;
 import com.itextpdf.layout.element.*;
 import com.itextpdf.layout.property.UnitValue;
+import com.system.pos.pos.model.Relatorio;
 import com.system.pos.pos.service.RelatorioService;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
@@ -13,6 +14,7 @@ import javafx.stage.Window;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.sql.Date;
 
 public class ReportPrinter {
 
@@ -49,7 +51,16 @@ public class ReportPrinter {
                 }
 
                 doc.add(pdfTable);
-                System.out.println("PDF gerado com sucesso: " + file.getAbsolutePath());
+
+                // Registra o relatório no sistema
+                String nome = file.getName();
+                String caminho = file.getAbsolutePath();
+                Date data = new Date(System.currentTimeMillis());
+
+                Relatorio relatorio = new Relatorio(nome, data, caminho);
+                new RelatorioService().registrarRelatorio(relatorio);
+
+                System.out.println("PDF gerado e relatório registrado com sucesso: " + caminho);
 
             } catch (Exception e) {
                 System.err.println("Erro ao gerar PDF: " + e.getMessage());

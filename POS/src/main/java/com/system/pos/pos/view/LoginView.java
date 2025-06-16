@@ -14,7 +14,7 @@ public class LoginView {
 
     @FXML private TextField username;
     @FXML private PasswordField password;
-    @FXML private PasswordField confirmPassword; // Novo campo para confirmação
+    @FXML private PasswordField confirmPassword; // campo para confirmar a senha
     @FXML private Button btnLogin;
     @FXML private Button btnRegister;
     @FXML private GridPane login_content;

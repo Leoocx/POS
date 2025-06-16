@@ -71,7 +71,29 @@ public class DatabaseInitialize {
                     FOREIGN KEY (categoria_id) REFERENCES categorias(id_categoria),
                     UNIQUE (nome, categoria_id)
                 );
-
+                -- Tabela de funcionarios
+                CREATE TABLE IF NOT EXISTS funcionarios (
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            documento TEXT NOT NULL UNIQUE,  -- CPF do funcionário
+                            nome TEXT NOT NULL,
+                            telefone TEXT,
+                            email TEXT,
+                            cargo TEXT NOT NULL,
+                            salario REAL NOT NULL,
+                            data_admissao TEXT NOT NULL,  -- ISO8601 strings (YYYY-MM-DD)
+                            data_demissao TEXT,
+                            turno TEXT,
+                            status TEXT NOT NULL,
+                            cep TEXT,
+                            logradouro TEXT,
+                            numero TEXT,
+                            complemento TEXT,
+                            bairro TEXT,
+                            localidade TEXT,
+                            uf TEXT,
+                            data_cadastro TEXT DEFAULT CURRENT_TIMESTAMP
+                        );
+            
                 -- Tabela de produtos
                 CREATE TABLE IF NOT EXISTS produtos (
                     id_produto INTEGER PRIMARY KEY AUTOINCREMENT,
