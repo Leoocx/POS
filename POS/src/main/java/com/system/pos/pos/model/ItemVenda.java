@@ -8,7 +8,6 @@ public class ItemVenda {
     private final IntegerProperty quantidade = new SimpleIntegerProperty();
     private final ReadOnlyObjectWrapper<BigDecimal> totalItem = new ReadOnlyObjectWrapper<>(BigDecimal.ZERO);
 
-
     public ItemVenda(Produto produto, int quantidade) {
         this.produto = produto;
         setQuantidade(quantidade);
@@ -21,7 +20,6 @@ public class ItemVenda {
         BigDecimal total = produto.getPreco().multiply(BigDecimal.valueOf(getQuantidade()));
         totalItem.set(total);
     }
-
 
     public Produto getProduto() {
         return produto;
@@ -61,10 +59,5 @@ public class ItemVenda {
 
     public BigDecimal getSubTotal() {
         return getTotalItem();
-    }
-
-
-    public String getDummy() {
-        return "";
     }
 }

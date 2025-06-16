@@ -3,7 +3,6 @@ package com.system.pos.pos.database;
 import com.system.pos.pos.model.ItemVenda;
 import com.system.pos.pos.repository.VendaRepository;
 
-import java.math.BigDecimal;
 import java.sql.*;
 import java.util.List;
 
@@ -13,6 +12,7 @@ public class VendaDAO implements VendaRepository {
     public VendaDAO() {
         this.CONEXAO_DB = ConnectionManager.getConnection();
     }
+
     @Override
     public int registrarVenda(List<ItemVenda> itens, String formaPagamento) throws SQLException {
         String sqlVenda = "INSERT INTO vendas (data, formaPagamento, status) VALUES (date('now'), ?, 'CONCLUIDA')";
@@ -47,5 +47,4 @@ public class VendaDAO implements VendaRepository {
             stmt.executeBatch();
         }
     }
-
 }

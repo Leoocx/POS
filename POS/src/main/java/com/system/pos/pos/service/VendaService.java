@@ -3,6 +3,8 @@ package com.system.pos.pos.service;
 import com.system.pos.pos.database.ConnectionManager;
 import com.system.pos.pos.database.VendaDAO;
 import com.system.pos.pos.model.ItemVenda;
+import com.system.pos.pos.model.Venda;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -12,24 +14,23 @@ public class VendaService {
     private final ProdutoService produtoService = new ProdutoService();
     private final Connection CONEXAO_DB;
 
-
-    public VendaService(){
-        this.CONEXAO_DB= ConnectionManager.getConnection();
+    public VendaService() {
+        this.CONEXAO_DB = ConnectionManager.getConnection();
     }
 
-    public boolean registrarVenda(List<ItemVenda> itens, String formaPagamento) {
+    public boolean registrarVenda(Venda venda) {
         try {
             CONEXAO_DB.setAutoCommit(false); // Desativa auto-commit
 
             // 1. Registrar a venda
-            int idVenda = vendaDAO.registrarVenda(itens, formaPagamento);
+            int idVenda = vendaDAO.registrarVenda(venda.getItensVenda(), venda.getPagamento().getFormaPagamento());
             if (idVenda == -1) {
                 CONEXAO_DB.rollback();
                 return false;
             }
 
             // 2. Atualizar estoque para cada item
-            for (ItemVenda item : itens) {
+            for (ItemVenda item : venda.getItensVenda()) {
                 boolean atualizado = produtoService.atualizarEstoque(item.getIdProduto(), item.getQuantidade());
                 if (!atualizado) {
                     CONEXAO_DB.rollback();

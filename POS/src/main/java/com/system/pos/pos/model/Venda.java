@@ -7,10 +7,12 @@ import java.math.BigDecimal;
 
 public class Venda {
     private final ObservableList<ItemVenda> itensVenda = FXCollections.observableArrayList();
-    private BigDecimal totalVenda; // Alterado para BigDecimal
+    private BigDecimal totalVenda;
+    private Pagamento pagamento;
 
     public Venda() {
         this.totalVenda = BigDecimal.ZERO; // Inicializa como BigDecimal.ZERO
+        this.pagamento = new Pagamento(); // Inicializa o pagamento
     }
 
     public void adicionarItem(ItemVenda item) {
@@ -37,5 +39,19 @@ public class Venda {
 
     private void atualizarTotal() {
         totalVenda = calcularTotal(); // Atualiza o totalVenda
+    }
+
+    // Métodos para gerenciar o pagamento
+    public void setPagamento(Pagamento pagamento) {
+        this.pagamento = pagamento;
+        pagamento.setValorTotal(getTotalVenda()); // Define o valor total do pagamento
+    }
+
+    public Pagamento getPagamento() {
+        return pagamento;
+    }
+
+    public boolean isPagamentoValido() {
+        return pagamento.isPagamentoValido(); // Verifica se o pagamento é válido
     }
 }

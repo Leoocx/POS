@@ -48,7 +48,6 @@ public class PDV {
     @FXML private Label lblTotalPago;
     @FXML private Label lblTroco;
 
-
     @FXML private TextField txtDescricao;
     @FXML private TextField txtID;
     @FXML private TextField txtValorUnitario;
@@ -190,14 +189,19 @@ public class PDV {
 
     private void atualizarTotais() {
         BigDecimal totalBruto = calcularTotalBruto();
-        int totalItens = calcularTotalItens();
-        BigDecimal totalLiquido = calcularTotalLiquido(totalBruto);
+        vendaAtual.setPagamento(new com.system.pos.pos.model.Pagamento()); // Inicializa o pagamento
+        vendaAtual.getPagamento().setValorTotal(totalBruto);
+        vendaAtual.getPagamento().setDesconto(discountAmount);
 
         lblTotalBruto.setText(currencyFormat.format(totalBruto));
-        lblQtdItens.setText(String.valueOf(totalItens));
-        lblTotalLiquido.setText(currencyFormat.format(totalLiquido));
+        lblQtdItens.setText(String.valueOf(calcularTotalItens()));
+        lblTotalLiquido.setText(vendaAtual.getPagamento().getTotalLiquidoFormatado());
 
-        atualizarPagamentoETroco(totalLiquido);
+        // Atualiza troco se houver valor pago
+        if (!txtValorPgto1.getText().isEmpty()) {
+            vendaAtual.getPagamento().setValorPago(parseCurrency(txtValorPgto1.getText()));
+            lblTroco.setText(vendaAtual.getPagamento().getTrocoFormatado());
+        }
     }
 
     private BigDecimal calcularTotalBruto() {
@@ -210,23 +214,6 @@ public class PDV {
         return itensVenda.stream()
                 .mapToInt(ItemVenda::getQuantidade)
                 .sum();
-    }
-
-    private BigDecimal calcularTotalLiquido(BigDecimal totalBruto) {
-        return totalBruto.subtract(discountAmount).max(BigDecimal.ZERO);
-    }
-
-    private void atualizarPagamentoETroco(BigDecimal totalLiquido) {
-        BigDecimal pago = parseCurrency(txtValorPgto1.getText());
-        lblTotalPago.setText(currencyFormat.format(pago));
-
-        if (pago.compareTo(BigDecimal.ZERO) == 0) {
-            lblTroco.setText(currencyFormat.format(BigDecimal.ZERO));
-        } else if (pago.compareTo(totalLiquido) >= 0) {
-            lblTroco.setText(currencyFormat.format(pago.subtract(totalLiquido)));
-        } else {
-            lblTroco.setText("Insuficiente");
-        }
     }
 
     public void adicionarProdutoAVenda(Produto produto) {
@@ -280,10 +267,11 @@ public class PDV {
             return BigDecimal.ZERO;
         }
     }
+
     @FXML
     private void calcularTroco() {
         try {
-            BigDecimal total = parseCurrency(lblTotalLiquido.getText());
+            BigDecimal total = vendaAtual.getPagamento().calcularTotalLiquido();
             BigDecimal pago = parseCurrency(txtValorPgto1.getText());
 
             lblTotalPago.setText(currencyFormat.format(pago));
@@ -299,7 +287,7 @@ public class PDV {
             }
         } catch (Exception e) {
             lblTroco.setText("Inválido");
-            e.printStackTrace(); // apenas para debug
+            e.printStackTrace();
         }
     }
 
@@ -377,6 +365,7 @@ public class PDV {
             } else {
                 ItemVenda novoItem = new ItemVenda(produto, quantidade);
                 itensVenda.add(novoItem);
+                vendaAtual.adicionarItem(novoItem);
             }
 
             atualizarTotais();
@@ -450,25 +439,21 @@ public class PDV {
             return;
         }
 
-        BigDecimal totalLiquido = parseCurrency(lblTotalLiquido.getText());
-        BigDecimal valorPago = parseCurrency(txtValorPgto1.getText());
+        vendaAtual.getPagamento().setValorPago(parseCurrency(txtValorPgto1.getText()));
 
-        if (valorPago.compareTo(totalLiquido) < 0) {
+        if (!vendaAtual.isPagamentoValido()) {
             mostrarAlerta("Aviso", "Valor pago é menor que o total", Alert.AlertType.INFORMATION);
             return;
         }
 
-        boolean sucesso = vendaService.registrarVenda(itensVenda, "DINHEIRO");
+        boolean sucesso = vendaService.registrarVenda(vendaAtual);
 
         if (sucesso) {
-            String comprovante = gerarComprovanteVenda();
-            exibirComprovante(comprovante);
-            mostrarAlerta("Sucesso", "Venda registrada", Alert.AlertType.INFORMATION);
+            exibirComprovante(gerarComprovanteVenda());
             novaVenda();
-        } else {
-            mostrarAlerta("Erro", "Falha ao registrar venda", Alert.AlertType.INFORMATION);
         }
     }
+
 
     private void exibirComprovante(String comprovante) {
         TextArea textArea = new TextArea(comprovante);
@@ -541,3 +526,4 @@ public class PDV {
         return comprovante.toString();
     }
 }
+
