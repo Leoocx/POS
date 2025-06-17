@@ -17,11 +17,6 @@ public class FornecedorDAO implements FornecedorRepository {
     }
 
     @Override
-    public int salvarEndereco(Endereco endereco) throws SQLException {
-        return 0;
-    }
-
-    @Override
     public void adicionarFornecedor(Fornecedor fornecedor) throws SQLException {
         String sql = "INSERT INTO fornecedores (nome, cnpj, telefone, email, " +
                 "representante, telefone_representante, email_representante, " +

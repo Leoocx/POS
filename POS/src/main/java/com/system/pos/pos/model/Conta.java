@@ -11,7 +11,7 @@ public class Conta {
     private boolean pagar; // true para contas a pagar, false para contas a receber
     private LocalDate dataPagamento;
 
-    // Construtores, getters e setters
+
     public Conta() {}
 
     public Conta(String descricao, double valor, LocalDate vencimento, boolean isPagar) {
@@ -22,7 +22,7 @@ public class Conta {
         this.pago = false;
     }
 
-    // Getters e Setters para todos os campos
+
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
     public String getDescricao() { return descricao; }

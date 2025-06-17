@@ -2,430 +2,528 @@ package com.system.pos.pos.view;
 
 import com.system.pos.pos.exceptions.BusinessException;
 import com.system.pos.pos.exceptions.InsufficientStockException;
-import com.system.pos.pos.model.*;
+import com.system.pos.pos.model.ItemVenda;
+import com.system.pos.pos.model.Produto;
+import com.system.pos.pos.model.Venda;
 import com.system.pos.pos.service.ProdutoService;
 import com.system.pos.pos.service.VendaService;
 import com.system.pos.pos.utils.AlertUtil;
-import com.system.pos.pos.utils.ComprovanteGenerator;
-import com.system.pos.pos.utils.CurrencyFormatter;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.print.PrinterJob;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.math.BigDecimal;
-import java.sql.SQLException;
+import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.Optional;
 
 import static com.system.pos.pos.utils.AlertUtil.mostrarAlerta;
 
-/**
- * Controller principal para o sistema de Ponto de Venda (PDV)
- * Gerencia toda a interação do usuário com a interface de venda
- */
 public class PDV {
 
-    // ============== SERVIÇOS ==============
-    private final ProdutoService produtoService;
-    private final VendaService vendaService;
-    private final CurrencyFormatter currencyFormatter;
-
-    // ============== MODELOS ==============
-    private Venda vendaAtual;
-    private BigDecimal desconto = BigDecimal.ZERO;
-
-    // ============== COMPONENTES DA INTERFACE ==============
-    // Labels
     @FXML private Label lblNumeroVenda;
     @FXML private Label lblDataVenda;
-    @FXML private Label lblVendedor;
     @FXML private Label lblCliente;
+    @FXML private Label lblVendedor;
     @FXML private Label lblTotalBruto;
+    @FXML private Label lblQtdItens;
     @FXML private Label lblTotalLiquido;
     @FXML private Label lblTotalPago;
     @FXML private Label lblTroco;
-    @FXML private Label lblQtdItens;
 
-    // Campos de texto
-    @FXML private TextField txtBusca;
+    @FXML private TextField txtDescricao;
+    @FXML private TextField txtID;
+    @FXML private TextField txtValorUnitario;
+    @FXML private TextField txtValorPgto1;
     @FXML private TextField txtQuantidade;
-    @FXML private TextField txtValorPgto;
 
-    // Tabelas
-    @FXML private TableView<Produto> tabelaProdutos;
-    @FXML private TableView<ItemVenda> tabelaItens;
+    @FXML private TableView<Produto> tableViewProdutos;
+    @FXML private TableColumn<Produto, String> colDescricao;
+    @FXML private TableColumn<Produto, Integer> colID;
+    @FXML private TableColumn<Produto, BigDecimal> colValorUnitario;
+    @FXML private TableView<ItemVenda> tableViewItensVenda;
+    @FXML private TableColumn<ItemVenda, String> colItemDescricao;
+    @FXML private TableColumn<ItemVenda, Integer> colItemQuantidade;
+    @FXML private TableColumn<ItemVenda, String> colItemTotal;
 
-    // ============== CONSTANTES ==============
-    private static final DateTimeFormatter DATE_FORMATTER =
-            DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+    private final ObservableList<ItemVenda> itensVenda = FXCollections.observableArrayList();
+    private final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+    private final ProdutoService produtoService = new ProdutoService();
+    private final VendaService vendaService = new VendaService();
+    private Venda vendaAtual;
+    private BigDecimal discountAmount = BigDecimal.ZERO;
 
-    /**
-     * Construtor com injeção de dependências
-     */
-    public PDV(ProdutoService produtoService, VendaService vendaService) {
-        this.produtoService = produtoService;
-        this.vendaService = vendaService;
-        this.currencyFormatter = new CurrencyFormatter();
-    }
-
-    /**
-     * Inicialização do controller quando o FXML é carregado
-     */
     @FXML
-    public void initialize() throws SQLException {
+    public void initialize() {
         configurarTabelas();
+        carregarDadosIniciais();
+        configurarTeclasAtalho();
         configurarListeners();
-        configurarAtalhosTeclado();
-        iniciarNovaVenda();
-        atualizarInterface();
-    }
+        vendaAtual = new Venda();
 
-    // ============== CONFIGURAÇÕES INICIAIS ==============
-    private void configurarTabelas() throws SQLException {
-        // Configura colunas da tabela de produtos
-        TableColumn<Produto, Integer> colunaId = (TableColumn<Produto, Integer>) tabelaProdutos.getColumns().get(0);
-        colunaId.setCellValueFactory(cell -> cell.getValue().idProperty().asObject());
-
-        TableColumn<Produto, String> colunaNome = (TableColumn<Produto, String>) tabelaProdutos.getColumns().get(1);
-        colunaNome.setCellValueFactory(cell -> cell.getValue().nomeProperty());
-
-        TableColumn<Produto, BigDecimal> colunaPreco = (TableColumn<Produto, BigDecimal>) tabelaProdutos.getColumns().get(2);
-        colunaPreco.setCellValueFactory(cell -> cell.getValue().precoProperty());
-        colunaPreco.setCellFactory(col -> new TableCell<>() {
-            @Override
-            protected void updateItem(BigDecimal preco, boolean empty) {
-                super.updateItem(preco, empty);
-                setText(empty ? null : currencyFormatter.format(preco));
-            }
+        tableViewProdutos.setRowFactory(tv -> {
+            TableRow<Produto> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (!row.isEmpty() && event.getClickCount() == 1) {
+                    adicionarProdutoAVenda(row.getItem());
+                }
+            });
+            return row;
         });
 
-        // Configura colunas da tabela de itens
-        TableColumn<ItemVenda, String> colunaItemDescricao = (TableColumn<ItemVenda, String>) tabelaItens.getColumns().get(0);
-        colunaItemDescricao.setCellValueFactory(cell -> cell.getValue().getProduto().nomeProperty());
-
-        TableColumn<ItemVenda, Integer> colunaItemQuantidade = (TableColumn<ItemVenda, Integer>) tabelaItens.getColumns().get(1);
-        colunaItemQuantidade.setCellValueFactory(cell -> cell.getValue().quantidadeProperty().asObject());
-
-        TableColumn<ItemVenda, String> colunaItemTotal = (TableColumn<ItemVenda, String>) tabelaItens.getColumns().get(2);
-        colunaItemTotal.setCellValueFactory(cell -> {
-            BigDecimal total = cell.getValue().getTotalItem();
-            return new javafx.beans.property.SimpleStringProperty(currencyFormatter.format(total));
-        });
-
-        // Carrega produtos
-        tabelaProdutos.setItems(produtoService.listarTodosProdutos());
-    }
-
-    private void configurarListeners() {
-        // Listener para busca de produtos
-        txtBusca.textProperty().addListener((obs, oldVal, newVal) -> {
-            try {
-                buscarProdutos();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        });
-
-        // Listener para cálculo de troco
-        txtValorPgto.textProperty().addListener((obs, oldVal, newVal) -> calcularTroco());
-
-        // Validação de quantidade
         txtQuantidade.textProperty().addListener((obs, oldVal, newVal) -> {
             if (!newVal.matches("\\d*")) {
                 txtQuantidade.setText(oldVal);
             }
         });
-    }
 
-    private void configurarAtalhosTeclado() {
-        txtBusca.getScene().setOnKeyPressed(event -> {
-            processarAtalhoTeclado(event);
+        txtValorPgto1.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal.matches("\\d*([.,]\\d{0,2})?")) {
+                txtValorPgto1.setText(oldVal);
+            }
+            calcularTroco();
         });
     }
 
-    // ============== MÉTODOS DE NEGÓCIO ==============
-    /**
-     * Inicia uma nova venda
-     */
-    private void iniciarNovaVenda() {
-        this.vendaAtual = new Venda();
-        this.vendaAtual.setPagamento(new Pagamento());
-        this.desconto = BigDecimal.ZERO;
+    private void configurarTabelas() {
+        colID.setCellValueFactory(cellData -> cellData.getValue().idProperty().asObject());
+        colDescricao.setCellValueFactory(cellData -> cellData.getValue().nomeProperty());
+        colValorUnitario.setCellValueFactory(cellData -> cellData.getValue().precoProperty());
 
-        // Configura dados iniciais
-        lblNumeroVenda.setText("001"); // Na prática, viria do banco de dados
-        lblVendedor.setText("Operador 1");
-        lblCliente.setText("Consumidor Final");
-        lblDataVenda.setText(LocalDateTime.now().format(DATE_FORMATTER));
+        colItemDescricao.setCellValueFactory(cellData -> cellData.getValue().getProduto().nomeProperty());
+        colItemQuantidade.setCellValueFactory(cellData -> cellData.getValue().quantidadeProperty().asObject());
+        colItemTotal.setCellValueFactory(cellData -> {
+            BigDecimal total = cellData.getValue().getTotalItem();
+            return new SimpleStringProperty(currencyFormat.format(total));
+        });
 
-        // Limpa campos
-        tabelaItens.getItems().clear();
-        txtBusca.clear();
-        txtQuantidade.setText("1");
-        txtValorPgto.clear();
-
-        atualizarInterface();
+        tableViewProdutos.setItems(produtoService.listarProdutos());
+        tableViewItensVenda.setItems(itensVenda);
     }
 
-    /**
-     * Adiciona um item à venda atual
-     */
-    @FXML
-    private void adicionarItem() {
-        Produto produtoSelecionado = tabelaProdutos.getSelectionModel().getSelectedItem();
+    private void carregarDadosIniciais() {
+        lblVendedor.setText("Operador 1");
+        lblNumeroVenda.setText("001");
 
-        if (produtoSelecionado == null) {
-            mostrarAlerta("Selecione um produto", Alert.AlertType.WARNING);
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.seconds(1),
+                        event -> {
+                            String dataHoraAtual = LocalDateTime.now()
+                                    .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+                            lblDataVenda.setText(dataHoraAtual);
+                        }
+                ));
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
+
+        lblCliente.setText("CLIENTE PADRÃO");
+        txtQuantidade.setText("1");
+        resetarValoresMonetarios();
+    }
+
+    private void resetarValoresMonetarios() {
+        lblTotalBruto.setText(currencyFormat.format(BigDecimal.ZERO));
+        lblTotalLiquido.setText(currencyFormat.format(BigDecimal.ZERO));
+        lblTotalPago.setText(currencyFormat.format(BigDecimal.ZERO));
+        lblTroco.setText(currencyFormat.format(BigDecimal.ZERO));
+        discountAmount = BigDecimal.ZERO;
+    }
+
+    private void configurarTeclasAtalho() {
+        tableViewProdutos.sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null) {
+                newScene.setOnKeyPressed(this::tratarTeclasAtalho);
+            }
+        });
+    }
+
+    private void tratarTeclasAtalho(KeyEvent event) {
+        switch (event.getCode()) {
+            case F1 -> aplicarDesconto();
+            case F2 -> novaVenda();
+            case F3 -> buscarProduto();
+            case F9 -> cancelarVenda();
+            case ENTER -> {
+                if (event.getTarget() instanceof TextField) {
+                    tratarEnter((TextField) event.getTarget());
+                }
+            }
+            case F10 -> finalizarVenda();
+            case ADD, PLUS -> aumentarQuantidade();
+            case SUBTRACT, MINUS -> diminuirQuantidade();
+        }
+    }
+
+    private void configurarListeners() {
+        tableViewProdutos.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                preencherCamposProduto(newVal);
+            }
+        });
+    }
+
+    private void preencherCamposProduto(Produto produto) {
+        txtID.setText(String.valueOf(produto.getId()));
+        txtDescricao.setText(produto.getNome());
+        txtValorUnitario.setText(currencyFormat.format(produto.getPreco()));
+        txtQuantidade.setText("1");
+        txtQuantidade.requestFocus();
+    }
+
+    private void atualizarTotais() {
+        BigDecimal totalBruto = calcularTotalBruto();
+        vendaAtual.setPagamento(new com.system.pos.pos.model.Pagamento()); // Inicializa o pagamento
+        vendaAtual.getPagamento().setValorTotal(totalBruto);
+        vendaAtual.getPagamento().setDesconto(discountAmount);
+
+        lblTotalBruto.setText(currencyFormat.format(totalBruto));
+        lblQtdItens.setText(String.valueOf(calcularTotalItens()));
+        lblTotalLiquido.setText(vendaAtual.getPagamento().getTotalLiquidoFormatado());
+
+        // Atualiza troco se houver valor pago
+        if (!txtValorPgto1.getText().isEmpty()) {
+            vendaAtual.getPagamento().setValorPago(parseCurrency(txtValorPgto1.getText()));
+            lblTroco.setText(vendaAtual.getPagamento().getTrocoFormatado());
+        }
+    }
+
+    private BigDecimal calcularTotalBruto() {
+        return itensVenda.stream()
+                .map(ItemVenda::getTotalItem)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    private int calcularTotalItens() {
+        return itensVenda.stream()
+                .mapToInt(ItemVenda::getQuantidade)
+                .sum();
+    }
+
+    public void adicionarProdutoAVenda(Produto produto) {
+        try {
+            if (produto == null) return;
+
+            Optional<ItemVenda> itemExistente = itensVenda.stream()
+                    .filter(item -> item.getIdProduto() == produto.getId())
+                    .findFirst();
+
+            if (itemExistente.isPresent()) {
+                atualizarQuantidadeExistente(itemExistente.get(), produto);
+            } else {
+                adicionarNovoItem(produto);
+            }
+            atualizarTotais();
+        } catch (BusinessException e) {
+            mostrarAlerta("Erro", e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+
+    private void atualizarQuantidadeExistente(ItemVenda item, Produto produto) throws BusinessException {
+        int novaQuantidade = item.getQuantidade() + 1;
+        if (novaQuantidade > produto.getQuantidade()) {
+            throw new InsufficientStockException(produto.getQuantidade());
+        }
+        item.setQuantidade(novaQuantidade);
+        tableViewItensVenda.refresh();
+    }
+
+    private void adicionarNovoItem(Produto produto) throws BusinessException {
+        if (produto.getQuantidade() < 1) {
+            throw new InsufficientStockException(produto.getQuantidade());
+        }
+        ItemVenda novoItem = new ItemVenda(produto, 1);
+        itensVenda.add(novoItem);
+        vendaAtual.adicionarItem(novoItem);
+    }
+
+    private BigDecimal parseCurrency(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+        try {
+            // Remove todos os não-numéricos exceto vírgula/ponto
+            String cleanValue = value.replaceAll("[^\\d,.]", "")
+                    .replace(".", "")
+                    .replace(",", ".");
+            return new BigDecimal(cleanValue);
+        } catch (NumberFormatException e) {
+            return BigDecimal.ZERO;
+        }
+    }
+
+    @FXML
+    private void calcularTroco() {
+        try {
+            BigDecimal total = vendaAtual.getPagamento().calcularTotalLiquido();
+            BigDecimal pago = parseCurrency(txtValorPgto1.getText());
+
+            lblTotalPago.setText(currencyFormat.format(pago));
+
+            // Calcula o troco
+            if (pago.compareTo(BigDecimal.ZERO) == 0) {
+                lblTroco.setText(currencyFormat.format(BigDecimal.ZERO));
+            } else if (pago.compareTo(total) >= 0) {
+                BigDecimal troco = pago.subtract(total);
+                lblTroco.setText(currencyFormat.format(troco));
+            } else {
+                lblTroco.setText("Insuficiente");
+            }
+        } catch (Exception e) {
+            lblTroco.setText("Inválido");
+            e.printStackTrace();
+        }
+    }
+
+    private void cancelarVenda() {
+        itensVenda.clear();
+        vendaAtual = new Venda();
+        txtValorPgto1.clear();
+        resetarValoresMonetarios();
+    }
+
+    private void tratarEnter(TextField campo) {
+        if (campo == txtDescricao || campo == txtID) {
+            buscarProduto();
+        } else if (campo == txtQuantidade) {
+            adicionarItem();
+        }
+    }
+
+    private void aumentarQuantidade() {
+        try {
+            int qtd = Integer.parseInt(txtQuantidade.getText());
+            txtQuantidade.setText(String.valueOf(qtd + 1));
+        } catch (NumberFormatException e) {
+            txtQuantidade.setText("1");
+        }
+    }
+
+    private void diminuirQuantidade() {
+        try {
+            int qtd = Integer.parseInt(txtQuantidade.getText());
+            if (qtd > 1) {
+                txtQuantidade.setText(String.valueOf(qtd - 1));
+            }
+        } catch (NumberFormatException e) {
+            txtQuantidade.setText("1");
+        }
+    }
+
+    @FXML
+    private void buscarProduto() {
+        String busca = txtDescricao.getText().isEmpty() ? txtID.getText() : txtDescricao.getText();
+        tableViewProdutos.setItems(produtoService.buscarProdutos(busca));
+
+        if (!tableViewProdutos.getItems().isEmpty()) {
+            tableViewProdutos.getSelectionModel().selectFirst();
+        }
+    }
+
+    private void adicionarItem() {
+        Produto produto = tableViewProdutos.getSelectionModel().getSelectedItem();
+        if (produto == null) {
+            mostrarAlerta("Aviso", "Nenhum produto selecionado.", Alert.AlertType.INFORMATION);
             return;
         }
 
         try {
             int quantidade = Integer.parseInt(txtQuantidade.getText());
-            adicionarItemVenda(produtoSelecionado, quantidade);
+            if (quantidade <= 0) {
+                mostrarAlerta("Erro", "A quantidade deve ser maior que zero.", Alert.AlertType.INFORMATION);
+                return;
+            }
+
+            if (quantidade > produto.getQuantidade()) {
+                mostrarAlerta("Estoque insuficiente", "Quantidade disponível: " + produto.getQuantidade(), Alert.AlertType.INFORMATION);
+                return;
+            }
+
+            Optional<ItemVenda> itemExistente = itensVenda.stream()
+                    .filter(item -> item.getIdProduto() == produto.getId())
+                    .findFirst();
+
+            if (itemExistente.isPresent()) {
+                ItemVenda item = itemExistente.get();
+                item.setQuantidade(item.getQuantidade() + quantidade);
+            } else {
+                ItemVenda novoItem = new ItemVenda(produto, quantidade);
+                itensVenda.add(novoItem);
+                vendaAtual.adicionarItem(novoItem);
+            }
+
+            atualizarTotais();
+            limparCamposProduto();
         } catch (NumberFormatException e) {
-            mostrarAlerta("Quantidade inválida", Alert.AlertType.ERROR);
-        } catch (BusinessException e) {
-            mostrarAlerta(e.getMessage(), Alert.AlertType.ERROR);
+            mostrarAlerta("Erro", "Quantidade inválida.", Alert.AlertType.INFORMATION);
         }
     }
 
-    /**
-     * Lógica principal para adicionar um item à venda
-     */
-    private void adicionarItemVenda(Produto produto, int quantidade) throws BusinessException {
-        // Validações
-        if (quantidade <= 0) {
-            throw new BusinessException("Quantidade deve ser maior que zero");
-        }
-
-        if (quantidade > produto.getQuantidade()) {
-            throw new InsufficientStockException(produto.getQuantidade());
-        }
-
-        // Verifica se o produto já está na venda
-        Optional<ItemVenda> itemExistente = vendaAtual.getItensVenda().stream()
-                .filter(item -> item.getIdProduto() == produto.getId())
-                .findFirst();
-
-        if (itemExistente.isPresent()) {
-            // Atualiza quantidade do item existente
-            ItemVenda item = itemExistente.get();
-            item.setQuantidade(item.getQuantidade() + quantidade);
-        } else {
-            // Cria novo item
-            ItemVenda novoItem = new ItemVenda(produto, quantidade);
-            vendaAtual.adicionarItem(novoItem);
-        }
-
-        // Atualiza interface
-        tabelaItens.setItems(vendaAtual.getItensVenda());
-        atualizarInterface();
+    private void limparCamposProduto() {
+        txtID.clear();
+        txtDescricao.clear();
+        txtValorUnitario.clear();
         txtQuantidade.setText("1");
-        txtBusca.requestFocus();
     }
 
-
-
-    /**
-     * Aplica desconto à venda
-     */
     @FXML
     private void aplicarDesconto() {
-        TextInputDialog dialog = new TextInputDialog();
+        TextInputDialog dialog = new TextInputDialog("0");
         dialog.setTitle("Desconto");
-        dialog.setHeaderText("Informe o valor ou percentual de desconto");
-        dialog.setContentText("Ex: 10 (R$ 10,00) ou 10% (10% do total)");
+        dialog.setHeaderText("Informe o valor ou percentual");
+        dialog.setContentText("Ex: 10 ou 10%");
 
-        Optional<String> resultado = dialog.showAndWait();
-        resultado.ifPresent(descontoStr -> {
+        dialog.showAndWait().ifPresent(desconto -> {
             try {
-                BigDecimal valorDesconto = calcularValorDesconto(descontoStr);
-                this.desconto = valorDesconto;
-                vendaAtual.getPagamento().setDesconto(valorDesconto);
-                atualizarInterface();
+                BigDecimal total = calcularTotalBruto();
+                BigDecimal valorDesconto;
+
+                String input = desconto.replace(",", ".").replace("%", "");
+
+                if (input.startsWith("-")) {
+                    mostrarAlerta("Erro", "O desconto não pode ser negativo.", Alert.AlertType.INFORMATION);
+                    return;
+                }
+
+                if (desconto.contains("%")) {
+                    double percentual = Double.parseDouble(input) / 100;
+                    valorDesconto = total.multiply(BigDecimal.valueOf(percentual));
+                } else {
+                    valorDesconto = new BigDecimal(input);
+                }
+
+                if (valorDesconto.compareTo(total) > 0) {
+                    mostrarAlerta("Aviso", "Desconto maior que o total da venda. Ajustado para o valor total.", Alert.AlertType.INFORMATION);
+                    valorDesconto = total;
+                }
+
+                discountAmount = valorDesconto;
+                atualizarTotais();
+
             } catch (NumberFormatException e) {
-                mostrarAlerta("Valor de desconto inválido", Alert.AlertType.ERROR);
+                mostrarAlerta("Erro", "Valor inválido. Use números (ex: 10 ou 10.5%)", Alert.AlertType.INFORMATION);
             }
         });
     }
 
-    /**
-     * Calcula o valor do desconto baseado na entrada do usuário
-     */
-    private BigDecimal calcularValorDesconto(String entrada) throws NumberFormatException {
-        entrada = entrada.replace("%", "").replace(",", ".");
-
-        if (entrada.contains("%")) {
-            // Desconto percentual
-            double percentual = Double.parseDouble(entrada.replace("%", "")) / 100;
-            return vendaAtual.calcularTotal().multiply(BigDecimal.valueOf(percentual));
-        } else {
-            // Desconto em valor absoluto
-            return new BigDecimal(entrada);
-        }
+    @FXML
+    private void novaVenda() {
+        vendaAtual = new Venda();
+        itensVenda.clear();
+        txtValorPgto1.clear();
+        resetarValoresMonetarios();
+        lblNumeroVenda.setText(String.format("%03d", Integer.parseInt(lblNumeroVenda.getText()) + 1));
+        lblDataVenda.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
     }
 
-    /**
-     * Calcula o troco baseado no valor pago
-     */
-    private void calcularTroco() {
-        try {
-            BigDecimal valorPago = currencyFormatter.parse(txtValorPgto.getText());
-            BigDecimal totalLiquido = vendaAtual.getPagamento().calcularTotalLiquido();
-
-            vendaAtual.getPagamento().setValorPago(valorPago);
-
-            if (valorPago.compareTo(totalLiquido) >= 0) {
-                BigDecimal troco = valorPago.subtract(totalLiquido);
-                lblTroco.setText(currencyFormatter.format(troco));
-            } else {
-                lblTroco.setText("Insuficiente");
-            }
-
-            lblTotalPago.setText(currencyFormatter.format(valorPago));
-        } catch (Exception e) {
-            lblTroco.setText("Inválido");
-        }
-    }
-
-    /**
-     * Finaliza a venda atual
-     */
     @FXML
     private void finalizarVenda() {
-        try {
-            validarVenda();
-
-            // Confirmação do usuário
-            Alert confirmacao = new Alert(Alert.AlertType.CONFIRMATION);
-            confirmacao.setTitle("Confirmar Venda");
-            confirmacao.setHeaderText("Deseja finalizar esta venda?");
-            confirmacao.setContentText("Total: " + lblTotalLiquido.getText());
-
-            Optional<ButtonType> resultado = confirmacao.showAndWait();
-            if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
-                vendaService.registrarVenda(vendaAtual);
-                gerarComprovante();
-                iniciarNovaVenda();
-            }
-        } catch (BusinessException e) {
-            mostrarAlerta(e.getMessage(), Alert.AlertType.ERROR);
+        if (itensVenda.isEmpty()) {
+            mostrarAlerta("Aviso", "Adicione itens à venda", Alert.AlertType.INFORMATION);
+            return;
         }
-    }
 
-    /**
-     * Valida se a venda pode ser finalizada
-     */
-    private void validarVenda() throws BusinessException {
-        if (vendaAtual.getItensVenda().isEmpty()) {
-            throw new BusinessException("Adicione itens à venda antes de finalizar");
-        }
+        vendaAtual.getPagamento().setValorPago(parseCurrency(txtValorPgto1.getText()));
 
         if (!vendaAtual.isPagamentoValido()) {
-            throw new BusinessException("Valor pago é insuficiente");
+            mostrarAlerta("Aviso", "Valor pago é menor que o total", Alert.AlertType.INFORMATION);
+            return;
+        }
+
+        boolean sucesso = vendaService.registrarVenda(vendaAtual);
+
+        if (sucesso) {
+            exibirComprovante(gerarComprovanteVenda());
+            novaVenda();
         }
     }
 
-    /**
-     * Gera e exibe o comprovante da venda
-     */
-    private void gerarComprovante() {
-        ComprovanteGenerator generator = new ComprovanteGenerator(vendaAtual);
-        String comprovante = generator.gerarComprovante();
-        ComprovanteView.mostrarComprovante(comprovante);
+
+    private void exibirComprovante(String comprovante) {
+        TextArea textArea = new TextArea(comprovante);
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
+        textArea.setStyle("-fx-font-family: monospace;");
+
+        Button btnImprimir = new Button("Imprimir");
+        btnImprimir.setOnAction(e -> imprimirComprovante(comprovante));
+
+        VBox root = new VBox(10, textArea, btnImprimir);
+        root.setPadding(new Insets(15));
+
+        Stage stage = new Stage();
+        stage.setTitle("Comprovante de Venda");
+        stage.setScene(new Scene(root, 400, 500));
+        stage.show();
     }
 
-    /**
-     * Cancela a venda atual
-     */
-    @FXML
-    private void cancelarVenda() {
-        Alert confirmacao = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmacao.setTitle("Cancelar Venda");
-        confirmacao.setHeaderText("Deseja cancelar esta venda?");
-        confirmacao.setContentText("Todos os itens serão removidos");
+    private void imprimirComprovante(String comprovante) {
+        PrinterJob job = PrinterJob.createPrinterJob();
+        if (job != null && job.showPrintDialog(null)) {
+            Text printerText = new Text(comprovante);
+            printerText.setFont(Font.font("Monospaced", 10));
+            printerText.setTextAlignment(TextAlignment.LEFT);
 
-        Optional<ButtonType> resultado = confirmacao.showAndWait();
-        if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
-            iniciarNovaVenda();
+            StackPane printRoot = new StackPane(printerText);
+            printRoot.setPadding(new Insets(20));
+
+            boolean success = job.printPage(printRoot);
+            if (success) {
+                job.endJob();
+            } else {
+                mostrarAlerta("Erro", "Falha ao imprimir comprovante.", Alert.AlertType.INFORMATION);
+            }
         }
     }
 
-    // ============== ATUALIZAÇÃO DA INTERFACE ==============
-    /**
-     * Atualiza todos os elementos da interface
-     */
-    private void atualizarInterface() {
-        BigDecimal totalBruto = vendaAtual.calcularTotal();
-        BigDecimal totalLiquido = totalBruto.subtract(desconto);
+    private String gerarComprovanteVenda() {
+        StringBuilder comprovante = new StringBuilder();
 
-        // Atualiza labels
-        lblTotalBruto.setText(currencyFormatter.format(totalBruto));
-        lblTotalLiquido.setText(currencyFormatter.format(totalLiquido));
-        lblQtdItens.setText(String.valueOf(
-                vendaAtual.getItensVenda().stream()
-                        .mapToInt(ItemVenda::getQuantidade)
-                        .sum()
-        ));
+        comprovante.append("----------------------------------------\n");
+        comprovante.append("          COMPROVANTE DE VENDA          \n");
+        comprovante.append("----------------------------------------\n");
+        comprovante.append("Número: ").append(lblNumeroVenda.getText()).append("\n");
+        comprovante.append("Data: ").append(lblDataVenda.getText()).append("\n");
+        comprovante.append("Vendedor: ").append(lblVendedor.getText()).append("\n");
+        comprovante.append("Cliente: ").append(lblCliente.getText()).append("\n");
+        comprovante.append("----------------------------------------\n");
+        comprovante.append("ITENS:\n");
 
-        // Atualiza pagamento e troco
-        if (vendaAtual.getPagamento() != null) {
-            vendaAtual.getPagamento().setValorTotal(totalBruto);
-            calcularTroco();
+        for (ItemVenda item : itensVenda) {
+            comprovante.append(String.format(
+                    "%-20s %3d x %-8s %10s\n",
+                    item.getProduto().getNome(),
+                    item.getQuantidade(),
+                    currencyFormat.format(item.getPrecoUnitario()),
+                    currencyFormat.format(item.getTotalItem())
+            ));
         }
-    }
 
-    // ============== MANIPULAÇÃO DE TECLADO ==============
-    /**
-     * Processa atalhos de teclado
-     */
-    private void processarAtalhoTeclado(KeyEvent event) {
-        if (event.getCode() == KeyCode.ENTER) {
-            String termo = txtBusca.getText();
+        comprovante.append("----------------------------------------\n");
+        comprovante.append(String.format("%-30s %10s\n", "TOTAL BRUTO:", lblTotalBruto.getText()));
+        comprovante.append(String.format("%-30s %10s\n", "TOTAL LÍQUIDO:", lblTotalLiquido.getText()));
+        comprovante.append(String.format("%-30s %10s\n", "VALOR PAGO:", lblTotalPago.getText()));
+        comprovante.append(String.format("%-30s %10s\n", "TROCO:", lblTroco.getText()));
+        comprovante.append("----------------------------------------\n");
+        comprovante.append("Obrigado pela preferência!\n");
 
-            Task<ObservableList<Produto>> task = new Task<>() {
-                @Override
-                protected ObservableList<Produto> call() throws Exception {
-                    return produtoService.buscarProdutosPorNome(termo);
-                }
-            };
-
-            task.setOnSucceeded(e -> {
-                tabelaProdutos.setItems(task.getValue());
-            });
-
-            task.setOnFailed(e -> {
-                mostrarAlerta("Erro", Alert.AlertType.valueOf(task.getException().getMessage()));
-            });
-
-            new Thread(task).start();
-        }
-    }
-    /**
-     * Busca produtos conforme texto digitado
-     */
-    private void buscarProdutos() throws SQLException {
-        String termo = txtBusca.getText().trim();
-        tabelaProdutos.setItems(produtoService.buscarProdutosPorNome(termo));
-
-        if (!tabelaProdutos.getItems().isEmpty()) {
-            tabelaProdutos.getSelectionModel().selectFirst();
-        }
-    }
-    /**
-     * Processa a tecla ENTER conforme o campo ativo
-     */
-    private void processarEnter(KeyEvent event) throws SQLException {
-        if (event.getSource() == txtBusca) {
-            buscarProdutos();
-        } else if (event.getSource() == txtQuantidade) {
-            adicionarItem();
-        } else if (event.getSource() == txtValorPgto) {
-            finalizarVenda();
-        }
+        return comprovante.toString();
     }
 }
+

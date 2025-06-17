@@ -6,6 +6,10 @@ import java.math.BigDecimal;
 public class ItemVenda {
     private final Produto produto;
     private final IntegerProperty quantidade = new SimpleIntegerProperty();
+    /*
+    *  propriedade totalItem é criada com ReadOnlyObjectWrapper<BigDecimal>.
+    * Isso significa que o valor do totalItem só pode ser alterado internamente (no método calcularTotal()),
+    *                                                                                                                                                         mas externamente não é possível modificar diretamente a propriedade.*/
     private final ReadOnlyObjectWrapper<BigDecimal> totalItem = new ReadOnlyObjectWrapper<>(BigDecimal.ZERO);
 
     public ItemVenda(Produto produto, int quantidade) {

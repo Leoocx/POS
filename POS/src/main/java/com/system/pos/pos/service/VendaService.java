@@ -14,7 +14,7 @@ public class VendaService {
     private final ProdutoService produtoService = new ProdutoService();
     private final Connection CONEXAO_DB;
 
-    public VendaService() throws SQLException {
+    public VendaService() {
         this.CONEXAO_DB = ConnectionManager.getConnection();
     }
 

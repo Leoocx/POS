@@ -121,7 +121,7 @@ public class ContasView {
             tipoContaCombo.getSelectionModel().selectFirst();
             atualizarStatusBar();
         } catch (Exception e) {
-            mostrarAlerta("Erro, Falha ao carregar contas: " + e.getMessage(), Alert.AlertType.ERROR);
+            mostrarAlerta("Erro", "Falha ao carregar contas: " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
@@ -181,10 +181,10 @@ public class ContasView {
                 contaController.registrarPagamento(selecionada.getId());
                 selecionada.setPago(true);
                 tabelaContas.refresh();
-                mostrarAlerta("Sucesso, Pagamento registrado com sucesso!", Alert.AlertType.INFORMATION);
+                mostrarAlerta("Sucesso", "Pagamento registrado com sucesso!", Alert.AlertType.INFORMATION);
                 atualizarStatusBar();
             } catch (Exception e) {
-                mostrarAlerta("Erro, Falha ao registrar pagamento: " + e.getMessage(), Alert.AlertType.ERROR);
+                mostrarAlerta("Erro", "Falha ao registrar pagamento: " + e.getMessage(), Alert.AlertType.ERROR);
             }
         }
     }
@@ -197,9 +197,9 @@ public class ContasView {
                 contaController.removerConta(selecionada.getId());
                 carregarDados();
                 limparFormulario();
-                mostrarAlerta("Sucesso, Conta removida com sucesso!", Alert.AlertType.INFORMATION);
+                mostrarAlerta("Sucesso", "Conta removida com sucesso!", Alert.AlertType.INFORMATION);
             } catch (Exception e) {
-                mostrarAlerta("Erro, Falha ao remover conta: " + e.getMessage(), Alert.AlertType.ERROR);
+                mostrarAlerta("Erro", "Falha ao remover conta: " + e.getMessage(), Alert.AlertType.ERROR);
             }
         }
     }
@@ -212,16 +212,16 @@ public class ContasView {
 
                 if (conta.getId() == 0) { // Nova conta
                     contaController.criarConta(conta);
-                    mostrarAlerta("Sucesso, Conta criada com sucesso!", Alert.AlertType.INFORMATION);
+                    mostrarAlerta("Sucesso", "Conta criada com sucesso!", Alert.AlertType.INFORMATION);
                 } else { // Edição
                     contaController.atualizarConta(conta);
-                    mostrarAlerta("Sucesso, Conta atualizada com sucesso!", Alert.AlertType.INFORMATION);
+                    mostrarAlerta("Sucesso", "Conta atualizada com sucesso!", Alert.AlertType.INFORMATION);
                 }
 
                 carregarDados();
                 limparFormulario();
             } catch (Exception e) {
-                mostrarAlerta("Erro, Falha ao salvar conta: " + e.getMessage(), Alert.AlertType.ERROR);
+                mostrarAlerta("Erro", "Falha ao salvar conta: " + e.getMessage(), Alert.AlertType.ERROR);
             }
         }
     }
@@ -233,17 +233,17 @@ public class ContasView {
 
     private boolean validarFormulario() {
         if (descricaoField.getText().isBlank()) {
-            mostrarAlerta("Aviso, A descrição é obrigatória", Alert.AlertType.WARNING);
+            mostrarAlerta("Aviso", "A descrição é obrigatória", Alert.AlertType.WARNING);
             return false;
         }
 
         if (valorField.getText().isBlank() || Double.parseDouble(valorField.getText()) <= 0) {
-            mostrarAlerta("Aviso, O valor deve ser positivo", Alert.AlertType.WARNING);
+            mostrarAlerta("Aviso", "O valor deve ser positivo", Alert.AlertType.WARNING);
             return false;
         }
 
         if (vencimentoPicker.getValue() == null) {
-            mostrarAlerta("Aviso, A data de vencimento é obrigatória", Alert.AlertType.WARNING);
+            mostrarAlerta("Aviso", "A data de vencimento é obrigatória", Alert.AlertType.WARNING);
             return false;
         }
 

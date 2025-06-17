@@ -2,81 +2,34 @@ package com.system.pos.pos.service;
 
 import com.system.pos.pos.database.FuncionarioDAO;
 import com.system.pos.pos.model.Funcionario;
-import com.system.pos.pos.model.Endereco;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.util.Optional;
+import java.util.List;
 
 public class FuncionarioService {
     private final FuncionarioDAO funcionarioDAO;
-    private final ObservableList<Funcionario> funcionariosObservable;
 
-    public FuncionarioService() throws SQLException {
+    public FuncionarioService() {
         this.funcionarioDAO = new FuncionarioDAO();
-        this.funcionariosObservable = FXCollections.observableArrayList();
-        this.funcionariosObservable.setAll(funcionarioDAO.listarTodos());
     }
 
-    public ObservableList<Funcionario> listarTodosObservable() {
-        return funcionariosObservable;
+    public void adicionarFuncionario(Funcionario funcionario) throws SQLException {
+        validarFuncionario(funcionario);
+        funcionarioDAO.adicionarFuncionario(funcionario);
     }
 
-    public Funcionario cadastrarFuncionario(
-            String nome, String cpf, String telefone, String email, Endereco endereco,
-            String cargo, BigDecimal salario, LocalDate dataAdmissao,
-            LocalDate dataDemissao, String turno, String status) {
-
-        try {
-            Funcionario funcionario = new Funcionario(
-                    null, // TipoParticipante
-                    cpf, nome, telefone, email, endereco,
-                    cargo, salario, dataAdmissao, dataDemissao, turno, status
-            );
-
-            validarFuncionario(funcionario);
-            funcionarioDAO.adicionarFuncionario(funcionario);
-            funcionariosObservable.setAll(funcionarioDAO.listarTodos());
-            return funcionario;
-        } catch (Exception e) {
-            e.getStackTrace();
-            return null;
-        }
+    public void atualizarFuncionario(Funcionario funcionario) throws SQLException {
+        validarFuncionario(funcionario);
+        funcionarioDAO.atualizarFuncionario(funcionario);
     }
 
-    public Optional<Funcionario> atualizarFuncionario(
-            int id, String nome, String cpf, String telefone, String email, Endereco endereco,
-            String cargo, BigDecimal salario, LocalDate dataAdmissao,
-            LocalDate dataDemissao, String turno, String status) {
-
-        try {
-            Funcionario funcionario = new Funcionario(
-                    null, // TipoParticipante
-                    cpf, nome, telefone, email, endereco,
-                    cargo, salario, dataAdmissao, dataDemissao, turno, status
-            );
-            funcionario.setId(id);
-
-            validarFuncionario(funcionario);
-            funcionarioDAO.atualizarFuncionario(funcionario);
-            funcionariosObservable.setAll(funcionarioDAO.listarTodos());
-            return Optional.of(funcionario);
-        } catch (Exception e) {
-            return Optional.empty();
-        }
+    public void removerFuncionario(Funcionario funcionario) throws SQLException {
+        funcionarioDAO.removerFuncionario(funcionario);
     }
 
-    public boolean removerFuncionario(int id) {
-        try {
-            funcionarioDAO.removerFuncionario(id);
-            funcionariosObservable.setAll(funcionarioDAO.listarTodos());
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+    public List<Funcionario> listarTodos() throws SQLException {
+        return funcionarioDAO.showAll();
     }
 
     private void validarFuncionario(Funcionario funcionario) {

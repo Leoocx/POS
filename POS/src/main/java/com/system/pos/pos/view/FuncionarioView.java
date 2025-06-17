@@ -1,13 +1,21 @@
 package com.system.pos.pos.view;
 
 import com.system.pos.pos.controller.FuncionariosController;
+import com.system.pos.pos.model.Endereco;
 import com.system.pos.pos.model.Funcionario;
+import com.system.pos.pos.service.EnderecoService;
+import com.system.pos.pos.report.ReportPrinter;
 import com.system.pos.pos.utils.AlertUtil;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 import static com.system.pos.pos.utils.AlertUtil.mostrarAlerta;
 
@@ -25,18 +33,22 @@ public class FuncionarioView {
     @FXML private TextField cep;
     @FXML private TableView<Funcionario> table;
 
-    private final FuncionariosController controller;
+    private ObservableList<Funcionario> funcionarios;
+    private final FuncionariosController funcionarioController;
+    private final EnderecoService enderecoService;
 
-    public FuncionarioView() throws SQLException {
-        this.controller = new FuncionariosController();
+    public FuncionarioView() {
+        this.funcionarioController = new FuncionariosController();
+        this.enderecoService = new EnderecoService();
     }
 
     @FXML
-    public void initialize() {
-        configurarComboBoxes();
-        controller.configurarTabela(table);
+    public void initialize() throws SQLException {
+        this.funcionarios = FXCollections.observableArrayList();
+        inicializarTabela();
         carregarFuncionarios();
-        configurarListeners();
+        configurarBuscaCEP();
+        configurarComboBoxes();
     }
 
     private void configurarComboBoxes() {
@@ -44,55 +56,62 @@ public class FuncionarioView {
         status.getItems().addAll("Ativo", "Inativo", "Férias", "Afastado");
     }
 
-    private void configurarListeners() {
+    private void configurarBuscaCEP() {
         cep.focusedProperty().addListener((obs, oldVal, newVal) -> {
             if (!newVal && !cep.getText().isEmpty()) {
-                controller.buscarEnderecoPorCEP(cep.getText())
-                        .ifPresentOrElse(
-                                endereco -> {}, // Pode preencher outros campos se necessário
-                                () -> mostrarAlerta("Erro, CEP não encontrado", Alert.AlertType.ERROR)
-                        );
-            }
-        });
-
-        table.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            if (newSelection != null) {
-                preencherCampos(newSelection);
+                buscarEnderecoPorCEP();
             }
         });
     }
 
-    private void carregarFuncionarios() {
-        controller.carregarFuncionarios(table);
+    private void buscarEnderecoPorCEP() {
+        try {
+            Endereco endereco = enderecoService.buscarEnderecoPorCep(cep.getText());
+        } catch (Exception e) {
+            mostrarAlerta("Erro na busca", e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+
+    private void carregarFuncionarios() throws SQLException {
+        funcionarios.setAll(funcionarioController.listarTodos());
     }
 
     @FXML
-    private void cadastrarFuncionarioBTN() {
+    private void cadastroFuncionarioBTN() {
         try {
-            BigDecimal salarioValue = new BigDecimal(salario.getText());
+            if (validarCampos()) {
+                Endereco endereco = criarEnderecoFromInputs();
+                Funcionario funcionario = new Funcionario(
+                        null, // TipoParticipante já definido no construtor
+                        cpf.getText(),
+                        nome.getText(),
+                        telefone.getText(),
+                        email.getText(),
+                        endereco,
+                        cargo.getText(),
+                        new BigDecimal(salario.getText()),
+                        dataAdmissao.getValue(),
+                        dataDemissao.getValue(),
+                        turno.getValue(),
+                        status.getValue()
+                );
 
-            controller.cadastrarFuncionario(
-                    nome.getText(),
-                    cpf.getText(),
-                    telefone.getText(),
-                    email.getText(),
-                    cargo.getText(),
-                    salarioValue,
-                    dataAdmissao.getValue(),
-                    dataDemissao.getValue(),
-                    turno.getValue(),
-                    status.getValue(),
-                    cep.getText()
-            ).ifPresentOrElse(
-                    funcionario -> {
-                        carregarFuncionarios();
-                        limparCampos();
-                        mostrarAlerta("Sucesso, Funcionário cadastrado com sucesso!", Alert.AlertType.INFORMATION);
-                    },
-                    () -> mostrarAlerta("Erro, Falha ao cadastrar funcionário", Alert.AlertType.ERROR)
-            );
-        } catch (NumberFormatException e) {
-            mostrarAlerta("Erro, Salário deve ser um valor numérico válido", Alert.AlertType.ERROR);
+                funcionarioController.cadastrarFuncionario(funcionario);
+                carregarFuncionarios();
+                limparCampos();
+                mostrarAlerta("Sucesso", "Funcionário cadastrado com sucesso!", Alert.AlertType.INFORMATION);
+            }
+        } catch (Exception e) {
+            mostrarAlerta("Erro", "Falha ao cadastrar funcionário: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+
+    private Endereco criarEnderecoFromInputs() {
+        try {
+            return enderecoService.buscarEnderecoPorCep(cep.getText());
+        } catch (Exception e) {
+            mostrarAlerta("Erro", "Falha ao buscar endereço: " + e.getMessage(), Alert.AlertType.ERROR);
+            return new Endereco();
         }
     }
 
@@ -101,56 +120,57 @@ public class FuncionarioView {
         Funcionario selecionado = table.getSelectionModel().getSelectedItem();
         if (selecionado != null) {
             try {
-                BigDecimal salarioValue = new BigDecimal(salario.getText());
-
-                controller.atualizarFuncionario(
-                        selecionado.getId(),
-                        nome.getText(),
-                        cpf.getText(),
-                        telefone.getText(),
-                        email.getText(),
-                        cargo.getText(),
-                        salarioValue,
-                        dataAdmissao.getValue(),
-                        dataDemissao.getValue(),
-                        turno.getValue(),
-                        status.getValue(),
-                        cep.getText()
-                ).ifPresentOrElse(
-                        funcionario -> {
-                            carregarFuncionarios();
-                            limparCampos();
-                            mostrarAlerta("Sucesso, Funcionário atualizado com sucesso!", Alert.AlertType.INFORMATION);
-                        },
-                        () -> mostrarAlerta("Erro, Falha ao atualizar funcionário", Alert.AlertType.ERROR)
-                );
-            } catch (NumberFormatException e) {
-                mostrarAlerta("Erro, Salário deve ser um valor numérico válido", Alert.AlertType.ERROR);
+                if (validarCampos()) {
+                    atualizarFuncionarioFromInputs(selecionado);
+                    funcionarioController.atualizarFuncionario(selecionado);
+                    carregarFuncionarios();
+                    limparCampos();
+                    mostrarAlerta("Sucesso", "Funcionário atualizado com sucesso!", Alert.AlertType.INFORMATION);
+                }
+            } catch (Exception e) {
+                mostrarAlerta("Erro", "Falha ao atualizar funcionário: " + e.getMessage(), Alert.AlertType.ERROR);
             }
         } else {
-            mostrarAlerta("Aviso, Nenhum funcionário selecionado", Alert.AlertType.WARNING);
+            mostrarAlerta("Aviso", "Nenhum funcionário selecionado", Alert.AlertType.WARNING);
         }
     }
 
+    private void atualizarFuncionarioFromInputs(Funcionario funcionario) {
+        funcionario.setNome(nome.getText());
+        funcionario.setTelefone(telefone.getText());
+        funcionario.setEmail(email.getText());
+        funcionario.setDocumento(cpf.getText());
+        funcionario.setCargo(cargo.getText());
+        funcionario.setSalario(new BigDecimal(salario.getText()));
+        funcionario.setDataAdmissao(dataAdmissao.getValue());
+        funcionario.setDataDemissao(dataDemissao.getValue());
+        funcionario.setTurno(turno.getValue());
+        funcionario.setStatus(status.getValue());
+
+        Endereco endereco = criarEnderecoFromInputs();
+        funcionario.setEndereco(endereco);
+    }
+
     @FXML
-    private void removerFuncionarioBTN() {
+    private void deleteFuncionarioBTN() {
         Funcionario selecionado = table.getSelectionModel().getSelectedItem();
         if (selecionado != null) {
-            if (controller.removerFuncionario(selecionado.getId())) {
+            try {
+                funcionarioController.excluirFuncionario(selecionado);
                 carregarFuncionarios();
                 limparCampos();
-                mostrarAlerta("Sucesso, Funcionário removido com sucesso!", Alert.AlertType.INFORMATION);
-            } else {
-                mostrarAlerta("Erro, Falha ao remover funcionário", Alert.AlertType.ERROR);
+                mostrarAlerta("Sucesso", "Funcionário removido com sucesso!", Alert.AlertType.INFORMATION);
+            } catch (Exception e) {
+                mostrarAlerta("Erro", "Falha ao remover funcionário: " + e.getMessage(), Alert.AlertType.ERROR);
             }
         } else {
-            mostrarAlerta("Aviso, Nenhum funcionário selecionado", Alert.AlertType.WARNING);
+            mostrarAlerta("Aviso", "Nenhum funcionário selecionado", Alert.AlertType.WARNING);
         }
     }
 
     @FXML
     private void gerarPDFButton() {
-        controller.gerarPDF(table);
+        ReportPrinter.imprimirTabela(table);
     }
 
     @FXML
@@ -169,6 +189,48 @@ public class FuncionarioView {
         table.getSelectionModel().clearSelection();
     }
 
+    private void inicializarTabela() {
+        TableColumn<Funcionario, Integer> idColumn = new TableColumn<>("ID");
+        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+
+        TableColumn<Funcionario, String> nomeColumn = new TableColumn<>("NOME");
+        nomeColumn.setCellValueFactory(new PropertyValueFactory<>("nome"));
+
+        TableColumn<Funcionario, String> cpfColumn = new TableColumn<>("CPF");
+        cpfColumn.setCellValueFactory(new PropertyValueFactory<>("documento"));
+
+        TableColumn<Funcionario, String> telefoneColumn = new TableColumn<>("TELEFONE");
+        telefoneColumn.setCellValueFactory(new PropertyValueFactory<>("telefone"));
+
+        TableColumn<Funcionario, String> emailColumn = new TableColumn<>("EMAIL");
+        emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
+
+        TableColumn<Funcionario, String> cargoColumn = new TableColumn<>("CARGO");
+        cargoColumn.setCellValueFactory(new PropertyValueFactory<>("cargo"));
+
+        TableColumn<Funcionario, BigDecimal> salarioColumn = new TableColumn<>("SALÁRIO");
+        salarioColumn.setCellValueFactory(new PropertyValueFactory<>("salario"));
+
+        TableColumn<Funcionario, String> statusColumn = new TableColumn<>("STATUS");
+        statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
+
+        TableColumn<Funcionario, String> enderecoColumn = new TableColumn<>("ENDEREÇO");
+        enderecoColumn.setCellValueFactory(cellData -> {
+            Endereco endereco = cellData.getValue().getEndereco();
+            return new SimpleStringProperty(endereco != null ? endereco.toString() : "");
+        });
+
+        table.setItems(funcionarios);
+        table.getColumns().setAll(idColumn, nomeColumn, cpfColumn, telefoneColumn,
+                emailColumn, cargoColumn, salarioColumn, statusColumn, enderecoColumn);
+
+        table.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                preencherCampos(newSelection);
+            }
+        });
+    }
+
     private void preencherCampos(Funcionario funcionario) {
         nome.setText(funcionario.getNome());
         cpf.setText(funcionario.getDocumento());
@@ -181,8 +243,26 @@ public class FuncionarioView {
         turno.setValue(funcionario.getTurno());
         status.setValue(funcionario.getStatus());
 
-        if (funcionario.getEndereco() != null) {
-            cep.setText(funcionario.getEndereco().getCep());
+        Endereco endereco = funcionario.getEndereco();
+        if (endereco != null) {
+            cep.setText(endereco.getCep());
         }
+    }
+
+    private boolean validarCampos() {
+        if (nome.getText().isBlank() || cpf.getText().isBlank() || cargo.getText().isBlank()
+                || salario.getText().isBlank() || dataAdmissao.getValue() == null || cep.getText().isBlank()) {
+            mostrarAlerta("Aviso", "Nome, CPF, Cargo, Salário, Data de Admissão e CEP são campos obrigatórios", Alert.AlertType.WARNING);
+            return false;
+        }
+
+        try {
+            new BigDecimal(salario.getText());
+        } catch (NumberFormatException e) {
+            mostrarAlerta("Erro", "Salário deve ser um valor numérico válido", Alert.AlertType.ERROR);
+            return false;
+        }
+
+        return true;
     }
 }

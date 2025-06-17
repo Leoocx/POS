@@ -2,67 +2,37 @@ package com.system.pos.pos.service;
 
 import com.system.pos.pos.database.ClienteDAO;
 import com.system.pos.pos.model.Cliente;
-import com.system.pos.pos.model.Endereco;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
 import java.sql.SQLException;
-import java.util.Optional;
+import java.util.List;
 
 public class ClienteService {
     private final ClienteDAO clienteDAO;
-    private final ObservableList<Cliente> clientesObservable;
 
-    public ClienteService() throws SQLException {
+    public ClienteService() {
         this.clienteDAO = new ClienteDAO();
-        this.clientesObservable = FXCollections.observableArrayList();
-        this.clientesObservable.setAll(clienteDAO.listarTodos());
     }
 
-    public ObservableList<Cliente> listarTodosObservable() {
-        return clientesObservable;
+    public void cadastrarCliente(Cliente cliente) throws SQLException {
+        validarCliente(cliente);
+        clienteDAO.adicionarCliente(cliente);
     }
 
-    public Optional<Cliente> cadastrarCliente(Cliente cliente) {
-        try {
-            validarCliente(cliente);
-            clienteDAO.adicionarCliente(cliente);
-            atualizarListaClientes();
-            return Optional.of(cliente);
-        } catch (Exception e) {
-            return Optional.empty();
-        }
+    public void atualizarCliente(Cliente cliente) throws SQLException {
+        validarCliente(cliente);
+        clienteDAO.atualizarCliente(cliente);
     }
 
-    public Optional<Cliente> atualizarCliente(int id, String nome, String telefone, String cpf, String email, Endereco endereco) {
-        try {
-            Cliente cliente = new Cliente(nome, telefone, cpf, email, endereco);
-            cliente.setId(id);
-            validarCliente(cliente);
-            clienteDAO.atualizarCliente(cliente);
-            atualizarListaClientes();
-            return Optional.of(cliente);
-        } catch (Exception e) {
-            return Optional.empty();
-        }
+    public void removerCliente(int id) throws SQLException {
+        clienteDAO.removerCliente(id);
     }
 
-    public boolean removerCliente(int id) {
-        try {
-            clienteDAO.removerCliente(id);
-            atualizarListaClientes();
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+    public List<Cliente> listarTodos() throws SQLException {
+        return clienteDAO.listarClientes();
     }
 
-    private void atualizarListaClientes() {
-        try {
-            clientesObservable.setAll(clienteDAO.listarTodos());
-        } catch (SQLException e) {
-            // Tratar exceção
-        }
+    public Cliente buscarPorId(int id) throws SQLException {
+        return clienteDAO.buscarClientePorCodigo(id);
     }
 
     private void validarCliente(Cliente cliente) {

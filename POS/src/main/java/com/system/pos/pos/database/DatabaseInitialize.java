@@ -8,6 +8,7 @@ import java.sql.Statement;
 public class DatabaseInitialize {
     private static final String URL = "jdbc:sqlite:database.db";
 
+
     public static void criarTabelas() {
         try (Connection conn = DriverManager.getConnection(URL);
              Statement stmt = conn.createStatement()) {
@@ -99,7 +100,7 @@ public class DatabaseInitialize {
                     id_produto INTEGER PRIMARY KEY AUTOINCREMENT,
                     nome_produto TEXT NOT NULL,
                     quantidade INTEGER NOT NULL DEFAULT 0,
-                    preco TEXT NOT NULL, -- Alterado de REAL para TEXT para armazenar o valor exato
+                    preco TEXT NOT NULL,
                     status TEXT NOT NULL CHECK (status IN ('Estoque normal', 'Baixo Estoque', 'Esgotado')),
                     codigo_barras TEXT UNIQUE,
                     categoria_id INTEGER NOT NULL,

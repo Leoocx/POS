@@ -1,246 +1,256 @@
-package com.system.pos.pos.view;
+    package com.system.pos.pos.view;
 
-import com.system.pos.pos.controller.ProdutoController;
-import com.system.pos.pos.model.Categoria;
-import com.system.pos.pos.model.Produto;
-import com.system.pos.pos.model.SubCategoria;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
+    import com.system.pos.pos.controller.ProdutoController;
+    import com.system.pos.pos.model.Categoria;
+    import com.system.pos.pos.model.Produto;
+    import com.system.pos.pos.model.SubCategoria;
+    import com.system.pos.pos.report.ReportPrinter;
+    import javafx.beans.property.SimpleStringProperty;
+    import javafx.collections.FXCollections;
+    import javafx.collections.ObservableList;
+    import javafx.fxml.FXML;
+    import javafx.scene.control.*;
+    import javafx.scene.control.cell.PropertyValueFactory;
 
-import java.math.BigDecimal;
-import java.sql.SQLException;
+    import java.math.BigDecimal;
+    import java.sql.SQLException;
 
-public class ProdutoView {
-    @FXML private TextField nomeProduto;
-    @FXML private TextField quantidade;
-    @FXML private TextField preco;
-    @FXML private ComboBox<String> statusComboBox;
-    @FXML private TableView<Produto> table;
-    @FXML private TextField codigoBarrasField;
-    @FXML private ComboBox<Categoria> categoriaComboBox;
-    @FXML private ComboBox<SubCategoria> subCategoriaComboBox;
+    import static com.system.pos.pos.utils.AlertUtil.mostrarAlerta;
 
-    private ProdutoController produtoController;
+    public class ProdutoView {
 
-    @FXML
-    public void initialize() throws SQLException {
-        produtoController = new ProdutoController();
-        configurarUI();
-        carregarDados();
-    }
+        @FXML private TextField nomeProduto;
+        @FXML private TextField quantidade;
+        @FXML private TextField preco;
+        @FXML private ComboBox<String> statusComboBox;
+        @FXML private TableView<Produto> table;
+        @FXML private TextField codigoBarrasField;
+        @FXML private ComboBox<Categoria> categoriaComboBox;
+        @FXML private ComboBox<SubCategoria> subCategoriaComboBox;
 
-    private void configurarUI() {
-        configurarComboBoxes();
-        configurarValidacaoCampos();
-        configurarTabela();
-    }
+        private ProdutoController produtoController;
+        private ObservableList<Produto> produtos;
 
-    private void configurarComboBoxes() {
-        statusComboBox.getItems().addAll("Estoque normal", "Baixo Estoque", "Esgotado");
-        categoriaComboBox.getItems().setAll(Categoria.values());
-        categoriaComboBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal != null) {
-                subCategoriaComboBox.getItems().setAll(newVal.getSubCategorias());
-            }
-        });
-    }
-
-    private void configurarValidacaoCampos() {
-        quantidade.textProperty().addListener((obs, oldValue, newValue) -> {
-            if (!newValue.matches("\\d*")) {
-                quantidade.setText(newValue.replaceAll("[^\\d]", ""));
-            }
-        });
-
-        preco.textProperty().addListener((obs, oldValue, newValue) -> {
-            if (!newValue.matches("\\d*(\\.\\d*)?")) {
-                preco.setText(newValue.replaceAll("[^\\d.]", ""));
-            }
-        });
-    }
-
-    private void configurarTabela() {
-        TableColumn<Produto, Integer> idColumn = new TableColumn<>("ID");
-        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-
-        TableColumn<Produto, String> nomeColumn = new TableColumn<>("PRODUTO");
-        nomeColumn.setCellValueFactory(new PropertyValueFactory<>("nome"));
-
-        TableColumn<Produto, Integer> quantidadeColumn = new TableColumn<>("QUANTIDADE");
-        quantidadeColumn.setCellValueFactory(new PropertyValueFactory<>("quantidade"));
-
-        TableColumn<Produto, Double> precoColumn = new TableColumn<>("PREÇO");
-        precoColumn.setCellValueFactory(new PropertyValueFactory<>("preco"));
-
-        TableColumn<Produto, String> statusColumn = new TableColumn<>("STATUS");
-        statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
-
-        TableColumn<Produto, String> codigoBarrasColumn = new TableColumn<>("CÓDIGO DE BARRAS");
-        codigoBarrasColumn.setCellValueFactory(new PropertyValueFactory<>("codigoBarras"));
-
-        TableColumn<Produto, String> categoriaColumn = new TableColumn<>("CATEGORIA");
-        categoriaColumn.setCellValueFactory(cellData -> {
-            Categoria cat = cellData.getValue().getCategoria();
-            return new SimpleStringProperty(cat != null ? cat.getDescricao() : "");
-        });
-
-        TableColumn<Produto, String> subCategoriaColumn = new TableColumn<>("SUBCATEGORIA");
-        subCategoriaColumn.setCellValueFactory(cellData -> {
-            SubCategoria sub = cellData.getValue().getSubCategoria();
-            return new SimpleStringProperty(sub != null ? sub.getDescricao() : "");
-        });
-
-        table.getColumns().addAll(idColumn, nomeColumn, quantidadeColumn, precoColumn,
-                statusColumn, codigoBarrasColumn, categoriaColumn, subCategoriaColumn);
-
-        table.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            if (newSelection != null) {
-                preencherCampos(newSelection);
-            }
-        });
-    }
-
-    private void carregarDados() {
-        try {
-            table.setItems(produtoController.listarProdutos());
-        } catch (Exception e) {
-            exibirAlertaErro("Erro ao carregar produtos", e.getMessage());
+        @FXML
+        public void initialize() {
+            this.produtoController = new ProdutoController();
+            inicializarTabela();
+            carregarDadosIniciais();
+            configurarComponentes();
         }
-    }
 
-    @FXML
-    private void cadastrarProduto() {
-        if (validarCampos()) {
+        private void configurarComponentes() {
+            // Configura ComboBox de status
+            statusComboBox.getItems().addAll("Estoque normal", "Baixo Estoque", "Esgotado");
+
+            // Configura ComboBox de categorias e subcategorias
+            categoriaComboBox.setItems(FXCollections.observableArrayList(Categoria.values()));
+
+            categoriaComboBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+                if (newVal != null) {
+                    subCategoriaComboBox.setItems(FXCollections.observableArrayList(newVal.getSubCategorias()));
+                }
+            });
+
+            // Configura validação para campos numéricos
+            quantidade.textProperty().addListener((obs, oldValue, newValue) -> {
+                if (!newValue.matches("\\d*")) {
+                    quantidade.setText(newValue.replaceAll("[^\\d]", ""));
+                }
+            });
+
+            preco.textProperty().addListener((obs, oldValue, newValue) -> {
+                if (!newValue.matches("\\d*(\\.\\d*)?")) {
+                    preco.setText(newValue.replaceAll("[^\\d.]", ""));
+                }
+            });
+        }
+
+        private void inicializarTabela() {
+            TableColumn<Produto, Integer> idColumn = new TableColumn<>("ID");
+            idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+
+            TableColumn<Produto, String> nomeColumn = new TableColumn<>("PRODUTO");
+            nomeColumn.setCellValueFactory(new PropertyValueFactory<>("nome"));
+
+            TableColumn<Produto, Integer> quantidadeColumn = new TableColumn<>("QUANTIDADE");
+            quantidadeColumn.setCellValueFactory(new PropertyValueFactory<>("quantidade"));
+
+            TableColumn<Produto, Double> precoColumn = new TableColumn<>("PREÇO");
+            precoColumn.setCellValueFactory(new PropertyValueFactory<>("preco"));
+
+            TableColumn<Produto, String> statusColumn = new TableColumn<>("STATUS");
+            statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
+
+            TableColumn<Produto, String> codigoBarrasColumn = new TableColumn<>("CÓDIGO DE BARRAS");
+            codigoBarrasColumn.setCellValueFactory(new PropertyValueFactory<>("codigoBarras"));
+
+            TableColumn<Produto, String> categoriaColumn = new TableColumn<>("CATEGORIA");
+            categoriaColumn.setCellValueFactory(cellData -> {
+                Categoria cat = cellData.getValue().getCategoria();
+                return new SimpleStringProperty(cat != null ? cat.getDescricao() : "");
+            });
+
+            TableColumn<Produto, String> subCategoriaColumn = new TableColumn<>("SUBCATEGORIA");
+            subCategoriaColumn.setCellValueFactory(cellData -> {
+                SubCategoria sub = cellData.getValue().getSubCategoria();
+                return new SimpleStringProperty(sub != null ? sub.getDescricao() : "");
+            });
+
+            table.getColumns().setAll(idColumn, nomeColumn, quantidadeColumn, precoColumn,
+                    statusColumn, codigoBarrasColumn, categoriaColumn, subCategoriaColumn);
+
+            // Listener para seleção na tabela
+            table.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+                if (newSelection != null) {
+                    preencherCampos(newSelection);
+                }
+            });
+        }
+
+        private void carregarDadosIniciais() {
             try {
-                produtoController.cadastrarProduto(
-                        nomeProduto.getText(),
-                        Integer.parseInt(quantidade.getText()),
-                        new BigDecimal(preco.getText().replace(",", ".")),
-                        statusComboBox.getValue(),
-                        codigoBarrasField.getText(),
-                        categoriaComboBox.getValue(),
-                        subCategoriaComboBox.getValue()
-                );
-                carregarDados();
-                limparCampos();
-                exibirAlertaSucesso("Produto cadastrado com sucesso!");
+                produtos = FXCollections.observableArrayList(produtoController.listarTodos());
+                table.setItems(produtos);
             } catch (Exception e) {
-                exibirAlertaErro("Erro ao cadastrar produto", e.getMessage());
+                mostrarAlerta("Erro", "Falha ao carregar produtos: " + e.getMessage(), Alert.AlertType.ERROR);
             }
         }
-    }
 
-    @FXML
-    private void atualizarProduto() {
-        Produto selecionado = table.getSelectionModel().getSelectedItem();
-        if (selecionado != null && validarCampos()) {
+        @FXML
+        private void cadastraProdutoButton() {
             try {
-                produtoController.atualizarProduto(
-                        selecionado.getId(),
-                        nomeProduto.getText(),
-                        Integer.parseInt(quantidade.getText()),
-                        new BigDecimal(preco.getText().replace(",", ".")),
-                        statusComboBox.getValue(),
-                        codigoBarrasField.getText(),
-                        categoriaComboBox.getValue(),
-                        subCategoriaComboBox.getValue()
-                );
-                carregarDados();
-                limparCampos();
-                exibirAlertaSucesso("Produto atualizado com sucesso!");
+                if (validarCampos()) {
+                    Produto produto = criarProdutoFromInputs();
+                    produtoController.adicionarProduto(produto);
+                    atualizarTabela();
+                    limparCampos();
+                    mostrarAlerta("Sucesso", "Produto cadastrado com sucesso!", Alert.AlertType.INFORMATION);
+                }
             } catch (Exception e) {
-                exibirAlertaErro("Erro ao atualizar produto", e.getMessage());
+                mostrarAlerta("Erro", "Falha ao cadastrar produto: " + e.getMessage(), Alert.AlertType.ERROR);
             }
-        } else {
-            exibirAlertaAviso("Nenhum produto selecionado");
         }
-    }
 
-    @FXML
-    private void removerProduto() {
-        Produto selecionado = table.getSelectionModel().getSelectedItem();
-        if (selecionado != null) {
+        @FXML
+        private void atualizarProdutoBTN() {
+            Produto selecionado = table.getSelectionModel().getSelectedItem();
+            if (selecionado != null) {
+                try {
+                    if (validarCampos()) {
+                        atualizarProdutoFromInputs(selecionado);
+                        produtoController.atualizarProduto(selecionado);
+                        atualizarTabela();
+                        limparCampos();
+                        mostrarAlerta("Sucesso", "Produto atualizado com sucesso!", Alert.AlertType.INFORMATION);
+                    }
+                } catch (Exception e) {
+                    mostrarAlerta("Erro", "Falha ao atualizar produto: " + e.getMessage(), Alert.AlertType.ERROR);
+                }
+            } else {
+                mostrarAlerta("Aviso", "Nenhum produto selecionado", Alert.AlertType.WARNING);
+            }
+        }
+
+        @FXML
+        private void removerProdutoBTN() {
+            Produto selecionado = table.getSelectionModel().getSelectedItem();
+            if (selecionado != null) {
+                try {
+                    produtoController.removerProduto(selecionado.getId());
+                    atualizarTabela();
+                    limparCampos();
+                    mostrarAlerta("Sucesso", "Produto removido com sucesso!", Alert.AlertType.INFORMATION);
+                } catch (Exception e) {
+                    mostrarAlerta("Erro", "Falha ao remover produto: " + e.getMessage(), Alert.AlertType.ERROR);
+                }
+            } else {
+                mostrarAlerta("Aviso", "Nenhum produto selecionado", Alert.AlertType.WARNING);
+            }
+        }
+
+        @FXML
+        private void clearFields() {
+            limparCampos();
+        }
+
+        @FXML
+        private void gerarPDFButton() {
+            ReportPrinter.imprimirTabela(table);
+        }
+
+        private boolean validarCampos() {
+            if (nomeProduto.getText().isBlank() || quantidade.getText().isBlank() ||
+                    preco.getText().isBlank() || statusComboBox.getValue() == null ||
+                    categoriaComboBox.getValue() == null || subCategoriaComboBox.getValue() == null) {
+                mostrarAlerta("Aviso", "Preencha todos os campos obrigatórios", Alert.AlertType.WARNING);
+                return false;
+            }
+
             try {
-                produtoController.removerProduto(selecionado.getId());
-                carregarDados();
-                limparCampos();
-                exibirAlertaSucesso("Produto removido com sucesso!");
-            } catch (Exception e) {
-                exibirAlertaErro("Erro ao remover produto", e.getMessage());
+                new BigDecimal(preco.getText().replace(",", ".")); // Verifica se o preço é um número válido
+                Integer.parseInt(quantidade.getText());
+            } catch (NumberFormatException e) {
+                mostrarAlerta("Erro", "Valores numéricos inválidos", Alert.AlertType.ERROR);
+                return false;
             }
-        } else {
-            exibirAlertaAviso("Nenhum produto selecionado");
-        }
-    }
 
-    @FXML
-    private void gerarRelatorio() {
-        produtoController.gerarRelatorio(table);
-    }
-
-    @FXML
-    private void limparCampos() {
-        nomeProduto.clear();
-        quantidade.clear();
-        preco.clear();
-        codigoBarrasField.clear();
-        statusComboBox.getSelectionModel().clearSelection();
-        categoriaComboBox.getSelectionModel().clearSelection();
-        subCategoriaComboBox.getSelectionModel().clearSelection();
-        table.getSelectionModel().clearSelection();
-    }
-
-    private boolean validarCampos() {
-        boolean camposValidos = produtoController.validarDadosProduto(
-                nomeProduto.getText(),
-                quantidade.getText(),
-                preco.getText(),
-                statusComboBox.getValue(),
-                categoriaComboBox.getValue(),
-                subCategoriaComboBox.getValue()
-        );
-
-        if (!camposValidos) {
-            exibirAlertaAviso("Preencha todos os campos obrigatórios corretamente");
+            return true;
         }
 
-        return camposValidos;
-    }
 
-    private void preencherCampos(Produto produto) {
-        nomeProduto.setText(produto.getNome());
-        quantidade.setText(String.valueOf(produto.getQuantidade()));
-        preco.setText(produto.getPreco().toString());
-        statusComboBox.setValue(produto.getStatus());
-        codigoBarrasField.setText(produto.getCodigoBarras());
-        categoriaComboBox.setValue(produto.getCategoria());
-        subCategoriaComboBox.setValue(produto.getSubCategoria());
-    }
+        private Produto criarProdutoFromInputs() {
+            return new Produto(
+                    nomeProduto.getText(),
+                    Integer.parseInt(quantidade.getText()),
+                    new BigDecimal(preco.getText().replace(",", ".")), // Alterado para BigDecimal
+                    statusComboBox.getValue(),
+                    codigoBarrasField.getText(),
+                    categoriaComboBox.getValue(),
+                    subCategoriaComboBox.getValue()
+            );
+        }
 
-    private void exibirAlertaErro(String titulo, String mensagem) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensagem);
-        alert.showAndWait();
-    }
 
-    private void exibirAlertaSucesso(String mensagem) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Sucesso");
-        alert.setHeaderText(null);
-        alert.setContentText(mensagem);
-        alert.showAndWait();
-    }
+        private void atualizarProdutoFromInputs(Produto produto) {
+            produto.setNome(nomeProduto.getText());
+            produto.setQuantidade(Integer.parseInt(quantidade.getText()));
+            produto.setPreco(new BigDecimal(preco.getText().replace(",", "."))); // Alterado para BigDecimal
+            produto.setStatus(statusComboBox.getValue());
+            produto.setCodigoBarras(codigoBarrasField.getText());
+            produto.setCategoria(categoriaComboBox.getValue());
+            produto.setSubCategoria(subCategoriaComboBox.getValue());
+        }
 
-    private void exibirAlertaAviso(String mensagem) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Aviso");
-        alert.setHeaderText(null);
-        alert.setContentText(mensagem);
-        alert.showAndWait();
+
+        private void preencherCampos(Produto produto) {
+            nomeProduto.setText(produto.getNome());
+            quantidade.setText(String.valueOf(produto.getQuantidade()));
+            preco.setText(String.valueOf(produto.getPreco()));
+            statusComboBox.setValue(produto.getStatus());
+            codigoBarrasField.setText(produto.getCodigoBarras());
+            categoriaComboBox.setValue(produto.getCategoria());
+            subCategoriaComboBox.setValue(produto.getSubCategoria());
+        }
+
+        private void limparCampos() {
+            nomeProduto.clear();
+            quantidade.clear();
+            preco.clear();
+            codigoBarrasField.clear();
+            statusComboBox.getSelectionModel().clearSelection();
+            categoriaComboBox.getSelectionModel().clearSelection();
+            subCategoriaComboBox.getSelectionModel().clearSelection();
+            table.getSelectionModel().clearSelection();
+        }
+
+        private void atualizarTabela() {
+            try {
+                produtos.setAll(produtoController.listarTodos());
+                table.refresh();
+            } catch (SQLException e) {
+                mostrarAlerta("Erro", "Falha ao atualizar tabela: " + e.getMessage(), Alert.AlertType.ERROR);
+            }
+        }
+
     }
-}

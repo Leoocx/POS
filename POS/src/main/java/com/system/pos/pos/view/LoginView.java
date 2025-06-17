@@ -49,7 +49,7 @@ public class LoginView {
                 onLoginSucesso.run();
             }
         } else {
-            AlertUtil.mostrarAlerta("Campos vazios, preencha todos os campos",Alert.AlertType.WARNING);
+            AlertUtil.mostrarAlerta("Campos vazios", "Preencha todos os campos",Alert.AlertType.WARNING);
         }
     }
 
@@ -67,12 +67,12 @@ public class LoginView {
         String confirmPass = confirmPassword.getText();
 
         if (user.isBlank() || pass.isBlank() || confirmPass.isBlank()) {
-            AlertUtil.mostrarAlerta("Campos vazios, preencha todos os campos",Alert.AlertType.WARNING);
+            AlertUtil.mostrarAlerta("Campos vazios", "Preencha todos os campos",Alert.AlertType.WARNING);
             return;
         }
 
         if (!pass.equals(confirmPass)) {
-            AlertUtil.mostrarAlerta("Erro de senha, as senhas não coincidem",Alert.AlertType.WARNING);
+            AlertUtil.mostrarAlerta("Erro de senha", "As senhas não coincidem",Alert.AlertType.WARNING);
             return;
         }
 

@@ -1,31 +1,24 @@
 package com.system.pos.pos.controller;
 
-import com.system.pos.pos.model.Categoria;
 import com.system.pos.pos.model.Produto;
-import com.system.pos.pos.model.SubCategoria;
 import com.system.pos.pos.service.ProdutoService;
 import javafx.collections.ObservableList;
-import javafx.scene.control.TableView;
 
-import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.List;
 
 public class ProdutoController {
     private final ProdutoService produtoService;
 
-    public ProdutoController() throws SQLException {
+    public ProdutoController() {
         this.produtoService = new ProdutoService();
     }
 
-    public void cadastrarProduto(String nome, int quantidade, BigDecimal preco, String status,
-                                 String codigoBarras, Categoria categoria, SubCategoria subCategoria) throws SQLException {
-        Produto produto = new Produto(nome, quantidade, preco, status, codigoBarras, categoria, subCategoria);
+    public void adicionarProduto(Produto produto) throws SQLException {
         produtoService.adicionarProduto(produto);
     }
 
-    public void atualizarProduto(int id, String nome, int quantidade, BigDecimal preco, String status,
-                                 String codigoBarras, Categoria categoria, SubCategoria subCategoria) throws SQLException {
-        Produto produto = new Produto(id, nome, quantidade, preco, status, codigoBarras, categoria, subCategoria);
+    public void atualizarProduto(Produto produto) throws SQLException {
         produtoService.atualizarProduto(produto);
     }
 
@@ -33,31 +26,19 @@ public class ProdutoController {
         produtoService.removerProduto(id);
     }
 
-    public ObservableList<Produto> listarProdutos() throws SQLException {
-        return produtoService.listarTodosProdutos();
+    public List<Produto> listarTodos() throws SQLException {
+        return produtoService.listarTodos();
     }
 
-    public boolean validarDadosProduto(String nome, String quantidadeStr, String precoStr,
-                                       String status, Categoria categoria, SubCategoria subCategoria) {
-        try {
-            int quantidade = Integer.parseInt(quantidadeStr);
-            BigDecimal preco = new BigDecimal(precoStr.replace(",", "."));
-
-            Produto produto = new Produto();
-            produto.setNome(nome);
-            produto.setQuantidade(quantidade);
-            produto.setPreco(preco);
-            produto.setStatus(status);
-            produto.setCategoria(categoria);
-            produto.setSubCategoria(subCategoria);
-
-            return produtoService.validarProduto(produto);
-        } catch (NumberFormatException e) {
-            return false;
-        }
+    public ObservableList<Produto> listarProdutos() {
+        return produtoService.listarProdutos();
     }
 
-    public void gerarRelatorio(TableView<Produto> tabela) {
-        produtoService.gerarRelatorioProdutos(tabela);
+    public ObservableList<Produto> buscarProdutos(String termo) {
+        return produtoService.buscarProdutos(termo);
+    }
+
+    public boolean atualizarEstoque(int idProduto, int quantidadeVendida) throws SQLException {
+        return produtoService.atualizarEstoque(idProduto, quantidadeVendida);
     }
 }

@@ -49,22 +49,24 @@ public class FornecedorView {
     private void configurarBuscaCEP() {
         cep.focusedProperty().addListener((obs, oldVal, newVal) -> {
             if (!newVal && !cep.getText().isEmpty()) {
-                try {
-                    Endereco endereco = enderecoService.buscarEnderecoPorCep(cep.getText());
-                    // Aqui você pode preencher os campos do endereço se necessário
-                    mostrarAlerta("CEP encontrado: " + endereco.getLogradouro(), Alert.AlertType.INFORMATION);
-                } catch (Exception e) {
-                    mostrarAlerta("Erro na busca: " + e.getMessage(), Alert.AlertType.ERROR);
-                }
+                buscarEnderecoPorCEP();
             }
         });
+    }
+
+    private void buscarEnderecoPorCEP() {
+        try {
+            Endereco endereco = enderecoService.buscarEnderecoPorCep(cep.getText());
+        } catch (Exception e) {
+            mostrarAlerta("Erro na busca", e.getMessage(), Alert.AlertType.ERROR);
+        }
     }
 
     private void carregarFornecedores() {
         try {
             fornecedores.setAll(fornecedorController.listarTodos());
         } catch (SQLException e) {
-            mostrarAlerta("Erro, Falha ao carregar fornecedores: ", Alert.AlertType.ERROR);
+            mostrarAlerta("Erro", "Falha ao carregar fornecedores: " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
@@ -87,15 +89,21 @@ public class FornecedorView {
                 fornecedorController.cadastrarFornecedor(fornecedor);
                 carregarFornecedores();
                 limparCampos();
-                mostrarAlerta("Sucesso, Fornecedor cadastrado com sucesso!", Alert.AlertType.INFORMATION);
+                mostrarAlerta("Sucesso", "Fornecedor cadastrado com sucesso!", Alert.AlertType.INFORMATION);
             }
         } catch (Exception e) {
-            mostrarAlerta("Erro, Falha ao cadastrar fornecedor: " + e.getMessage(), Alert.AlertType.ERROR);
+            mostrarAlerta("Erro", "Falha ao cadastrar fornecedor: " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
-    private Endereco criarEnderecoFromInputs() throws Exception {
-        return enderecoService.buscarEnderecoPorCep(cep.getText());
+    private Endereco criarEnderecoFromInputs() {
+        try {
+            // Busca o endereço completo pelo CEP
+            return enderecoService.buscarEnderecoPorCep(cep.getText());
+        } catch (Exception e) {
+            mostrarAlerta("Erro", "Falha ao buscar endereço: " + e.getMessage(), Alert.AlertType.ERROR);
+            return new Endereco(); // Retorna um endereço vazio se tiver algum erro que salva no banco com valores null
+        }
     }
 
     @FXML
@@ -104,29 +112,21 @@ public class FornecedorView {
         if (selecionado != null) {
             try {
                 if (validarCampos()) {
-                    Endereco endereco = criarEnderecoFromInputs();
-                    selecionado.setNome(nome.getText());
-                    selecionado.setTelefone(telefone.getText());
-                    selecionado.setEmail(email.getText());
-                    selecionado.setRepresentante(representante.getText());
-                    selecionado.setTelefoneRepresentante(telefoneRepresentante.getText());
-                    selecionado.setEmailRepresentante(emailRepresentante.getText());
-                    selecionado.setEndereco(endereco);
-
+                    atualizarFornecedorFromInputs(selecionado);
                     fornecedorController.atualizarFornecedor(selecionado);
                     carregarFornecedores();
                     limparCampos();
-                    mostrarAlerta("Sucesso, Fornecedor atualizado com sucesso!", Alert.AlertType.INFORMATION);
+                    mostrarAlerta("Sucesso", "Fornecedor atualizado com sucesso!", Alert.AlertType.INFORMATION);
                 }
             } catch (Exception e) {
-                mostrarAlerta("Erro, Falha ao atualizar fornecedor: " + e.getMessage(), Alert.AlertType.ERROR);
+                mostrarAlerta("Erro", "Falha ao atualizar fornecedor: " + e.getMessage(), Alert.AlertType.ERROR);
             }
         } else {
-            mostrarAlerta("Aviso, Nenhum fornecedor selecionado", Alert.AlertType.WARNING);
+            mostrarAlerta("Aviso", "Nenhum fornecedor selecionado", Alert.AlertType.WARNING);
         }
     }
 
-    private void atualizarFornecedorFromInputs(Fornecedor fornecedor) throws Exception {
+    private void atualizarFornecedorFromInputs(Fornecedor fornecedor) {
         fornecedor.setNome(nome.getText());
         fornecedor.setTelefone(telefone.getText());
         fornecedor.setEmail(email.getText());
@@ -146,12 +146,12 @@ public class FornecedorView {
                 fornecedorController.excluirFornecedor(selecionado);
                 carregarFornecedores();
                 limparCampos();
-                mostrarAlerta("Sucesso, Fornecedor removido com sucesso!", Alert.AlertType.INFORMATION);
+                mostrarAlerta("Sucesso", "Fornecedor removido com sucesso!", Alert.AlertType.INFORMATION);
             } catch (Exception e) {
-                mostrarAlerta("Erro, Falha ao remover fornecedor: " + e.getMessage(), Alert.AlertType.ERROR);
+                mostrarAlerta("Erro", "Falha ao remover fornecedor: " + e.getMessage(), Alert.AlertType.ERROR);
             }
         } else {
-            mostrarAlerta("Aviso, Nenhum fornecedor selecionado", Alert.AlertType.WARNING);
+            mostrarAlerta("Aviso", "Nenhum fornecedor selecionado", Alert.AlertType.WARNING);
         }
     }
 
@@ -218,15 +218,15 @@ public class FornecedorView {
         telefoneRepresentante.setText(fornecedor.getTelefoneRepresentante());
         emailRepresentante.setText(fornecedor.getEmailRepresentante());
 
-        if (fornecedor.getEndereco() != null) {
-            cep.setText(fornecedor.getEndereco().getCep());
-        } else {
-            cep.clear();
+        Endereco endereco = fornecedor.getEndereco();
+        if (endereco != null) {
+            cep.setText(endereco.getCep());
         }
     }
+
     private boolean validarCampos() {
         if (nome.getText().isBlank() || cnpj.getText().isBlank() || cep.getText().isBlank()) {
-            mostrarAlerta("Aviso, Nome, CNPJ e CEP são campos obrigatórios", Alert.AlertType.WARNING);
+            mostrarAlerta("Aviso", "Nome, CNPJ e CEP são campos obrigatórios", Alert.AlertType.WARNING);
             return false;
         }
         return true;
