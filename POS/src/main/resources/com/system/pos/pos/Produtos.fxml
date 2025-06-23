@@ -8,10 +8,8 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
@@ -75,17 +73,18 @@
                                 <ComboBox fx:id="statusComboBox" layoutX="100.0" nodeOrientation="LEFT_TO_RIGHT" prefWidth="299.0" promptText="Status" GridPane.rowIndex="4" />
                                 <ComboBox fx:id="categoriaComboBox" layoutX="100.0" nodeOrientation="LEFT_TO_RIGHT" prefWidth="299.0" promptText="Categoria" GridPane.rowIndex="5" />
                                 <ComboBox fx:id="subCategoriaComboBox" layoutX="100.0" nodeOrientation="LEFT_TO_RIGHT" prefWidth="299.0" promptText="Subcategoria" GridPane.rowIndex="6" />
-                                <Button fx:id="cadastroProdutoBTN" mnemonicParsing="false" onAction="#cadastraProdutoButton" prefHeight="71.0" prefWidth="299.0" style="-fx-background-color: #1c435e;" text="Adicionar" textFill="WHITE" GridPane.rowIndex="7">
+                                <ComboBox fx:id="fornecedorComboBox" layoutX="100.0" nodeOrientation="LEFT_TO_RIGHT" prefWidth="299.0" promptText="Fornecedor" GridPane.rowIndex="7" />
+                                <Button fx:id="cadastroProdutoBTN" mnemonicParsing="false" onAction="#cadastraProdutoButton" prefHeight="71.0" prefWidth="299.0" style="-fx-background-color: #1c435e;" text="Adicionar" textFill="WHITE" GridPane.rowIndex="8">
                                     <font>
                                         <Font size="18.0" />
                                     </font>
                                 </Button>
-                                <Button fx:id="atualizarProdutoBTN" mnemonicParsing="false" onAction="#atualizarProdutoBTN" prefHeight="24.0" prefWidth="285.0" style="-fx-background-color: #1c435e;" text="Atualizar" textFill="WHITE" GridPane.rowIndex="8">
+                                <Button fx:id="atualizarProdutoBTN" mnemonicParsing="false" onAction="#atualizarProdutoBTN" prefHeight="24.0" prefWidth="285.0" style="-fx-background-color: #1c435e;" text="Atualizar" textFill="WHITE" GridPane.rowIndex="9">
                                     <font>
                                         <Font size="18.0" />
                                     </font>
                                 </Button>
-                                <Button fx:id="deleteProdutoBTN" mnemonicParsing="false" onAction="#removerProdutoBTN" prefHeight="23.0" prefWidth="285.0" style="-fx-background-color: #1c435e;" text="Deletar" textFill="WHITE" GridPane.rowIndex="9">
+                                <Button fx:id="deleteProdutoBTN" mnemonicParsing="false" onAction="#removerProdutoBTN" prefHeight="23.0" prefWidth="285.0" style="-fx-background-color: #1c435e;" text="Deletar" textFill="WHITE" GridPane.rowIndex="10">
                                     <font>
                                         <Font size="18.0" />
                                     </font>

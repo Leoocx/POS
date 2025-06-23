@@ -2,6 +2,7 @@ package com.system.pos.pos.database;
 
 import com.system.pos.pos.model.Conta;
 import com.system.pos.pos.repository.ContaRepository;
+
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ public class ContaDAO implements ContaRepository {
 
     @Override
     public void insertConta(Conta conta) throws SQLException {
-        String sql = "INSERT INTO contas (descricao, valor, vencimento, pago, tipo) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO contas (descricao, valor, vencimento, pago, tipo, data_pagamento) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = CONEXAO_DB.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, conta.getDescricao());
@@ -24,6 +25,7 @@ public class ContaDAO implements ContaRepository {
             stmt.setDate(3, Date.valueOf(conta.getVencimento()));
             stmt.setBoolean(4, conta.isPago());
             stmt.setString(5, conta.isPagar() ? "PAGAR" : "RECEBER");
+            stmt.setDate(6, conta.isPago() ? Date.valueOf(conta.getDataPagamento()) : null); // Novo campo
             stmt.executeUpdate();
 
             try (ResultSet rs = stmt.getGeneratedKeys()) {
@@ -36,13 +38,16 @@ public class ContaDAO implements ContaRepository {
 
     @Override
     public void updateConta(Conta conta) throws SQLException {
-        String sql = "UPDATE contas SET descricao = ?, valor = ?, vencimento = ? WHERE id = ?";
+        String sql = "UPDATE contas SET descricao = ?, valor = ?, vencimento = ?, pago = ?, tipo = ?, data_pagamento = ? WHERE id = ?";
 
         try (PreparedStatement stmt = CONEXAO_DB.prepareStatement(sql)) {
             stmt.setString(1, conta.getDescricao());
             stmt.setDouble(2, conta.getValor());
             stmt.setDate(3, Date.valueOf(conta.getVencimento()));
-            stmt.setInt(4, conta.getId());
+            stmt.setBoolean(4, conta.isPago());
+            stmt.setString(5, conta.isPagar() ? "PAGAR" : "RECEBER");
+            stmt.setDate(6, conta.isPago() ? Date.valueOf(conta.getDataPagamento()) : null); // Novo campo
+            stmt.setInt(7, conta.getId());
             stmt.executeUpdate();
         }
     }

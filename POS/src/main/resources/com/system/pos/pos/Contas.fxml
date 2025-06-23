@@ -75,7 +75,7 @@
             <RadioButton fx:id="radioReceber" text="Conta a Receber" />
         </HBox>
 
-        <HBox spacing="10" GridPane.rowIndex="5" GridPane.columnIndex="1">
+        <HBox spacing="10" GridPane.rowIndex="7" GridPane.columnIndex="1">
             <Button fx:id="btnSalvar" text="Salvar" styleClass="btn-primary" onAction="#handleSalvar" />
             <Button fx:id="btnLimpar" text="Limpar" styleClass="btn-secondary" onAction="#handleLimpar" />
         </HBox>

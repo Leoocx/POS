@@ -3,6 +3,7 @@ package com.system.pos.pos.database;
 import com.system.pos.pos.model.Endereco;
 import com.system.pos.pos.model.Fornecedor;
 import com.system.pos.pos.repository.FornecedorRepository;
+import com.system.pos.pos.exceptions.BusinessException;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -77,13 +78,35 @@ public class FornecedorDAO implements FornecedorRepository {
     }
 
     @Override
-    public void removerFornecedor(Fornecedor fornecedor) throws SQLException {
+    public void removerFornecedor(Fornecedor fornecedor) throws SQLException, BusinessException {
+
+        if (existemProdutosVinculados(fornecedor.getId())) {
+            throw new BusinessException("Não é possível excluir o fornecedor pois existem produtos vinculados a ele.");
+        }
+
         String sql = "DELETE FROM fornecedores WHERE id = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, fornecedor.getId());
             stmt.executeUpdate();
         }
+    }
+
+    /**
+     * Verifica se existem produtos vinculados a este fornecedor
+     */
+    public boolean existemProdutosVinculados(int fornecedorId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM produtos WHERE fornecedor_id = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, fornecedorId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
     }
 
     @Override

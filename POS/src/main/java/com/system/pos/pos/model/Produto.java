@@ -12,11 +12,12 @@ public class Produto {
     private final StringProperty codigoBarras = new SimpleStringProperty();
     private final ObjectProperty<Categoria> categoria = new SimpleObjectProperty<>();
     private final ObjectProperty<SubCategoria> subCategoria = new SimpleObjectProperty<>();
+    private final ObjectProperty<Fornecedor> fornecedor = new SimpleObjectProperty<>(); // Novo campo
 
     public Produto() {
     }
 
-    public Produto(String nome, int quantidade, BigDecimal preco, String status, String codigoBarras, Categoria categoria, SubCategoria subCategoria) {
+    public Produto(String nome, int quantidade, BigDecimal preco, String status, String codigoBarras, Categoria categoria, SubCategoria subCategoria, Fornecedor fornecedor) {
         this.nome.set(nome);
         this.quantidade.set(quantidade);
         this.preco.set(preco);
@@ -24,9 +25,10 @@ public class Produto {
         this.codigoBarras.set(codigoBarras);
         this.categoria.set(categoria);
         this.subCategoria.set(subCategoria);
+        this.fornecedor.set(fornecedor); // Novo campo
     }
 
-    public Produto(int id, String nome, int quantidade, BigDecimal preco, String status, String codigoBarras, Categoria categoria, SubCategoria subCategoria) {
+    public Produto(int id, String nome, int quantidade, BigDecimal preco, String status, String codigoBarras, Categoria categoria, SubCategoria subCategoria, Fornecedor fornecedor) {
         this.id.set(id);
         this.nome.set(nome);
         this.quantidade.set(quantidade);
@@ -35,38 +37,115 @@ public class Produto {
         this.codigoBarras.set(codigoBarras);
         this.categoria.set(categoria);
         this.subCategoria.set(subCategoria);
+        this.fornecedor.set(fornecedor); // Novo campo
     }
 
-    // Getters and Setters
-    public int getId() { return id.get(); }
-    public IntegerProperty idProperty() { return id; }
-    public void setId(int id) { this.id.set(id); }
 
-    public String getNome() { return nome.get(); }
-    public StringProperty nomeProperty() { return nome; }
-    public void setNome(String nome) { this.nome.set(nome); }
+    public int getId() {
+        return id.get();
+    }
 
-    public int getQuantidade() { return quantidade.get(); }
-    public IntegerProperty quantidadeProperty() { return quantidade; }
-    public void setQuantidade(int quantidade) { this.quantidade.set(quantidade); }
+    public IntegerProperty idProperty() {
+        return id;
+    }
 
-    public BigDecimal getPreco() { return preco.get(); }
-    public ObjectProperty<BigDecimal> precoProperty() { return preco; }
-    public void setPreco(BigDecimal preco) { this.preco.set(preco); }
+    public void setId(int id) {
+        this.id.set(id);
+    }
 
-    public String getStatus() { return status.get(); }
-    public StringProperty statusProperty() { return status; }
-    public void setStatus(String status) { this.status.set(status); }
+    public String getNome() {
+        return nome.get();
+    }
 
-    public String getCodigoBarras() { return codigoBarras.get(); }
-    public StringProperty codigoBarrasProperty() { return codigoBarras; }
-    public void setCodigoBarras(String codigoBarras) { this.codigoBarras.set(codigoBarras); }
+    public StringProperty nomeProperty() {
+        return nome;
+    }
 
-    public Categoria getCategoria() { return categoria.get(); }
-    public ObjectProperty<Categoria> categoriaProperty() { return categoria; }
-    public void setCategoria(Categoria categoria) { this.categoria.set(categoria); }
+    public void setNome(String nome) {
+        this.nome.set(nome);
+    }
 
-    public SubCategoria getSubCategoria() { return subCategoria.get(); }
-    public ObjectProperty<SubCategoria> subCategoriaProperty() { return subCategoria; }
-    public void setSubCategoria(SubCategoria subCategoria) { this.subCategoria.set(subCategoria); }
+    public int getQuantidade() {
+        return quantidade.get();
+    }
+
+    public IntegerProperty quantidadeProperty() {
+        return quantidade;
+    }
+
+    public void setQuantidade(int quantidade) {
+        this.quantidade.set(quantidade);
+    }
+
+    public BigDecimal getPreco() {
+        return preco.get();
+    }
+
+    public ObjectProperty<BigDecimal> precoProperty() {
+        return preco;
+    }
+
+    public void setPreco(BigDecimal preco) {
+        this.preco.set(preco);
+    }
+
+    public String getStatus() {
+        return status.get();
+    }
+
+    public StringProperty statusProperty() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status.set(status);
+    }
+
+    public String getCodigoBarras() {
+        return codigoBarras.get();
+    }
+
+    public StringProperty codigoBarrasProperty() {
+        return codigoBarras;
+    }
+
+    public void setCodigoBarras(String codigoBarras) {
+        this.codigoBarras.set(codigoBarras);
+    }
+
+    public Categoria getCategoria() {
+        return categoria.get();
+    }
+
+    public ObjectProperty<Categoria> categoriaProperty() {
+        return categoria;
+    }
+
+    public void setCategoria(Categoria categoria) {
+        this.categoria.set(categoria);
+    }
+
+    public SubCategoria getSubCategoria() {
+        return subCategoria.get();
+    }
+
+    public ObjectProperty<SubCategoria> subCategoriaProperty() {
+        return subCategoria;
+    }
+
+    public void setSubCategoria(SubCategoria subCategoria) {
+        this.subCategoria.set(subCategoria);
+    }
+
+    public Fornecedor getFornecedor() {
+        return fornecedor.get();
+    }
+
+    public ObjectProperty<Fornecedor> fornecedorProperty() {
+        return fornecedor;
+    }
+
+    public void setFornecedor(Fornecedor fornecedor) {
+        this.fornecedor.set(fornecedor);
+    }
 }

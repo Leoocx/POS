@@ -71,21 +71,24 @@ public class Main extends Application {
         primaryStage.setTitle("Sistema PDV");
     }
 
+
     private HBox createToolbar() {
         HBox toolbar = new HBox(10);
         toolbar.setPadding(new Insets(10));
         toolbar.setStyle("-fx-background-color: #0078D7;");
         toolbar.setAlignment(Pos.CENTER_LEFT);
-
+        /*
         String[] labels = {"Cadastros", "Estoque", "Compra", "Produção", "Vendas", "Financeiro"};
         for (String label : labels) {
             Button btn = new Button(label);
             btn.setStyle("-fx-background-color: white; -fx-border-radius: 4; -fx-background-radius: 4;");
             btn.setOnAction(e -> contentArea.setText("Você clicou em: " + label));
             toolbar.getChildren().add(btn);
-        }
+        } */
         return toolbar;
     }
+
+
 
     private VBox createSideMenu() {
         VBox vbox = new VBox();

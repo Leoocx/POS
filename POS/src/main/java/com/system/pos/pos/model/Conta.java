@@ -10,9 +10,12 @@ public class Conta {
     private boolean pago;
     private boolean pagar; // true para contas a pagar, false para contas a receber
     private LocalDate dataPagamento;
+    private Pagamento pagamento;
 
     // Construtores, getters e setters
-    public Conta() {}
+    public Conta() {
+        this.pagamento = new Pagamento(); // Inicializa o pagamento
+    }
 
     public Conta(String descricao, double valor, LocalDate vencimento, boolean isPagar) {
         this.descricao = descricao;
@@ -20,6 +23,7 @@ public class Conta {
         this.vencimento = vencimento;
         this.pagar = isPagar;
         this.pago = false;
+        this.pagamento = new Pagamento(); // Inicializa o pagamento
     }
 
     // Getters e Setters para todos os campos
@@ -37,4 +41,6 @@ public class Conta {
     public void setPagar(boolean pagar) { this.pagar = pagar; }
     public LocalDate getDataPagamento() { return dataPagamento; }
     public void setDataPagamento(LocalDate dataPagamento) { this.dataPagamento = dataPagamento; }
+    public Pagamento getPagamento() { return pagamento; } // Getter para pagamento
+    public void setPagamento(Pagamento pagamento) { this.pagamento = pagamento; } // Setter para pagamento
 }

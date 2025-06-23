@@ -13,6 +13,7 @@ public class DatabaseInitialize {
              Statement stmt = conn.createStatement()) {
 
             String sql = """
+          
                 -- Tabela de usuários
                 CREATE TABLE IF NOT EXISTS users (
                     username TEXT NOT NULL PRIMARY KEY,
@@ -106,22 +107,23 @@ public class DatabaseInitialize {
                     subcategoria_id INTEGER NOT NULL,
                     data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    fornecedor_id INTEGER,
+                    FOREIGN KEY (fornecedor_id) REFERENCES fornecedores(id) ON DELETE RESTRICT,
                     FOREIGN KEY (categoria_id) REFERENCES categorias(id_categoria),
                     FOREIGN KEY (subcategoria_id) REFERENCES subcategorias(id_subcategoria)
                 );
 
                     
-                CREATE TABLE IF NOT EXISTS contas (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    descricao TEXT NOT NULL,
-                    valor REAL NOT NULL,
-                    vencimento DATE NOT NULL,
-                    pago BOOLEAN NOT NULL DEFAULT 0,
-                    tipo TEXT NOT NULL CHECK (tipo IN ('PAGAR', 'RECEBER')),
-                    data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    data_pagamento DATE,
-                    observacao TEXT
-                 );
+              CREATE TABLE IF NOT EXISTS contas (
+                          id INTEGER PRIMARY KEY AUTOINCREMENT,
+                          descricao TEXT NOT NULL,
+                          valor REAL NOT NULL,
+                          vencimento DATE NOT NULL,
+                          pago BOOLEAN NOT NULL DEFAULT 0,
+                          tipo TEXT NOT NULL CHECK (tipo IN ('PAGAR', 'RECEBER')),
+                          data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                          data_pagamento DATE
+                      );
                  
                 CREATE TABLE IF NOT EXISTS vendas (
                     data TEXT NOT NULL,                                                                                                                                  \s

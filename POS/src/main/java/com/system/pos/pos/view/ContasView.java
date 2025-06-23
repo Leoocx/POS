@@ -2,6 +2,7 @@ package com.system.pos.pos.view;
 
 import com.system.pos.pos.controller.ContaController;
 import com.system.pos.pos.model.Conta;
+import com.system.pos.pos.model.Pagamento; // Importar a classe Pagamento
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -10,9 +11,9 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.converter.DoubleStringConverter;
 
+import java.math.BigDecimal; // Importar BigDecimal
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 
 import static com.system.pos.pos.utils.AlertUtil.mostrarAlerta;
 
@@ -178,6 +179,13 @@ public class ContasView {
         Conta selecionada = tabelaContas.getSelectionModel().getSelectedItem();
         if (selecionada != null) {
             try {
+                // Criar um novo pagamento
+                Pagamento pagamento = new Pagamento();
+                pagamento.setValorTotal(BigDecimal.valueOf(selecionada.getValor()));
+                // Associar o pagamento à conta
+                selecionada.setPagamento(pagamento);
+
+                // Registrar o pagamento
                 contaController.registrarPagamento(selecionada.getId());
                 selecionada.setPago(true);
                 tabelaContas.refresh();
@@ -287,5 +295,4 @@ public class ContasView {
         statusBar.setText(String.format("Total: %d | Pagas: %d | Pendentes: %d | Valor Pendente: R$ %.2f",
                 total, pagas, total - pagas, valorTotal));
     }
-
 }
