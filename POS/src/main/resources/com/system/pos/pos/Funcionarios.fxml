@@ -108,7 +108,7 @@
                                         <Insets bottom="5.0" top="5.0" />
                                     </padding>
                                 </Button>
-                                <Button fx:id="atualizarFuncionarioBTN" mnemonicParsing="false" onAction="#atualizarFuncionarioBTN" prefHeight="40.0" prefWidth="299.0" style="-fx-background-color: #1c435e;" text="Atualizar" textFill="WHITE" GridPane.rowIndex="13">
+                                <Button fx:id="atualizarFuncionarioBTN" mnemonicParsing="false" onAction="#atualizarFuncionarioBTN" prefHeight="40.0" prefWidth="299.0" style="-fx-background-color: #1c435e;" text="Atualizar" textFill="WHITE" GridPane.rowIndex="14">
                                     <font>
                                         <Font size="18.0" />
                                     </font>
@@ -116,7 +116,7 @@
                                         <Insets bottom="5.0" top="5.0" />
                                     </padding>
                                 </Button>
-                                <Button fx:id="deleteFuncionarioBTN" mnemonicParsing="false" onAction="#deleteFuncionarioBTN" prefHeight="40.0" prefWidth="299.0" style="-fx-background-color: #1c435e;" text="Remover" textFill="WHITE" GridPane.rowIndex="14">
+                                <Button fx:id="deleteFuncionarioBTN" mnemonicParsing="false" onAction="#deleteFuncionarioBTN" prefHeight="40.0" prefWidth="299.0" style="-fx-background-color: #1c435e;" text="Remover" textFill="WHITE" GridPane.rowIndex="16">
                                     <font>
                                         <Font size="18.0" />
                                     </font>
